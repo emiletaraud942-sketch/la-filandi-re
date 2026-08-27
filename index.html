@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHG La Filandière — Service Technique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFF1EE;
+    --surface:#FFFFFF;
+    --ink:#1B2523;
+    --ink-soft:#5B6864;
+    --ink-faint:#8B948F;
+    --line:#DBDFD8;
+    --navy:#1C2E33;
+    --teal:#2E6E68;
+    --teal-soft:#E4EDEC;
+    --amber:#C97F1F;
+    --amber-soft:#FBEDDA;
+    --rust:#B14B33;
+    --rust-soft:#F6E4DF;
+    --green:#3E7A4E;
+    --green-soft:#E4EFE6;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(28,46,51,0.06), 0 6px 16px rgba(28,46,51,0.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans', sans-serif;-webkit-font-smoothing:antialiased;padding:0 0 80px;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+  header.topbar{background:var(--navy);color:#F3F5F2;padding:22px 0;border-bottom:3px solid var(--amber);}
+  header.topbar .row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .brand-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9FC3BC;margin:0 0 6px;}
+  .brand-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;letter-spacing:.01em;margin:0;text-transform:uppercase;}
+  .brand-sub{font-size:13px;color:#C7D3CF;margin:6px 0 0;}
+  .demo-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;background:rgba(224,153,58,0.16);color:#F0B968;border:1px solid rgba(224,153,58,0.4);padding:5px 10px;border-radius:999px;white-space:nowrap;}
+
+  .site-bar{display:flex;align-items:center;gap:10px;padding-top:18px;flex-wrap:wrap;}
+  .site-bar-label{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);}
+
+  section.overview{padding:16px 0 8px;display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;}
+  .gauge-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 16px 12px;text-align:center;}
+  .gauge-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:2px 0 0;}
+  .gauge-value{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:26px;margin-top:-46px;position:relative;}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px;}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:13px 15px;}
+  .kpi .num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;line-height:1;}
+  .kpi .lbl{font-size:11.5px;color:var(--ink-soft);margin-top:4px;}
+  .kpi.tone-rust .num{color:var(--rust);}
+  .kpi.tone-amber .num{color:var(--amber);}
+  .kpi.tone-teal .num{color:var(--teal);}
+
+  nav.tabs{display:flex;gap:0;margin:26px 0 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  nav.tabs button{background:none;border:none;cursor:pointer;padding:10px 4px;margin-right:18px;font-family:'Barlow Condensed',sans-serif;font-size:16.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-faint);border-bottom:3px solid transparent;text-transform:uppercase;}
+  nav.tabs button.active{color:var(--navy);border-bottom-color:var(--amber);}
+  nav.tabs button:hover{color:var(--navy);}
+
+  section.view{padding:22px 0 10px;animation:fade .2s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  .today-date{font-family:'Barlow Condensed',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;color:var(--navy);margin:0 0 16px;}
+
+  .view-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;}
+  .chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  .btn{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:13.5px;border:1px solid var(--navy);background:var(--navy);color:#fff;padding:9px 15px;border-radius:8px;cursor:pointer;}
+  .btn:hover{background:#132125;}
+  .btn.ghost{background:transparent;color:var(--navy);}
+  .btn.ghost:hover{background:var(--teal-soft);}
+
+  .list{display:flex;flex-direction:column;gap:10px;}
+  .empty{text-align:center;color:var(--ink-faint);font-size:13.5px;padding:22px 10px;border:1px dashed var(--line);border-radius:var(--radius);}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+  .card.p-urgente{border-left-color:var(--rust);}
+  .card.p-normale{border-left-color:var(--amber);}
+  .card.p-basse{border-left-color:var(--ink-faint);}
+  .card .main{flex:1;min-width:220px;}
+  .card .title{font-weight:600;font-size:15px;margin:0 0 3px;}
+  .card .meta{font-size:12.5px;color:var(--ink-soft);margin:0 0 6px;}
+  .card .desc{font-size:13px;color:var(--ink-soft);margin:0;}
+  .card .side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
+  .badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;padding:4px 9px;border-radius:999px;white-space:nowrap;cursor:pointer;border:none;}
+  .badge.s-nouveau{background:var(--amber-soft);color:var(--amber);}
+  .badge.s-encours{background:var(--teal-soft);color:var(--teal);}
+  .badge.s-termine{background:var(--green-soft);color:var(--green);cursor:default;}
+  .prio-tag{font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
+  .icon-x{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;}
+  .icon-x:hover{color:var(--rust);}
+
+  .ctrl-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:13px 16px;display:grid;grid-template-columns:1fr auto auto auto auto;gap:14px;align-items:center;}
+  .ctrl-row.stock-row{grid-template-columns:1fr auto auto auto;}
+  .ctrl-row .name{font-weight:600;font-size:14.5px;}
+  .ctrl-row .tags{font-size:12px;color:var(--ink-soft);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+  .status-pill{font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:5px 10px;border-radius:999px;text-align:center;white-space:nowrap;}
+  .status-pill.c-overdue{background:var(--rust-soft);color:var(--rust);}
+  .status-pill.c-soon{background:var(--amber-soft);color:var(--amber);}
+  .status-pill.c-ok{background:var(--green-soft);color:var(--green);}
+  .due-date{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+  .mini-btn{font-size:12px;font-weight:600;background:none;border:1px solid var(--line);color:var(--navy);padding:6px 10px;border-radius:7px;cursor:pointer;white-space:nowrap;}
+  .mini-btn:hover{background:var(--teal-soft);border-color:var(--teal);}
+  .qty-adjust{display:flex;align-items:center;gap:8px;}
+  .qty-val{font-family:'IBM Plex Mono',monospace;font-size:13px;min-width:66px;text-align:center;}
+
+  .project-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;}
+  .project-head{padding:15px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
+  .project-head:hover{background:#FAFAF8;}
+  .project-title-block{flex:1;min-width:220px;}
+  .project-name{font-weight:600;font-size:16px;margin:0 0 4px;}
+  .project-meta{font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
+  .project-right{display:flex;align-items:center;gap:10px;}
+  .status-pill.proj-avenir{background:#EEEFEC;color:var(--ink-soft);}
+  .status-pill.proj-encours{background:var(--teal-soft);color:var(--teal);}
+  .status-pill.proj-pause{background:var(--amber-soft);color:var(--amber);}
+  .status-pill.proj-termine{background:var(--green-soft);color:var(--green);}
+  .progress-track{width:110px;height:6px;background:#E7E9E3;border-radius:999px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--teal);}
+  .chevron{transition:transform .2s;color:var(--ink-faint);display:inline-block;}
+  .project-card.open .chevron{transform:rotate(90deg);}
+  .project-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .project-card.open .project-body{max-height:2400px;}
+  .project-inner{padding:0 18px 18px;border-top:1px solid var(--line);}
+  .project-desc{font-size:13px;color:var(--ink-soft);margin:12px 0;}
+  .team-pill{display:inline-block;font-size:11px;font-family:'IBM Plex Mono',monospace;background:var(--teal-soft);color:var(--teal);padding:3px 9px;border-radius:999px;margin:0 6px 6px 0;}
+  .subsection-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--navy);margin:16px 0 8px;}
+  .step-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .step-row:last-child{border-bottom:none;}
+  .step-row.done .step-label{text-decoration:line-through;color:var(--ink-faint);}
+  .step-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;color:#fff;font-size:12px;padding:0;}
+  .step-check.checked{background:var(--green);border-color:var(--green);}
+  .step-label{flex:1;}
+  .step-date{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);white-space:nowrap;}
+
+  table.materials{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;}
+  table.materials th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);}
+  table.materials td{padding:8px;border-bottom:1px solid #EFF1EC;vertical-align:middle;}
+  table.materials tr:last-child td{border-bottom:none;}
+  .mat-status{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap;border:none;}
+  .mat-status.mat-acommander{background:var(--rust-soft);color:var(--rust);}
+  .mat-status.mat-commande{background:var(--amber-soft);color:var(--amber);}
+  .mat-status.mat-recu{background:var(--green-soft);color:var(--green);}
+  .mat-total-row td{font-weight:600;border-top:1.5px solid var(--line);}
+  .add-row-form{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);align-items:center;}
+  .add-row-form input,.add-row-form select{font-family:inherit;font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#FCFCFB;}
+  .add-row-form .w-name{flex:2;min-width:140px;}
+  .add-row-form .w-sm{width:78px;}
+  .add-row-form .w-md{width:130px;}
+  .team-check-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .team-check{display:flex;align-items:center;gap:5px;font-size:12.5px;background:#FCFCFB;border:1px solid var(--line);padding:6px 10px;border-radius:7px;cursor:pointer;}
+  .team-check input{margin:0;}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px;display:none;}
+  .panel.open{display:block;animation:fade .2s ease;}
+  .panel h3{margin:0 0 12px;font-family:'Barlow Condensed',sans-serif;font-size:19px;text-transform:uppercase;letter-spacing:.02em;}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+  .field.full{grid-column:1 / -1;}
+  .field label{font-size:12px;color:var(--ink-soft);font-weight:500;}
+  .field input,.field select,.field textarea{font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:#FCFCFB;color:var(--ink);}
+  .field textarea{resize:vertical;min-height:56px;}
+  .panel-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;}
+  .cal-nav-btn{background:var(--surface);border:1px solid var(--line);border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--navy);}
+  .cal-nav-btn:hover{background:var(--teal-soft);}
+  .cal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;text-align:center;flex:1;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 16px;font-size:12px;color:var(--ink-soft);}
+  .legend span.sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+  .cal-weekday{text-align:center;font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;padding-bottom:4px;}
+  .cal-cell{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:64px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:5px;}
+  .cal-cell:hover{border-color:var(--teal);}
+  .cal-cell.out{opacity:.4;}
+  .cal-cell.today{border-color:var(--navy);border-width:2px;}
+  .cal-cell.selected{background:var(--teal-soft);border-color:var(--teal);}
+  .cal-daynum{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);}
+  .cal-dots{display:flex;gap:3px;flex-wrap:wrap;align-items:center;}
+  .cal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .cal-more{font-size:10px;color:var(--ink-faint);}
+  .agenda{margin-top:20px;}
+  .agenda h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;margin:0 0 10px;letter-spacing:.02em;}
+  .agenda-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #EFF1EC;font-size:13.5px;}
+  .agenda-item:last-child{border-bottom:none;}
+  .agenda-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+  .agenda-sub{font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
+
+  .mini-project-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap;}
+
+  .assign-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px;}
+  .assign-main{flex:1;min-width:200px;}
+  .assign-member{font-weight:600;font-size:14px;margin:0 0 4px;}
+  .assign-meta{font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;margin:0 0 4px;}
+  .assign-task{font-size:13px;color:var(--ink);margin:0 0 6px;}
+  .assign-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+  .reassign-form{display:flex;gap:6px;align-items:center;}
+  .reassign-form input{font-size:12px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;width:150px;}
+
+  .provider-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;}
+  .provider-name{font-weight:600;font-size:15px;margin:0 0 4px;}
+  .provider-specialty{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);background:var(--teal-soft);padding:3px 9px;border-radius:999px;display:inline-block;margin-bottom:6px;}
+  .provider-contact{font-size:13px;color:var(--ink-soft);margin:0 0 4px;}
+  .provider-contact a{color:var(--teal);text-decoration:none;}
+  .provider-contact a:hover{text-decoration:underline;}
+  .provider-notes{font-size:12.5px;color:var(--ink-faint);margin:6px 0 0;font-style:italic;}
+
+  footer{max-width:1080px;margin:36px auto 0;padding:16px 24px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
+
+  @media (max-width:680px){
+    section.overview{grid-template-columns:1fr;}
+    .ctrl-row{grid-template-columns:1fr;align-items:flex-start;}
+    .ctrl-row .status-pill,.ctrl-row .due-date,.ctrl-row .mini-btn,.ctrl-row .qty-adjust{justify-self:start;}
+    .field-grid{grid-template-columns:1fr;}
+    table.materials{display:block;overflow-x:auto;white-space:nowrap;}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap row">
+    <div>
+      <p class="brand-eyebrow">CHG La Filandière · Déville-lès-Rouen &amp; Bethel</p>
+      <h1 class="brand-title">Service Technique</h1>
+      <p class="brand-sub">Chantiers, interventions, matériel, stock, prestataires et calendrier partagé</p>
+    </div>
+    <span class="demo-tag">Prototype de démonstration</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="site-bar">
+    <span class="site-bar-label">Vue :</span>
+    <div class="filters" id="site-filters">
+      <button class="chip active" data-site="Tous les sites">Tous les sites</button>
+      <button class="chip" data-site="Déville-lès-Rouen">Déville-lès-Rouen</button>
+      <button class="chip" data-site="Bethel">Bethel</button>
+    </div>
+  </div>
+
+  <section class="overview">
+    <div class="gauge-card">
+      <div id="gauge-svg"></div>
+      <div class="gauge-value" id="gauge-value">—</div>
+      <p class="gauge-label">Contrôles sous contrôle</p>
+    </div>
+    <div class="kpi-row" id="kpi-row"></div>
+  </section>
+
+  <nav class="tabs">
+    <button data-tab="today" class="active">Aujourd'hui</button>
+    <button data-tab="projects">Chantiers</button>
+    <button data-tab="tickets">Interventions</button>
+    <button data-tab="controls">Contrôles réglementaires</button>
+    <button data-tab="stock">Stock</button>
+    <button data-tab="providers">Prestataires</button>
+    <button data-tab="calendar">Calendrier</button>
+  </nav>
+
+  <!-- ================= TODAY VIEW ================= -->
+  <section class="view" id="view-today">
+    <p class="today-date" id="today-date-label"></p>
+    <div id="today-panel"></div>
+  </section>
+
+  <!-- ================= PROJECTS VIEW ================= -->
+  <section class="view" id="view-projects" style="display:none">
+    <div class="view-head">
+      <div class="filters" id="project-filters"></div>
+      <button class="btn" id="toggle-project-form">+ Nouveau chantier</button>
+    </div>
+
+    <div class="panel" id="project-panel">
+      <h3>Nouveau chantier</h3>
+      <form id="project-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="p-name">Nom du chantier</label>
+            <input id="p-name" required placeholder="Ex : Rénovation salles de bain – Le Moulin">
+          </div>
+          <div class="field">
+            <label for="p-site">Site</label>
+            <select id="p-site">
+              <option>Déville-lès-Rouen</option>
+              <option>Bethel</option>
+              <option>Les deux sites</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="p-status">Statut initial</label>
+            <select id="p-status">
+              <option>À venir</option>
+              <option>En cours</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="p-start">Début</label>
+            <input id="p-start" type="date" required>
+          </div>
+          <div class="field">
+            <label for="p-end">Fin prévue</label>
+            <input id="p-end" type="date" required>
+          </div>
+          <div class="field full">
+            <label for="p-desc">Description</label>
+            <textarea id="p-desc" placeholder="Contexte, objectif du chantier"></textarea>
+          </div>
+          <div class="field full">
+            <label>Équipes impliquées</label>
+            <div class="team-check-group" id="p-teams">
+              <label class="team-check"><input type="checkbox" value="Plomberie"> Plomberie</label>
+              <label class="team-check"><input type="checkbox" value="Électricité"> Électricité</label>
+              <label class="team-check"><input type="checkbox" value="Chauffage / CVC"> Chauffage / CVC</label>
+              <label class="team-check"><input type="checkbox" value="Prestataire externe"> Prestataire externe</label>
+              <label class="team-check"><input type="checkbox" value="Direction / achats"> Direction / achats</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-project">Annuler</button>
+          <button type="submit" class="btn">Créer le chantier</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="list" id="project-list"></div>
+  </section>
+
+  <!-- ================= TICKETS VIEW ================= -->
+  <section class="view" id="view-tickets" style="display:none">
+    <div class="view-head">
+      <div class="filters" id="ticket-filters"></div>
+      <button class="btn" id="toggle-ticket-form">+ Nouvelle demande</button>
+    </div>
+
+    <div class="panel" id="ticket-panel">
+      <h3>Nouvelle demande d'intervention</h3>
+      <form id="ticket-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="t-title">Titre de la demande</label>
+            <input id="t-title" required placeholder="Ex : Lit médicalisé bloqué">
+          </div>
+          <div class="field">
+            <label for="t-site">Site</label>
+            <select id="t-site">
+              <option>Déville-lès-Rouen</option>
+              <option>Bethel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="t-location">Localisation</label>
+            <input id="t-location" placeholder="Ex : Chambre 12 – L'Étang">
+          </div>
+          <div class="field">
+            <label for="t-requester">Demandeur</label>
+            <input id="t-requester" placeholder="Ex : Équipe soignante">
+          </div>
+          <div class="field">
+            <label for="t-priority">Priorité</label>
+            <select id="t-priority">
+              <option value="normale">Normale</option>
+              <option value="urgente">Urgente</option>
+              <option value="basse">Basse</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="t-date">Date souhaitée (optionnel)</label>
+            <input id="t-date" type="date">
+          </div>
+          <div class="field full">
+            <label for="t-desc">Description (facultatif)</label>
+            <textarea id="t-desc" placeholder="Précisions utiles pour l'intervention"></textarea>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-ticket">Annuler</button>
+          <button type="submit" class="btn">Créer la demande</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="list" id="ticket-list"></div>
+  </section>
+
+  <!-- ================= CONTROLS VIEW ================= -->
+  <section class="view" id="view-controls" style="display:none">
+    <div class="view-head">
+      <div class="filters" id="control-filters"></div>
+      <button class="btn" id="toggle-control-form">+ Ajouter un contrôle</button>
+    </div>
+
+    <div class="panel" id="control-panel">
+      <h3>Nouveau contrôle réglementaire</h3>
+      <form id="control-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="c-name">Nom du contrôle</label>
+            <input id="c-name" required placeholder="Ex : Vérification portes coupe-feu">
+          </div>
+          <div class="field">
+            <label for="c-site">Site concerné</label>
+            <select id="c-site">
+              <option>Les deux sites</option>
+              <option>Déville-lès-Rouen</option>
+              <option>Bethel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="c-freq">Fréquence (mois)</label>
+            <input id="c-freq" type="number" min="1" max="60" value="12" required>
+          </div>
+          <div class="field full">
+            <label for="c-due">Prochaine échéance</label>
+            <input id="c-due" type="date" required>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-control">Annuler</button>
+          <button type="submit" class="btn">Ajouter le contrôle</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="list" id="control-list"></div>
+  </section>
+
+  <!-- ================= STOCK VIEW ================= -->
+  <section class="view" id="view-stock" style="display:none">
+    <div class="view-head">
+      <div class="filters" id="stock-filters"></div>
+      <button class="btn" id="toggle-stock-form">+ Ajouter une pièce</button>
+    </div>
+
+    <div class="panel" id="stock-panel">
+      <h3>Nouvelle pièce en stock</h3>
+      <form id="stock-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="s-name">Nom</label>
+            <input id="s-name" required placeholder="Ex : Ampoules LED E27">
+          </div>
+          <div class="field">
+            <label for="s-category">Catégorie</label>
+            <select id="s-category">
+              <option>Visserie</option>
+              <option>Électrique</option>
+              <option>Plomberie</option>
+              <option>Consommable</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="s-site">Site</label>
+            <select id="s-site">
+              <option>Les deux sites</option>
+              <option>Déville-lès-Rouen</option>
+              <option>Bethel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="s-qty">Quantité actuelle</label>
+            <input id="s-qty" type="number" min="0" value="0" required>
+          </div>
+          <div class="field">
+            <label for="s-threshold">Seuil d'alerte</label>
+            <input id="s-threshold" type="number" min="0" value="5" required>
+          </div>
+          <div class="field">
+            <label for="s-unit">Unité</label>
+            <input id="s-unit" value="unité" placeholder="unité, boîte, lot, ml...">
+          </div>
+          <div class="field full">
+            <label for="s-location">Emplacement (optionnel)</label>
+            <input id="s-location" placeholder="Ex : Atelier technique Déville">
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-stock">Annuler</button>
+          <button type="submit" class="btn">Ajouter la pièce</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="list" id="stock-list"></div>
+  </section>
+
+  <!-- ================= PROVIDERS VIEW ================= -->
+  <section class="view" id="view-providers" style="display:none">
+    <div class="view-head" style="justify-content:flex-end;">
+      <button class="btn" id="toggle-provider-form">+ Ajouter un prestataire</button>
+    </div>
+
+    <div class="panel" id="provider-panel">
+      <h3>Nouveau prestataire</h3>
+      <form id="provider-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="pr-name">Nom de l'entreprise</label>
+            <input id="pr-name" required placeholder="Ex : Sanitaire Pro">
+          </div>
+          <div class="field">
+            <label for="pr-specialty">Spécialité</label>
+            <input id="pr-specialty" required placeholder="Ex : Plomberie / Sanitaires">
+          </div>
+          <div class="field">
+            <label for="pr-contact">Contact</label>
+            <input id="pr-contact" placeholder="Ex : Mme Bataille">
+          </div>
+          <div class="field">
+            <label for="pr-phone">Téléphone</label>
+            <input id="pr-phone" placeholder="02 35 XX XX XX">
+          </div>
+          <div class="field">
+            <label for="pr-email">Email</label>
+            <input id="pr-email" type="email" placeholder="contact@entreprise.fr">
+          </div>
+          <div class="field full">
+            <label for="pr-notes">Notes (optionnel)</label>
+            <textarea id="pr-notes" placeholder="Contrat, remarques, historique..."></textarea>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-provider">Annuler</button>
+          <button type="submit" class="btn">Ajouter</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="list" id="provider-list"></div>
+  </section>
+
+  <!-- ================= CALENDAR VIEW ================= -->
+  <section class="view" id="view-calendar" style="display:none">
+    <div class="cal-head">
+      <button class="cal-nav-btn" id="cal-prev">‹</button>
+      <span class="cal-title" id="cal-title"></span>
+      <button class="cal-nav-btn" id="cal-next">›</button>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--teal)"></span>Intervention</span>
+      <span><span class="sw" style="background:var(--rust)"></span>Urgent / en retard</span>
+      <span><span class="sw" style="background:var(--amber)"></span>Échéance proche</span>
+      <span><span class="sw" style="background:var(--green)"></span>À jour / terminé</span>
+      <span><span class="sw" style="background:var(--navy)"></span>Étape de chantier</span>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-weekday">Lun</div><div class="cal-weekday">Mar</div><div class="cal-weekday">Mer</div>
+      <div class="cal-weekday">Jeu</div><div class="cal-weekday">Ven</div><div class="cal-weekday">Sam</div><div class="cal-weekday">Dim</div>
+    </div>
+    <div class="cal-grid" id="cal-grid" style="margin-top:6px;"></div>
+    <div class="agenda" id="agenda"></div>
+  </section>
+
+</div>
+
+<footer class="wrap">
+  Prototype non connecté à un système de production · données de démonstration propres à cette session
+</footer>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'filandiere:technique:v4';
+  let activeTab = 'today';
+  let ticketFilter = 'Tous';
+  let controlFilter = 'Tous';
+  let projectFilter = 'Tous';
+  let stockFilter = 'Tous';
+  let siteFilter = 'Tous les sites';
+  let openProjectIds = new Set([1]);
+  let pendingConversionTicketId = null;
+  let assignPanelOpen = { cal:false, today:false };
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  function iso(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function fmtDate(dateStr){
+    const [y,m,d] = dateStr.split('-').map(Number);
+    return new Date(y, m-1, d).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+  function daysBetween(dateStr){
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const target = new Date(y, m-1, d); target.setHours(0,0,0,0);
+    return Math.round((target - today) / 86400000);
+  }
+  function addMonths(dateStr, months){
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    dt.setMonth(dt.getMonth() + months);
+    return iso(dt);
+  }
+  function fmtEUR(n){
+    return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
+  }
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : str;
+    return d.innerHTML;
+  }
+  function matchesSite(site){
+    if(siteFilter === 'Tous les sites') return true;
+    return site === siteFilter || site === 'Les deux sites';
+  }
+
+  const defaultTickets = [
+    { id: 1, title: "Lit médicalisé bloqué", site: "Déville-lès-Rouen", location: "Chambre 12 – L'Étang",
+      requester: "Équipe soignante", priority: "urgente", status: "Nouveau",
+      desc: "Le bouton de réglage de hauteur ne répond plus, résidente à mobilité réduite.",
+      dateSouhaitee: "2026-08-28", createdAt: "2026-08-25", convertedProjectId: null },
+    { id: 2, title: "Fuite robinetterie salle de bain", site: "Déville-lès-Rouen", location: "Chambre 45 – Le Moulin",
+      requester: "ASH", priority: "normale", status: "En cours",
+      desc: "Fuite légère sous le lavabo, seau posé en attendant l'intervention.",
+      dateSouhaitee: "2026-08-30", createdAt: "2026-08-22", convertedProjectId: null },
+    { id: 3, title: "Volet roulant bloqué", site: "Déville-lès-Rouen", location: "Salon – La Clairière",
+      requester: "Équipe animation", priority: "basse", status: "Nouveau",
+      desc: "", dateSouhaitee: null, createdAt: "2026-08-26", convertedProjectId: null },
+    { id: 4, title: "Contrôle chauffage avant hiver", site: "Bethel", location: "Aile Petite Maison",
+      requester: "Direction", priority: "normale", status: "Terminé",
+      desc: "Vérification annuelle demandée en amont de la saison froide.",
+      dateSouhaitee: null, createdAt: "2026-08-10", convertedProjectId: null }
+  ];
+
+  const defaultControls = [
+    { id: 1, name: "Contrôle légionellose – balnéothérapie", site: "Déville-lès-Rouen", freq: 1, lastDone: "2026-07-15", nextDue: "2026-08-15" },
+    { id: 2, name: "Contrôle légionellose – réseau eau chaude", site: "Les deux sites", freq: 1, lastDone: "2026-08-05", nextDue: "2026-09-05" },
+    { id: 3, name: "Vérification ascenseurs", site: "Déville-lès-Rouen", freq: 6, lastDone: "2026-03-10", nextDue: "2026-09-10" },
+    { id: 4, name: "Vérification installation électrique", site: "Les deux sites", freq: 12, lastDone: "2025-11-20", nextDue: "2026-11-20" },
+    { id: 5, name: "Vérification désenfumage", site: "Déville-lès-Rouen", freq: 12, lastDone: "2025-08-20", nextDue: "2026-08-20" },
+    { id: 6, name: "Vérification extincteurs", site: "Bethel", freq: 12, lastDone: "2026-01-15", nextDue: "2027-01-15" },
+    { id: 7, name: "Vérification groupe électrogène", site: "Déville-lès-Rouen", freq: 3, lastDone: "2026-06-01", nextDue: "2026-09-01" },
+    { id: 8, name: "Vérification portes coupe-feu", site: "Les deux sites", freq: 12, lastDone: "2025-10-10", nextDue: "2026-10-10" },
+    { id: 9, name: "VGP lève-personnes et lits médicalisés", site: "Bethel", freq: 12, lastDone: "2025-07-01", nextDue: "2026-07-01" },
+    { id: 10, name: "Exercice évacuation incendie", site: "Déville-lès-Rouen", freq: 6, lastDone: "2026-02-15", nextDue: "2026-08-15" }
+  ];
+
+  const defaultProjects = [
+    {
+      id: 1, name: "Rénovation salles de bain – Le Moulin", site: "Déville-lès-Rouen", status: "En cours",
+      startDate: "2026-07-01", endDate: "2026-10-15",
+      description: "Remise aux normes PMR des salles de bain de l'aile Le Moulin : sanitaires, robinetterie et revêtements.",
+      teams: ["Plomberie", "Électricité", "Prestataire externe"],
+      steps: [
+        { id: 1, label: "Diagnostic technique", date: "2026-07-05", done: true },
+        { id: 2, label: "Commande des matériaux", date: "2026-07-20", done: true },
+        { id: 3, label: "Dépose des anciens équipements", date: "2026-09-02", done: false },
+        { id: 4, label: "Pose des sanitaires et faïence", date: "2026-09-20", done: false },
+        { id: 5, label: "Réception des travaux", date: "2026-10-15", done: false }
+      ],
+      materials: [
+        { id: 1, name: "Sanitaires PMR", qty: 6, unit: "unité", status: "Commandé", supplier: "Sanitaire Pro", unitCost: 420 },
+        { id: 2, name: "Robinetterie thermostatique", qty: 6, unit: "unité", status: "À commander", supplier: "Sanitaire Pro", unitCost: 180 },
+        { id: 3, name: "Carrelage sol antidérapant", qty: 45, unit: "m²", status: "Reçu", supplier: "CarreloNorm", unitCost: 32 },
+        { id: 4, name: "Faïence murale", qty: 60, unit: "m²", status: "À commander", supplier: "CarreloNorm", unitCost: 28 }
+      ]
+    },
+    {
+      id: 2, name: "Mise aux normes désenfumage – La Clairière", site: "Déville-lès-Rouen", status: "À venir",
+      startDate: "2026-09-15", endDate: "2026-11-30",
+      description: "Installation d'exutoires conformes suite au dernier rapport de la commission de sécurité.",
+      teams: ["Prestataire externe", "Direction / achats"],
+      steps: [
+        { id: 1, label: "Devis prestataire", date: "2026-08-10", done: true },
+        { id: 2, label: "Validation budget direction", date: "2026-09-05", done: false },
+        { id: 3, label: "Intervention prestataire", date: "2026-10-10", done: false },
+        { id: 4, label: "Contrôle de conformité", date: "2026-11-30", done: false }
+      ],
+      materials: [
+        { id: 1, name: "Exutoires de désenfumage", qty: 4, unit: "unité", status: "À commander", supplier: "Normandie Sécurité Incendie", unitCost: 1150 },
+        { id: 2, name: "Coffret de commande manuelle", qty: 1, unit: "unité", status: "À commander", supplier: "Normandie Sécurité Incendie", unitCost: 850 }
+      ]
+    },
+    {
+      id: 3, name: "Remplacement chaudière collective", site: "Bethel", status: "En pause",
+      startDate: "2026-06-01", endDate: "2027-01-31",
+      description: "Remplacement de la chaudière collective en fin de vie par un modèle à condensation.",
+      teams: ["Chauffage / CVC", "Prestataire externe", "Direction / achats"],
+      steps: [
+        { id: 1, label: "Étude de dimensionnement", date: "2026-06-15", done: true },
+        { id: 2, label: "Choix du prestataire", date: "2026-07-10", done: true },
+        { id: 3, label: "Validation budget (en attente d'arbitrage)", date: "2026-09-30", done: false },
+        { id: 4, label: "Dépose de l'ancienne chaudière", date: "2026-11-15", done: false },
+        { id: 5, label: "Installation de la nouvelle chaudière", date: "2026-12-10", done: false }
+      ],
+      materials: [
+        { id: 1, name: "Chaudière collective gaz condensation 150kW", qty: 1, unit: "unité", status: "À commander", supplier: "ThermoNormandie", unitCost: 18500 },
+        { id: 2, name: "Kit de raccordement hydraulique", qty: 1, unit: "unité", status: "À commander", supplier: "ThermoNormandie", unitCost: 620 }
+      ]
+    }
+  ];
+
+  const defaultStock = [
+    { id: 1, name: "Ampoules LED E27", category: "Consommable", site: "Les deux sites", qty: 34, threshold: 20, unit: "unité", location: "Atelier technique Déville" },
+    { id: 2, name: "Piles LR6 (AA)", category: "Consommable", site: "Les deux sites", qty: 12, threshold: 15, unit: "unité", location: "Atelier technique Déville" },
+    { id: 3, name: "Joints robinetterie (assortiment)", category: "Plomberie", site: "Déville-lès-Rouen", qty: 8, threshold: 10, unit: "lot", location: "Atelier technique Déville" },
+    { id: 4, name: "Disjoncteurs 16A", category: "Électrique", site: "Les deux sites", qty: 6, threshold: 4, unit: "unité", location: "Atelier technique Déville" },
+    { id: 5, name: "Visserie assortiment", category: "Visserie", site: "Les deux sites", qty: 3, threshold: 5, unit: "boîte", location: "Atelier technique Déville" },
+    { id: 6, name: "Filtres VMC", category: "Consommable", site: "Bethel", qty: 18, threshold: 10, unit: "unité", location: "Local technique Bethel" },
+    { id: 7, name: "Gants de protection", category: "Consommable", site: "Les deux sites", qty: 25, threshold: 15, unit: "paire", location: "Atelier technique Déville" },
+    { id: 8, name: "Tube PVC évacuation Ø100", category: "Plomberie", site: "Déville-lès-Rouen", qty: 4, threshold: 3, unit: "ml", location: "Atelier technique Déville" }
+  ];
+
+  const defaultAssignments = [
+    { id: 1, date: "2026-08-27", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 14 82 35 09",
+      task: "Dépose des anciens équipements – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
+    { id: 2, date: "2026-08-27", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
+      task: "Vérification tableau électrique – aile La Clairière", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 3, date: "2026-08-28", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
+      task: "Lit médicalisé bloqué – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: 1, status: "À faire" },
+    { id: 4, date: "2026-08-30", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+      horaireStart: "13:00", horaireEnd: "17:00", phone: "06 14 82 35 09",
+      task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
+    { id: 5, date: "2026-09-01", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
+      task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 6, date: "2026-09-10", member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Déville-lès-Rouen",
+      horaireStart: "09:00", horaireEnd: "12:00", phone: "06 45 60 12 78",
+      task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" }
+  ];
+
+  const defaultProviders = [
+    { id: 1, name: "Sanitaire Pro", specialty: "Plomberie / Sanitaires", contact: "Mme Bataille", phone: "02 35 08 41 27", email: "contact@sanitaire-pro.fr", notes: "Fournisseur habituel pour les rénovations de salles de bain." },
+    { id: 2, name: "CarreloNorm", specialty: "Revêtements sol / mur", contact: "M. Duval", phone: "02 35 08 55 63", email: "commandes@carrelonorm.fr", notes: "" },
+    { id: 3, name: "Normandie Sécurité Incendie", specialty: "Désenfumage / Sécurité incendie", contact: "M. Petit", phone: "02 35 12 09 84", email: "contact@nsi-securite.fr", notes: "Intervient aussi pour les exercices d'évacuation." },
+    { id: 4, name: "ThermoNormandie", specialty: "Chauffage / CVC", contact: "Mme Lefebvre", phone: "02 35 44 21 06", email: "contact@thermonormandie.fr", notes: "" },
+    { id: 5, name: "Ascenseurs Rouen Services", specialty: "Ascenseurs", contact: "M. Girard", phone: "02 35 60 17 92", email: "sav@ars-ascenseurs.fr", notes: "Contrat de maintenance semestriel." }
+  ];
+
+  let data = { tickets: [], controls: [], projects: [], stock: [], assignments: [], providers: [] };
+
+  async function loadData(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      if(res && res.value){
+        data = JSON.parse(res.value);
+      } else {
+        data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders };
+        await saveData();
+      }
+    }catch(e){
+      data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders };
+      try{ await saveData(); }catch(e2){ console.error('Storage init failed', e2); }
+    }
+    render();
+  }
+  async function saveData(){
+    try{ await window.storage.set(STORAGE_KEY, JSON.stringify(data), false); }
+    catch(e){ console.error('Storage save failed', e); }
+  }
+
+  function controlStatus(nextDue){
+    const d = daysBetween(nextDue);
+    if(d < 0) return 'overdue';
+    if(d <= 30) return 'soon';
+    return 'ok';
+  }
+  function controlStatusLabel(nextDue){
+    const d = daysBetween(nextDue);
+    if(d < 0) return `En retard de ${Math.abs(d)} j`;
+    if(d === 0) return `Échéance aujourd'hui`;
+    if(d <= 30) return `Dans ${d} j`;
+    return `À jour`;
+  }
+
+  /* ---------------- Gauge & KPIs ---------------- */
+  function renderGauge(){
+    const controls = data.controls.filter(c => matchesSite(c.site));
+    const total = controls.length || 1;
+    const overdue = controls.filter(c => controlStatus(c.nextDue) === 'overdue').length;
+    const pct = Math.round(((total - overdue) / total) * 100);
+    let color = 'var(--green)';
+    if(pct < 60) color = 'var(--rust)';
+    else if(pct < 85) color = 'var(--amber)';
+
+    const r = 78, cx = 100, cy = 96;
+    const circumference = Math.PI * r;
+    const filled = circumference * (pct/100);
+
+    document.getElementById('gauge-svg').innerHTML = `
+      <svg viewBox="0 0 200 110" width="180" height="99">
+        <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="#E4E7E1" stroke-width="14" stroke-linecap="round"/>
+        <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="${filled} ${circumference}"/>
+      </svg>`;
+    document.getElementById('gauge-value').textContent = pct + '%';
+    document.getElementById('gauge-value').style.color = color;
+  }
+
+  function renderKpis(){
+    const projects = data.projects.filter(p => matchesSite(p.site));
+    const tickets = data.tickets.filter(t => matchesSite(t.site));
+    const controls = data.controls.filter(c => matchesSite(c.site));
+    const stock = data.stock.filter(s => matchesSite(s.site));
+    const todayStr = iso(today);
+    const onFieldToday = data.assignments.filter(a => a.date === todayStr && matchesSite(a.site) && a.status !== 'Terminé').length;
+
+    const activeProjects = projects.filter(p => p.status === 'En cours').length;
+    const openTickets = tickets.filter(t => t.status !== 'Terminé').length;
+    const overdueControls = controls.filter(c => controlStatus(c.nextDue) === 'overdue').length;
+    const lowStock = stock.filter(s => s.qty <= s.threshold).length;
+    const totalBudget = projects.reduce((sum,p) => sum + p.materials.reduce((s,m)=>s+m.qty*m.unitCost,0), 0);
+
+    document.getElementById('kpi-row').innerHTML = `
+      <div class="kpi tone-teal"><div class="num">${onFieldToday}</div><div class="lbl">Équipes sur le terrain aujourd'hui</div></div>
+      <div class="kpi tone-teal"><div class="num">${activeProjects}</div><div class="lbl">Chantiers en cours</div></div>
+      <div class="kpi tone-teal"><div class="num">${openTickets}</div><div class="lbl">Interventions ouvertes</div></div>
+      <div class="kpi tone-rust"><div class="num">${overdueControls}</div><div class="lbl">Contrôles en retard</div></div>
+      <div class="kpi tone-rust"><div class="num">${lowStock}</div><div class="lbl">Pièces en stock bas</div></div>
+      <div class="kpi tone-amber"><div class="num">${fmtEUR(totalBudget)}</div><div class="lbl">Budget matériaux engagé</div></div>
+    `;
+  }
+
+  /* ---------------- Tickets ---------------- */
+  const statusCycle = { 'Nouveau': 'En cours', 'En cours': 'Terminé', 'Terminé': 'Nouveau' };
+  const statusClass = { 'Nouveau': 's-nouveau', 'En cours': 's-encours', 'Terminé': 's-termine' };
+
+  function renderTicketFilters(){
+    const scoped = data.tickets.filter(t => matchesSite(t.site));
+    const counts = { Tous: scoped.length };
+    ['Nouveau','En cours','Terminé'].forEach(s => counts[s] = scoped.filter(t=>t.status===s).length);
+    document.getElementById('ticket-filters').innerHTML = Object.keys(counts).map(f =>
+      `<button class="chip ${f===ticketFilter?'active':''}" data-filter="${f}">${f} (${counts[f]})</button>`
+    ).join('');
+  }
+  function renderTickets(){
+    const list = document.getElementById('ticket-list');
+    const items = data.tickets.filter(t => matchesSite(t.site) && (ticketFilter === 'Tous' || t.status === ticketFilter))
+      .sort((a,b) => (a.createdAt < b.createdAt ? 1 : -1));
+    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucune demande dans ce filtre pour le moment.</div>`; return; }
+    list.innerHTML = items.map(t => {
+      const statusBadge = t.convertedProjectId
+        ? `<span class="badge s-termine">Converti en chantier</span>`
+        : `<button class="badge ${statusClass[t.status]}" data-cycle-ticket="${t.id}" title="Cliquer pour changer le statut">${t.status}</button>`;
+      const convertBtn = t.convertedProjectId
+        ? `<button type="button" class="mini-btn" data-goto-project="${t.convertedProjectId}">Voir le chantier →</button>`
+        : `<button type="button" class="mini-btn" data-convert-ticket="${t.id}">→ Créer un chantier</button>`;
+      return `
+      <div class="card p-${t.priority}">
+        <div class="main">
+          <p class="title">${escapeHtml(t.title)}</p>
+          <p class="meta">${escapeHtml(t.site)} · ${escapeHtml(t.location || 'Lieu non précisé')} · demandé par ${escapeHtml(t.requester || '—')} · <span class="prio-tag">priorité ${t.priority}</span>${t.dateSouhaitee ? ` · souhaité le ${fmtDate(t.dateSouhaitee)}` : ''}</p>
+          ${t.desc ? `<p class="desc">${escapeHtml(t.desc)}</p>` : ''}
+        </div>
+        <div class="side">
+          ${statusBadge}
+          ${convertBtn}
+          <button class="icon-x" data-del-ticket="${t.id}" title="Supprimer">×</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---------------- Controls ---------------- */
+  function renderControlFilters(){
+    const scoped = data.controls.filter(c => matchesSite(c.site));
+    const counts = { Tous: scoped.length, 'En retard': 0, 'Bientôt': 0, 'À jour': 0 };
+    scoped.forEach(c => {
+      const s = controlStatus(c.nextDue);
+      if(s === 'overdue') counts['En retard']++; else if(s === 'soon') counts['Bientôt']++; else counts['À jour']++;
+    });
+    document.getElementById('control-filters').innerHTML = Object.keys(counts).map(f =>
+      `<button class="chip ${f===controlFilter?'active':''}" data-cfilter="${f}">${f} (${counts[f]})</button>`
+    ).join('');
+  }
+  function renderControls(){
+    const list = document.getElementById('control-list');
+    const statusMap = { overdue: 'En retard', soon: 'Bientôt', ok: 'À jour' };
+    const items = data.controls.filter(c => matchesSite(c.site) && (controlFilter === 'Tous' || statusMap[controlStatus(c.nextDue)] === controlFilter))
+      .sort((a,b) => new Date(a.nextDue) - new Date(b.nextDue));
+    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun contrôle dans ce filtre pour le moment.</div>`; return; }
+    list.innerHTML = items.map(c => {
+      const st = controlStatus(c.nextDue);
+      const stClass = { overdue: 'c-overdue', soon: 'c-soon', ok: 'c-ok' }[st];
+      return `
+      <div class="ctrl-row">
+        <div>
+          <div class="name">${escapeHtml(c.name)}</div>
+          <div class="tags">${escapeHtml(c.site)} · tous les ${c.freq} mois</div>
+        </div>
+        <div class="due-date">Échéance ${fmtDate(c.nextDue)}</div>
+        <div class="status-pill ${stClass}">${controlStatusLabel(c.nextDue)}</div>
+        <button class="mini-btn" data-done-control="${c.id}">Marquer comme fait</button>
+        <button class="icon-x" data-del-control="${c.id}" title="Supprimer">×</button>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---------------- Stock ---------------- */
+  function renderStockFilters(){
+    const scoped = data.stock.filter(s => matchesSite(s.site));
+    const low = scoped.filter(s => s.qty <= s.threshold).length;
+    const counts = { Tous: scoped.length, 'Stock bas': low, 'OK': scoped.length - low };
+    document.getElementById('stock-filters').innerHTML = Object.keys(counts).map(f =>
+      `<button class="chip ${f===stockFilter?'active':''}" data-sfilter="${f}">${f} (${counts[f]})</button>`
+    ).join('');
+  }
+  function renderStock(){
+    const list = document.getElementById('stock-list');
+    let items = data.stock.filter(s => matchesSite(s.site));
+    if(stockFilter === 'Stock bas') items = items.filter(s => s.qty <= s.threshold);
+    else if(stockFilter === 'OK') items = items.filter(s => s.qty > s.threshold);
+    items = items.slice().sort((a,b) => (a.qty - a.threshold) - (b.qty - b.threshold));
+    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucune pièce dans ce filtre.</div>`; return; }
+    list.innerHTML = items.map(s => {
+      const low = s.qty <= s.threshold;
+      return `
+      <div class="ctrl-row stock-row">
+        <div>
+          <div class="name">${escapeHtml(s.name)}</div>
+          <div class="tags">${escapeHtml(s.category)} · ${escapeHtml(s.site)}${s.location ? ' · '+escapeHtml(s.location) : ''} · seuil ${s.threshold}</div>
+        </div>
+        <div class="qty-adjust">
+          <button type="button" class="mini-btn" data-stock-dec="${s.id}">−</button>
+          <span class="qty-val">${s.qty} ${escapeHtml(s.unit)}</span>
+          <button type="button" class="mini-btn" data-stock-inc="${s.id}">+</button>
+        </div>
+        <div class="status-pill ${low?'c-overdue':'c-ok'}">${low?'Stock bas':'OK'}</div>
+        <button class="icon-x" data-del-stock="${s.id}" title="Supprimer">×</button>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---------------- Providers ---------------- */
+  function renderProviders(){
+    const list = document.getElementById('provider-list');
+    const items = data.providers.slice().sort((a,b)=>a.name.localeCompare(b.name));
+    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun prestataire enregistré.</div>`; return; }
+    list.innerHTML = items.map(p => `
+      <div class="provider-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <p class="provider-name">${escapeHtml(p.name)}</p>
+            <span class="provider-specialty">${escapeHtml(p.specialty)}</span>
+            <p class="provider-contact">${escapeHtml(p.contact || '—')}${p.phone ? ` · <a href="tel:${escapeHtml(p.phone.replace(/\s/g,''))}">${escapeHtml(p.phone)}</a>` : ''}${p.email ? ` · <a href="mailto:${escapeHtml(p.email)}">${escapeHtml(p.email)}</a>` : ''}</p>
+            ${p.notes ? `<p class="provider-notes">${escapeHtml(p.notes)}</p>` : ''}
+          </div>
+          <button class="icon-x" data-del-provider="${p.id}" title="Supprimer">×</button>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---------------- Projects ---------------- */
+  const projStatusClass = { 'À venir':'proj-avenir', 'En cours':'proj-encours', 'En pause':'proj-pause', 'Terminé':'proj-termine' };
+  const matStatusClass = { 'À commander':'mat-acommander', 'Commandé':'mat-commande', 'Reçu':'mat-recu' };
+  const matStatusCycle = { 'À commander':'Commandé', 'Commandé':'Reçu', 'Reçu':'À commander' };
+
+  function teamBadgeHtml(teams){ return teams.map(t=>`<span class="team-pill">${escapeHtml(t)}</span>`).join(''); }
+
+  function projectOptionsHtml(){
+    return '<option value="">—</option>' + data.projects.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  }
+  function projectsActiveOnDay(dateStr){
+    return data.projects.filter(p => matchesSite(p.site) && p.startDate <= dateStr && dateStr <= p.endDate);
+  }
+
+  function stepsHtml(p){
+    if(p.steps.length === 0) return `<p class="empty" style="padding:14px;">Aucune étape définie pour ce chantier.</p>`;
+    return p.steps.slice().sort((a,b)=> new Date(a.date)-new Date(b.date)).map(s => `
+      <div class="step-row ${s.done?'done':''}">
+        <button class="step-check ${s.done?'checked':''}" data-toggle-step="${p.id}|${s.id}">${s.done?'✓':''}</button>
+        <span class="step-label">${escapeHtml(s.label)}</span>
+        <span class="step-date">${fmtDate(s.date)}</span>
+        <button class="icon-x" data-del-step="${p.id}|${s.id}" title="Supprimer">×</button>
+      </div>`).join('');
+  }
+
+  function materialsHtml(p){
+    if(p.materials.length === 0) return `<p class="empty" style="padding:14px;">Aucun matériau renseigné pour ce chantier.</p>`;
+    const rows = p.materials.map(m => {
+      const total = m.qty * m.unitCost;
+      return `<tr>
+        <td>${escapeHtml(m.name)}</td>
+        <td>${m.qty} ${escapeHtml(m.unit)}</td>
+        <td><button class="mat-status ${matStatusClass[m.status]}" data-cycle-mat="${p.id}|${m.id}">${m.status}</button></td>
+        <td>${escapeHtml(m.supplier||'—')}</td>
+        <td>${fmtEUR(m.unitCost)}</td>
+        <td>${fmtEUR(total)}</td>
+        <td><button class="icon-x" data-del-mat="${p.id}|${m.id}" title="Supprimer">×</button></td>
+      </tr>`;
+    }).join('');
+    const sum = p.materials.reduce((a,m)=>a+m.qty*m.unitCost,0);
+    return `<table class="materials">
+      <thead><tr><th>Matériau</th><th>Qté</th><th>Statut</th><th>Fournisseur</th><th>Coût unit.</th><th>Coût total</th><th></th></tr></thead>
+      <tbody>${rows}<tr class="mat-total-row"><td colspan="5">Total matériaux</td><td>${fmtEUR(sum)}</td><td></td></tr></tbody>
+    </table>`;
+  }
+
+  function projectCardHtml(p){
+    const isOpen = openProjectIds.has(p.id);
+    const totalSteps = p.steps.length;
+    const doneSteps = p.steps.filter(s=>s.done).length;
+    const pct = totalSteps ? Math.round(doneSteps/totalSteps*100) : 0;
+    return `
+    <div class="project-card ${isOpen?'open':''}">
+      <div class="project-head" data-toggle-project="${p.id}">
+        <div class="project-title-block">
+          <p class="project-name">${escapeHtml(p.name)}</p>
+          <p class="project-meta">${escapeHtml(p.site)} · ${fmtDate(p.startDate)} → ${fmtDate(p.endDate)} · ${doneSteps}/${totalSteps} étapes</p>
+        </div>
+        <div class="project-right">
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <span class="status-pill ${projStatusClass[p.status]}">${p.status}</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-inner">
+          <p class="project-desc">${escapeHtml(p.description || '')}</p>
+          <div>${teamBadgeHtml(p.teams)}</div>
+
+          <p class="subsection-title">Étapes du chantier</p>
+          <div>${stepsHtml(p)}</div>
+          <div class="add-row-form">
+            <input class="w-name" type="text" placeholder="Nouvelle étape" id="new-step-label-${p.id}">
+            <input class="w-md" type="date" id="new-step-date-${p.id}">
+            <button type="button" class="mini-btn" data-add-step="${p.id}">+ Ajouter</button>
+          </div>
+
+          <p class="subsection-title">Matériaux nécessaires</p>
+          <div>${materialsHtml(p)}</div>
+          <div class="add-row-form">
+            <input class="w-name" type="text" placeholder="Matériau" id="new-mat-name-${p.id}">
+            <input class="w-sm" type="number" min="1" value="1" placeholder="Qté" id="new-mat-qty-${p.id}">
+            <select class="w-sm" id="new-mat-unit-${p.id}">
+              <option>unité</option><option>m²</option><option>ml</option><option>kg</option><option>lot</option>
+            </select>
+            <input class="w-md" type="text" placeholder="Fournisseur" id="new-mat-supplier-${p.id}">
+            <input class="w-sm" type="number" min="0" step="0.01" placeholder="Coût unit. €" id="new-mat-cost-${p.id}">
+            <button type="button" class="mini-btn" data-add-mat="${p.id}">+ Ajouter</button>
+          </div>
+
+          <div class="panel-actions" style="margin-top:16px;">
+            <button type="button" class="btn ghost" data-del-project="${p.id}">Supprimer ce chantier</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderProjectFilters(){
+    const scoped = data.projects.filter(p => matchesSite(p.site));
+    const statuses = ['Tous','À venir','En cours','En pause','Terminé'];
+    const counts = {};
+    statuses.forEach(s => counts[s] = s==='Tous' ? scoped.length : scoped.filter(p=>p.status===s).length);
+    document.getElementById('project-filters').innerHTML = statuses.map(f =>
+      `<button class="chip ${f===projectFilter?'active':''}" data-pfilter="${f}">${f} (${counts[f]})</button>`
+    ).join('');
+  }
+  function renderProjects(){
+    const list = document.getElementById('project-list');
+    const items = data.projects.filter(p => matchesSite(p.site) && (projectFilter === 'Tous' || p.status === projectFilter));
+    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun chantier dans ce filtre.</div>`; return; }
+    list.innerHTML = items.map(projectCardHtml).join('');
+  }
+
+  /* ---------------- Day panel (shared by Calendar day-click and Aujourd'hui) ---------------- */
+  function assignmentCardHtml(a, suffix){
+    const statusCls = { 'À faire':'s-nouveau', 'En cours':'s-encours', 'Terminé':'s-termine' }[a.status];
+    const linkBtn = a.linkedProjectId ? `<button type="button" class="mini-btn" data-view-project="${a.linkedProjectId}">Voir le chantier →</button>` : '';
+    const actionArea = a.status === 'Terminé'
+      ? `<div class="reassign-form">
+           <input type="text" placeholder="Nouvelle tâche" id="reassign-task-${suffix}-${a.id}">
+           <button type="button" class="mini-btn" data-reassign="${a.id}" data-suffix="${suffix}">Réaffecter</button>
+         </div>`
+      : `<button type="button" class="mini-btn" data-finish-assign="${a.id}">Terminer</button>`;
+    return `
+      <div class="assign-card">
+        <div class="assign-main">
+          <p class="assign-member">${escapeHtml(a.member)} <span class="team-pill">${escapeHtml(a.team)}</span></p>
+          <p class="assign-meta">${escapeHtml(a.site)} · ${escapeHtml(a.horaireStart)}–${escapeHtml(a.horaireEnd)} · ${a.phone ? escapeHtml(a.phone) : 'pas de numéro renseigné'}</p>
+          <p class="assign-task">${escapeHtml(a.task)}</p>
+          ${linkBtn}
+        </div>
+        <div class="assign-side">
+          <span class="badge ${statusCls}">${a.status}</span>
+          ${actionArea}
+          <button class="icon-x" data-del-assign="${a.id}" title="Supprimer">×</button>
+        </div>
+      </div>`;
+  }
+
+  function dayPanelHtml(dateStr, suffix){
+    const evMap = eventsByDateMap();
+    const evs = (evMap[dateStr] || []).slice().sort((a,b)=> a.type.localeCompare(b.type));
+    const activeProjects = projectsActiveOnDay(dateStr);
+    const dayAssignments = data.assignments.filter(a => a.date === dateStr && matchesSite(a.site));
+
+    const eventsBlock = evs.length === 0
+      ? `<p class="empty">Rien de prévu ce jour-là.</p>`
+      : evs.map(e => `
+        <div class="agenda-item">
+          <span class="agenda-dot" style="background:${e.color}"></span>
+          <div><strong>${e.type}</strong> — ${escapeHtml(e.label)}<br><span class="agenda-sub">${escapeHtml(e.sub)}</span></div>
+        </div>`).join('');
+
+    const projectsBlock = activeProjects.length === 0
+      ? `<p class="empty">Aucun chantier en cours ce jour-là.</p>`
+      : activeProjects.map(p => `
+        <div class="mini-project-row">
+          <div>
+            <strong>${escapeHtml(p.name)}</strong> <span class="status-pill ${projStatusClass[p.status]}">${p.status}</span>
+            <div class="assign-meta">${escapeHtml(p.site)} · ${teamBadgeHtml(p.teams)}</div>
+          </div>
+          <button type="button" class="mini-btn" data-view-project="${p.id}">Voir →</button>
+        </div>`).join('');
+
+    const assignBlock = dayAssignments.length === 0
+      ? `<p class="empty">Personne d'affecté ce jour-là pour le moment.</p>`
+      : dayAssignments.map(a => assignmentCardHtml(a, suffix)).join('');
+
+    return `
+      <p class="subsection-title">Agenda du jour</p>
+      ${eventsBlock}
+
+      <p class="subsection-title">Chantiers en cours ce jour</p>
+      ${projectsBlock}
+
+      <p class="subsection-title">Équipes sur le terrain</p>
+      ${assignBlock}
+      <div style="margin-top:12px;">
+        <button type="button" class="btn ghost" data-toggle-assign="${suffix}">+ Affecter quelqu'un ce jour</button>
+      </div>
+      <div class="panel ${assignPanelOpen[suffix] ? 'open':''}">
+        <h3>Nouvelle affectation — ${fmtDate(dateStr)}</h3>
+        <form data-assign-form="${suffix}" data-assign-date="${dateStr}">
+          <div class="field-grid">
+            <div class="field"><label>Nom</label><input id="a-member-${suffix}" required placeholder="Ex : Julien Marchand"></div>
+            <div class="field"><label>Corps de métier</label>
+              <select id="a-team-${suffix}">
+                <option>Plomberie</option><option>Électricité</option><option>Chauffage / CVC</option>
+                <option>Prestataire externe</option><option>Direction / achats</option>
+              </select>
+            </div>
+            <div class="field"><label>Site</label>
+              <select id="a-site-${suffix}"><option>Déville-lès-Rouen</option><option>Bethel</option></select>
+            </div>
+            <div class="field"><label>Téléphone</label><input id="a-phone-${suffix}" placeholder="06 XX XX XX XX"></div>
+            <div class="field"><label>Début</label><input id="a-start-${suffix}" type="time" value="08:00"></div>
+            <div class="field"><label>Fin</label><input id="a-end-${suffix}" type="time" value="16:00"></div>
+            <div class="field full"><label>Tâche</label><input id="a-task-${suffix}" required placeholder="Ex : Vérification tableau électrique"></div>
+            <div class="field full"><label>Lier à un chantier (optionnel)</label>
+              <select id="a-project-${suffix}">${projectOptionsHtml()}</select>
+            </div>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="btn ghost" data-cancel-assign="${suffix}">Annuler</button>
+            <button type="submit" class="btn">Affecter</button>
+          </div>
+        </form>
+      </div>`;
+  }
+
+  function renderTodayHeader(){
+    const label = today.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('today-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+  }
+  function renderTodayPanel(){
+    document.getElementById('today-panel').innerHTML = dayPanelHtml(iso(today), 'today');
+  }
+
+  /* ---------------- Calendar ---------------- */
+  let calYear = today.getFullYear();
+  let calMonth = today.getMonth();
+  let selectedDay = iso(today);
+
+  function buildMonthCells(year, month){
+    const firstOfMonth = new Date(year, month, 1);
+    const startOffset = (firstOfMonth.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+    const cells = [];
+    for(let i=startOffset-1;i>=0;i--){
+      const d = daysInPrevMonth - i;
+      cells.push({ dateStr: iso(new Date(year, month-1, d)), dayNum: d, inMonth:false });
+    }
+    for(let d=1; d<=daysInMonth; d++){
+      cells.push({ dateStr: iso(new Date(year, month, d)), dayNum: d, inMonth:true });
+    }
+    let nextDay = 1;
+    while(cells.length < 42){
+      cells.push({ dateStr: iso(new Date(year, month+1, nextDay)), dayNum: nextDay, inMonth:false });
+      nextDay++;
+    }
+    return cells;
+  }
+
+  function getAllEvents(){
+    const events = [];
+    data.tickets.forEach(t=>{
+      if(t.dateSouhaitee){
+        const color = t.priority==='urgente' ? 'var(--rust)' : 'var(--teal)';
+        events.push({ date:t.dateSouhaitee, type:'Intervention', color, label:t.title, sub:t.site });
+      }
+    });
+    data.controls.forEach(c=>{
+      const st = controlStatus(c.nextDue);
+      const color = st==='overdue' ? 'var(--rust)' : (st==='soon' ? 'var(--amber)' : 'var(--green)');
+      events.push({ date:c.nextDue, type:'Contrôle', color, label:c.name, sub:c.site });
+    });
+    data.projects.forEach(p=>{
+      p.steps.forEach(s=>{
+        const color = s.done ? 'var(--green)' : 'var(--navy)';
+        events.push({ date:s.date, type:'Chantier', color, label:`${p.name} — ${s.label}`, sub:p.site });
+      });
+    });
+    return events.filter(ev => matchesSite(ev.sub));
+  }
+  function eventsByDateMap(){
+    const map = {};
+    getAllEvents().forEach(ev => { (map[ev.date] = map[ev.date] || []).push(ev); });
+    return map;
+  }
+
+  function renderCalendar(){
+    document.getElementById('cal-title').textContent =
+      new Date(calYear, calMonth, 1).toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+    const cells = buildMonthCells(calYear, calMonth);
+    const evMap = eventsByDateMap();
+    const todayStr = iso(today);
+    document.getElementById('cal-grid').innerHTML = cells.map(c => {
+      const evs = evMap[c.dateStr] || [];
+      const dots = evs.slice(0,4).map(e=>`<span class="cal-dot" style="background:${e.color}"></span>`).join('');
+      const more = evs.length > 4 ? `<span class="cal-more">+${evs.length-4}</span>` : '';
+      const classes = ['cal-cell'];
+      if(!c.inMonth) classes.push('out');
+      if(c.dateStr === todayStr) classes.push('today');
+      if(c.dateStr === selectedDay) classes.push('selected');
+      return `<div class="${classes.join(' ')}" data-cal-day="${c.dateStr}">
+        <span class="cal-daynum">${c.dayNum}</span>
+        <div class="cal-dots">${dots}${more}</div>
+      </div>`;
+    }).join('');
+    renderAgenda();
+  }
+  function renderAgenda(){
+    document.getElementById('agenda').innerHTML = `<h4>${fmtDate(selectedDay)}</h4>` + dayPanelHtml(selectedDay, 'cal');
+  }
+
+  /* ---------------- Render all ---------------- */
+  function render(){
+    renderTodayHeader();
+    renderGauge();
+    renderKpis();
+    renderProjectFilters();
+    renderProjects();
+    renderTicketFilters();
+    renderTickets();
+    renderControlFilters();
+    renderControls();
+    renderStockFilters();
+    renderStock();
+    renderProviders();
+    renderTodayPanel();
+    renderCalendar();
+  }
+
+  /* ---------------- Site filter ---------------- */
+  document.getElementById('site-filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-site]'); if(!btn) return;
+    siteFilter = btn.dataset.site;
+    document.querySelectorAll('#site-filters .chip').forEach(c => c.classList.toggle('active', c === btn));
+    render();
+  });
+
+  /* ---------------- Tab switching ---------------- */
+  document.querySelectorAll('nav.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b === btn));
+      document.getElementById('view-today').style.display = activeTab === 'today' ? '' : 'none';
+      document.getElementById('view-projects').style.display = activeTab === 'projects' ? '' : 'none';
+      document.getElementById('view-tickets').style.display = activeTab === 'tickets' ? '' : 'none';
+      document.getElementById('view-controls').style.display = activeTab === 'controls' ? '' : 'none';
+      document.getElementById('view-stock').style.display = activeTab === 'stock' ? '' : 'none';
+      document.getElementById('view-providers').style.display = activeTab === 'providers' ? '' : 'none';
+      document.getElementById('view-calendar').style.display = activeTab === 'calendar' ? '' : 'none';
+    });
+  });
+
+  /* ---------------- Ticket form ---------------- */
+  document.getElementById('toggle-ticket-form').addEventListener('click', () => document.getElementById('ticket-panel').classList.toggle('open'));
+  document.getElementById('cancel-ticket').addEventListener('click', () => {
+    document.getElementById('ticket-panel').classList.remove('open');
+    document.getElementById('ticket-form').reset();
+  });
+  document.getElementById('ticket-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newTicket = {
+      id: Date.now(),
+      title: document.getElementById('t-title').value.trim(),
+      site: document.getElementById('t-site').value,
+      location: document.getElementById('t-location').value.trim(),
+      requester: document.getElementById('t-requester').value.trim(),
+      priority: document.getElementById('t-priority').value,
+      status: 'Nouveau',
+      desc: document.getElementById('t-desc').value.trim(),
+      dateSouhaitee: document.getElementById('t-date').value || null,
+      createdAt: iso(new Date()),
+      convertedProjectId: null
+    };
+    if(!newTicket.title) return;
+    data.tickets.push(newTicket);
+    await saveData();
+    document.getElementById('ticket-form').reset();
+    document.getElementById('ticket-panel').classList.remove('open');
+    render();
+  });
+  document.getElementById('ticket-filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-filter]'); if(!btn) return;
+    ticketFilter = btn.dataset.filter; renderTicketFilters(); renderTickets();
+  });
+  document.getElementById('ticket-list').addEventListener('click', async (e) => {
+    const cycleBtn = e.target.closest('[data-cycle-ticket]');
+    const delBtn = e.target.closest('[data-del-ticket]');
+    const convertBtn = e.target.closest('[data-convert-ticket]');
+    const gotoBtn = e.target.closest('[data-goto-project]');
+
+    if(cycleBtn){
+      const id = Number(cycleBtn.dataset.cycleTicket);
+      const t = data.tickets.find(x => x.id === id);
+      if(t){ t.status = statusCycle[t.status]; await saveData(); render(); }
+      return;
+    }
+    if(delBtn){
+      const id = Number(delBtn.dataset.delTicket);
+      data.tickets = data.tickets.filter(x => x.id !== id);
+      await saveData(); render();
+      return;
+    }
+    if(convertBtn){
+      const id = Number(convertBtn.dataset.convertTicket);
+      const t = data.tickets.find(x => x.id === id);
+      if(!t) return;
+      pendingConversionTicketId = id;
+      document.querySelector('nav.tabs button[data-tab="projects"]').click();
+      document.getElementById('project-panel').classList.add('open');
+      document.getElementById('p-name').value = t.title;
+      document.getElementById('p-site').value = (t.site === 'Bethel' ? 'Bethel' : 'Déville-lès-Rouen');
+      document.getElementById('p-desc').value = t.desc || '';
+      document.getElementById('p-status').value = 'À venir';
+      return;
+    }
+    if(gotoBtn){
+      const pid = Number(gotoBtn.dataset.gotoProject);
+      document.querySelector('nav.tabs button[data-tab="projects"]').click();
+      openProjectIds.add(pid);
+      projectFilter = 'Tous';
+      renderProjectFilters(); renderProjects();
+      return;
+    }
+  });
+
+  /* ---------------- Control form ---------------- */
+  document.getElementById('toggle-control-form').addEventListener('click', () => document.getElementById('control-panel').classList.toggle('open'));
+  document.getElementById('cancel-control').addEventListener('click', () => {
+    document.getElementById('control-panel').classList.remove('open');
+    document.getElementById('control-form').reset();
+  });
+  document.getElementById('control-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newControl = {
+      id: Date.now(),
+      name: document.getElementById('c-name').value.trim(),
+      site: document.getElementById('c-site').value,
+      freq: parseInt(document.getElementById('c-freq').value, 10) || 12,
+      lastDone: null,
+      nextDue: document.getElementById('c-due').value
+    };
+    if(!newControl.name || !newControl.nextDue) return;
+    data.controls.push(newControl);
+    await saveData();
+    document.getElementById('control-form').reset();
+    document.getElementById('control-panel').classList.remove('open');
+    render();
+  });
+  document.getElementById('control-filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-cfilter]'); if(!btn) return;
+    controlFilter = btn.dataset.cfilter; renderControlFilters(); renderControls();
+  });
+  document.getElementById('control-list').addEventListener('click', async (e) => {
+    const doneBtn = e.target.closest('[data-done-control]');
+    const delBtn = e.target.closest('[data-del-control]');
+    if(doneBtn){
+      const id = Number(doneBtn.dataset.doneControl);
+      const c = data.controls.find(x => x.id === id);
+      if(c){ c.lastDone = iso(today); c.nextDue = addMonths(iso(today), c.freq); await saveData(); render(); }
+    }
+    if(delBtn){
+      const id = Number(delBtn.dataset.delControl);
+      data.controls = data.controls.filter(x => x.id !== id);
+      await saveData(); render();
+    }
+  });
+
+  /* ---------------- Stock form ---------------- */
+  document.getElementById('toggle-stock-form').addEventListener('click', () => document.getElementById('stock-panel').classList.toggle('open'));
+  document.getElementById('cancel-stock').addEventListener('click', () => {
+    document.getElementById('stock-panel').classList.remove('open');
+    document.getElementById('stock-form').reset();
+  });
+  document.getElementById('stock-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newItem = {
+      id: Date.now(),
+      name: document.getElementById('s-name').value.trim(),
+      category: document.getElementById('s-category').value,
+      site: document.getElementById('s-site').value,
+      qty: parseFloat(document.getElementById('s-qty').value) || 0,
+      threshold: parseFloat(document.getElementById('s-threshold').value) || 0,
+      unit: document.getElementById('s-unit').value.trim() || 'unité',
+      location: document.getElementById('s-location').value.trim()
+    };
+    if(!newItem.name) return;
+    data.stock.push(newItem);
+    await saveData();
+    document.getElementById('stock-form').reset();
+    document.getElementById('stock-panel').classList.remove('open');
+    render();
+  });
+  document.getElementById('stock-filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-sfilter]'); if(!btn) return;
+    stockFilter = btn.dataset.sfilter; renderStockFilters(); renderStock();
+  });
+  document.getElementById('stock-list').addEventListener('click', async (e) => {
+    const dec = e.target.closest('[data-stock-dec]');
+    const inc = e.target.closest('[data-stock-inc]');
+    const del = e.target.closest('[data-del-stock]');
+    if(dec){
+      const id = Number(dec.dataset.stockDec);
+      const s = data.stock.find(x=>x.id===id);
+      if(s && s.qty>0){ s.qty -= 1; await saveData(); render(); }
+      return;
+    }
+    if(inc){
+      const id = Number(inc.dataset.stockInc);
+      const s = data.stock.find(x=>x.id===id);
+      if(s){ s.qty += 1; await saveData(); render(); }
+      return;
+    }
+    if(del){
+      const id = Number(del.dataset.delStock);
+      data.stock = data.stock.filter(x=>x.id!==id);
+      await saveData(); render();
+      return;
+    }
+  });
+
+  /* ---------------- Providers form ---------------- */
+  document.getElementById('toggle-provider-form').addEventListener('click', () => document.getElementById('provider-panel').classList.toggle('open'));
+  document.getElementById('cancel-provider').addEventListener('click', () => {
+    document.getElementById('provider-panel').classList.remove('open');
+    document.getElementById('provider-form').reset();
+  });
+  document.getElementById('provider-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newProvider = {
+      id: Date.now(),
+      name: document.getElementById('pr-name').value.trim(),
+      specialty: document.getElementById('pr-specialty').value.trim(),
+      contact: document.getElementById('pr-contact').value.trim(),
+      phone: document.getElementById('pr-phone').value.trim(),
+      email: document.getElementById('pr-email').value.trim(),
+      notes: document.getElementById('pr-notes').value.trim()
+    };
+    if(!newProvider.name) return;
+    data.providers.push(newProvider);
+    await saveData();
+    document.getElementById('provider-form').reset();
+    document.getElementById('provider-panel').classList.remove('open');
+    renderProviders();
+  });
+  document.getElementById('provider-list').addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-del-provider]');
+    if(del){
+      const id = Number(del.dataset.delProvider);
+      data.providers = data.providers.filter(x=>x.id!==id);
+      await saveData(); renderProviders();
+    }
+  });
+
+  /* ---------------- Project form & interactions ---------------- */
+  document.getElementById('toggle-project-form').addEventListener('click', () => document.getElementById('project-panel').classList.toggle('open'));
+  document.getElementById('cancel-project').addEventListener('click', () => {
+    document.getElementById('project-panel').classList.remove('open');
+    document.getElementById('project-form').reset();
+    pendingConversionTicketId = null;
+  });
+  document.getElementById('project-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const teams = Array.from(document.querySelectorAll('#p-teams input:checked')).map(i=>i.value);
+    const newProject = {
+      id: Date.now(),
+      name: document.getElementById('p-name').value.trim(),
+      site: document.getElementById('p-site').value,
+      status: document.getElementById('p-status').value,
+      startDate: document.getElementById('p-start').value,
+      endDate: document.getElementById('p-end').value,
+      description: document.getElementById('p-desc').value.trim(),
+      teams, steps: [], materials: []
+    };
+    if(!newProject.name || !newProject.startDate || !newProject.endDate) return;
+    data.projects.push(newProject);
+    openProjectIds.add(newProject.id);
+    if(pendingConversionTicketId){
+      const t = data.tickets.find(x => x.id === pendingConversionTicketId);
+      if(t){ t.convertedProjectId = newProject.id; t.status = 'Terminé'; }
+      pendingConversionTicketId = null;
+    }
+    await saveData();
+    document.getElementById('project-form').reset();
+    document.getElementById('project-panel').classList.remove('open');
+    render();
+  });
+  document.getElementById('project-filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-pfilter]'); if(!btn) return;
+    projectFilter = btn.dataset.pfilter; renderProjectFilters(); renderProjects();
+  });
+
+  document.getElementById('project-list').addEventListener('click', async (e) => {
+    const toggleP = e.target.closest('[data-toggle-project]');
+    const toggleStep = e.target.closest('[data-toggle-step]');
+    const delStep = e.target.closest('[data-del-step]');
+    const addStep = e.target.closest('[data-add-step]');
+    const cycleMat = e.target.closest('[data-cycle-mat]');
+    const delMat = e.target.closest('[data-del-mat]');
+    const addMat = e.target.closest('[data-add-mat]');
+    const delProject = e.target.closest('[data-del-project]');
+
+    if(toggleP){
+      const id = Number(toggleP.dataset.toggleProject);
+      if(openProjectIds.has(id)) openProjectIds.delete(id); else openProjectIds.add(id);
+      renderProjects();
+      return;
+    }
+    if(toggleStep){
+      const [pid,sid] = toggleStep.dataset.toggleStep.split('|').map(Number);
+      const p = data.projects.find(x=>x.id===pid);
+      const s = p.steps.find(x=>x.id===sid);
+      s.done = !s.done;
+      await saveData(); renderProjects(); renderKpis(); renderCalendar(); renderTodayPanel();
+      return;
+    }
+    if(delStep){
+      const [pid,sid] = delStep.dataset.delStep.split('|').map(Number);
+      const p = data.projects.find(x=>x.id===pid);
+      p.steps = p.steps.filter(x=>x.id!==sid);
+      await saveData(); renderProjects(); renderCalendar(); renderTodayPanel();
+      return;
+    }
+    if(addStep){
+      const pid = Number(addStep.dataset.addStep);
+      const p = data.projects.find(x=>x.id===pid);
+      const labelEl = document.getElementById(`new-step-label-${pid}`);
+      const dateEl = document.getElementById(`new-step-date-${pid}`);
+      const label = labelEl.value.trim();
+      const dateVal = dateEl.value;
+      if(!label || !dateVal) return;
+      const nextId = p.steps.length ? Math.max(...p.steps.map(s=>s.id))+1 : 1;
+      p.steps.push({ id:nextId, label, date:dateVal, done:false });
+      await saveData(); renderProjects(); renderCalendar(); renderTodayPanel();
+      return;
+    }
+    if(cycleMat){
+      const [pid,mid] = cycleMat.dataset.cycleMat.split('|').map(Number);
+      const p = data.projects.find(x=>x.id===pid);
+      const m = p.materials.find(x=>x.id===mid);
+      m.status = matStatusCycle[m.status];
+      await saveData(); renderProjects();
+      return;
+    }
+    if(delMat){
+      const [pid,mid] = delMat.dataset.delMat.split('|').map(Number);
+      const p = data.projects.find(x=>x.id===pid);
+      p.materials = p.materials.filter(x=>x.id!==mid);
+      await saveData(); renderProjects(); renderKpis();
+      return;
+    }
+    if(addMat){
+      const pid = Number(addMat.dataset.addMat);
+      const p = data.projects.find(x=>x.id===pid);
+      const name = document.getElementById(`new-mat-name-${pid}`).value.trim();
+      const qty = parseFloat(document.getElementById(`new-mat-qty-${pid}`).value) || 1;
+      const unit = document.getElementById(`new-mat-unit-${pid}`).value;
+      const supplier = document.getElementById(`new-mat-supplier-${pid}`).value.trim();
+      const unitCost = parseFloat(document.getElementById(`new-mat-cost-${pid}`).value) || 0;
+      if(!name) return;
+      const nextId = p.materials.length ? Math.max(...p.materials.map(m=>m.id))+1 : 1;
+      p.materials.push({ id:nextId, name, qty, unit, supplier, unitCost, status:'À commander' });
+      await saveData(); renderProjects(); renderKpis();
+      return;
+    }
+    if(delProject){
+      const id = Number(delProject.dataset.delProject);
+      data.projects = data.projects.filter(x=>x.id!==id);
+      openProjectIds.delete(id);
+      await saveData(); renderProjects(); renderKpis(); renderCalendar(); renderTodayPanel();
+      return;
+    }
+  });
+
+  /* ---------------- Calendar interactions ---------------- */
+  document.getElementById('cal-prev').addEventListener('click', () => {
+    calMonth--; if(calMonth<0){ calMonth=11; calYear--; }
+    renderCalendar();
+  });
+  document.getElementById('cal-next').addEventListener('click', () => {
+    calMonth++; if(calMonth>11){ calMonth=0; calYear++; }
+    renderCalendar();
+  });
+  document.getElementById('cal-grid').addEventListener('click', (e) => {
+    const cell = e.target.closest('[data-cal-day]'); if(!cell) return;
+    selectedDay = cell.dataset.calDay;
+    const [y,m] = selectedDay.split('-').map(Number);
+    calYear = y; calMonth = m-1;
+    renderCalendar();
+  });
+
+  /* ---------------- Day-panel interactions (shared: Calendar + Aujourd'hui) ---------------- */
+  document.body.addEventListener('click', async (e) => {
+    const toggleAssign = e.target.closest('[data-toggle-assign]');
+    const cancelAssign = e.target.closest('[data-cancel-assign]');
+    const viewProject = e.target.closest('[data-view-project]');
+    const finishBtn = e.target.closest('[data-finish-assign]');
+    const reassignBtn = e.target.closest('[data-reassign]');
+    const delAssignBtn = e.target.closest('[data-del-assign]');
+
+    if(toggleAssign){
+      const suffix = toggleAssign.dataset.toggleAssign;
+      assignPanelOpen[suffix] = !assignPanelOpen[suffix];
+      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
+      return;
+    }
+    if(cancelAssign){
+      const suffix = cancelAssign.dataset.cancelAssign;
+      assignPanelOpen[suffix] = false;
+      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
+      return;
+    }
+    if(viewProject){
+      const pid = Number(viewProject.dataset.viewProject);
+      document.querySelector('nav.tabs button[data-tab="projects"]').click();
+      openProjectIds.add(pid);
+      projectFilter = 'Tous';
+      renderProjectFilters(); renderProjects();
+      return;
+    }
+    if(finishBtn){
+      const id = Number(finishBtn.dataset.finishAssign);
+      const a = data.assignments.find(x=>x.id===id);
+      if(a){ a.status = 'Terminé'; await saveData(); renderAgenda(); renderTodayPanel(); renderKpis(); }
+      return;
+    }
+    if(reassignBtn){
+      const id = Number(reassignBtn.dataset.reassign);
+      const suffix = reassignBtn.dataset.suffix;
+      const input = document.getElementById(`reassign-task-${suffix}-${id}`);
+      const a = data.assignments.find(x=>x.id===id);
+      if(!a || !input) return;
+      const newTask = input.value.trim();
+      if(!newTask) return;
+      a.task = newTask; a.status = 'À faire'; a.linkedProjectId = null; a.linkedTicketId = null;
+      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis();
+      return;
+    }
+    if(delAssignBtn){
+      const id = Number(delAssignBtn.dataset.delAssign);
+      data.assignments = data.assignments.filter(x=>x.id!==id);
+      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis();
+      return;
+    }
+  });
+
+  document.body.addEventListener('submit', async (e) => {
+    const form = e.target.closest('[data-assign-form]');
+    if(!form) return;
+    e.preventDefault();
+    const suffix = form.dataset.assignForm;
+    const dateStr = form.dataset.assignDate;
+    const val = (id) => document.getElementById(`${id}-${suffix}`).value;
+    const newAssign = {
+      id: Date.now(),
+      date: dateStr,
+      member: val('a-member').trim(),
+      team: val('a-team'),
+      site: val('a-site'),
+      phone: val('a-phone').trim(),
+      horaireStart: val('a-start'),
+      horaireEnd: val('a-end'),
+      task: val('a-task').trim(),
+      linkedProjectId: val('a-project') ? Number(val('a-project')) : null,
+      linkedTicketId: null,
+      status: 'À faire'
+    };
+    if(!newAssign.member || !newAssign.task) return;
+    data.assignments.push(newAssign);
+    assignPanelOpen[suffix] = false;
+    await saveData();
+    renderAgenda(); renderTodayPanel(); renderKpis();
+  });
+
+  loadData();
+})();
+</script>
+</body>
+</html>
