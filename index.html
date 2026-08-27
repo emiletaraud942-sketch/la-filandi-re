@@ -872,19 +872,20 @@
     { id: 5, name: "Ascenseurs Rouen Services", specialty: "Ascenseurs", contact: "M. Girard", phone: "02 35 60 17 92", email: "sav@ars-ascenseurs.fr", notes: "Contrat de maintenance semestriel." }
   ];
 
-  let data = { tickets: [], controls: [], projects: [], stock: [], assignments: [], providers: [] };
+  let data = { tickets: [], controls: [], projects: [], stock: [], assignments: [], providers: [], history: [] };
 
   async function loadData(){
     try{
       const res = await window.storage.get(STORAGE_KEY, false);
       if(res && res.value){
         data = JSON.parse(res.value);
+        if(!data.history) data.history = [];
       } else {
-        data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders };
+        data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders, history: [] };
         await saveData();
       }
     }catch(e){
-      data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders };
+      data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders, history: [] };
       try{ await saveData(); }catch(e2){ console.error('Storage init failed', e2); }
     }
     render();
@@ -1969,7 +1970,11 @@
     if(finishBtn){
       const id = Number(finishBtn.dataset.finishAssign);
       const a = data.assignments.find(x=>x.id===id);
-      if(a){ a.status = 'Terminé'; await saveData(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis(); }
+      if(a){
+        data.history.push({ member: a.member, team: a.team, task: a.task, date: a.date, completedAt: iso(today) });
+        a.status = 'Terminé';
+        await saveData(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+      }
       return;
     }
     if(reassignBtn){
