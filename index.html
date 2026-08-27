@@ -186,8 +186,6 @@
   .cal-dots{display:flex;gap:3px;flex-wrap:wrap;align-items:center;}
   .cal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
   .cal-more{font-size:10px;color:var(--ink-faint);}
-  .agenda{margin-top:20px;}
-  .agenda h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;margin:0 0 10px;letter-spacing:.02em;}
   .agenda-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #EFF1EC;font-size:13.5px;}
   .agenda-item:last-child{border-bottom:none;}
   .agenda-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
@@ -211,6 +209,16 @@
   .provider-contact a{color:var(--teal);text-decoration:none;}
   .provider-contact a:hover{text-decoration:underline;}
   .provider-notes{font-size:12.5px;color:var(--ink-faint);margin:6px 0 0;font-style:italic;}
+
+  .day-modal-overlay{position:fixed;inset:0;background:rgba(20,28,26,0.5);display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;z-index:1000;opacity:0;pointer-events:none;transition:opacity .18s ease;overflow-y:auto;}
+  .day-modal-overlay.open{opacity:1;pointer-events:auto;}
+  .day-modal{background:var(--surface);border-radius:14px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 50px rgba(20,28,26,0.35);transform:translateY(10px) scale(.97);transition:transform .18s ease;margin:auto 0;}
+  .day-modal-overlay.open .day-modal{transform:translateY(0) scale(1);}
+  .day-modal-head{position:sticky;top:0;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line);border-radius:14px 14px 0 0;}
+  .day-modal-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;color:var(--navy);margin:0;}
+  .day-modal-close{background:none;border:1px solid var(--line);border-radius:8px;width:32px;height:32px;font-size:17px;line-height:1;color:var(--ink-soft);cursor:pointer;flex-shrink:0;}
+  .day-modal-close:hover{background:var(--rust-soft);color:var(--rust);border-color:var(--rust-soft);}
+  .day-modal-body{padding:18px 20px 22px;}
 
   footer{max-width:1080px;margin:36px auto 0;padding:16px 24px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
 
@@ -258,17 +266,17 @@
   </section>
 
   <nav class="tabs">
-    <button data-tab="today" class="active">Aujourd'hui</button>
+    <button data-tab="calendar" class="active">Calendrier</button>
+    <button data-tab="today">Aujourd'hui</button>
     <button data-tab="projects">Chantiers</button>
     <button data-tab="tickets">Interventions</button>
     <button data-tab="controls">Contrôles réglementaires</button>
     <button data-tab="stock">Stock</button>
     <button data-tab="providers">Prestataires</button>
-    <button data-tab="calendar">Calendrier</button>
   </nav>
 
   <!-- ================= TODAY VIEW ================= -->
-  <section class="view" id="view-today">
+  <section class="view" id="view-today" style="display:none">
     <p class="today-date" id="today-date-label"></p>
     <div id="today-panel"></div>
   </section>
@@ -541,7 +549,7 @@
   </section>
 
   <!-- ================= CALENDAR VIEW ================= -->
-  <section class="view" id="view-calendar" style="display:none">
+  <section class="view" id="view-calendar">
     <div class="cal-head">
       <button class="cal-nav-btn" id="cal-prev">‹</button>
       <span class="cal-title" id="cal-title"></span>
@@ -559,9 +567,18 @@
       <div class="cal-weekday">Jeu</div><div class="cal-weekday">Ven</div><div class="cal-weekday">Sam</div><div class="cal-weekday">Dim</div>
     </div>
     <div class="cal-grid" id="cal-grid" style="margin-top:6px;"></div>
-    <div class="agenda" id="agenda"></div>
   </section>
 
+</div>
+
+<div class="day-modal-overlay" id="day-modal-overlay">
+  <div class="day-modal" role="dialog" aria-modal="true" aria-labelledby="day-modal-title">
+    <div class="day-modal-head">
+      <p class="day-modal-title" id="day-modal-title"></p>
+      <button type="button" class="day-modal-close" id="day-modal-close" aria-label="Fermer">×</button>
+    </div>
+    <div class="day-modal-body" id="day-modal-body"></div>
+  </div>
 </div>
 
 <footer class="wrap">
@@ -571,7 +588,7 @@
 <script>
 (function(){
   const STORAGE_KEY = 'filandiere:technique:v4';
-  let activeTab = 'today';
+  let activeTab = 'calendar';
   let ticketFilter = 'Tous';
   let controlFilter = 'Tous';
   let projectFilter = 'Tous';
@@ -579,7 +596,8 @@
   let siteFilter = 'Tous les sites';
   let openProjectIds = new Set([1]);
   let pendingConversionTicketId = null;
-  let assignPanelOpen = { cal:false, today:false };
+  let assignPanelOpen = { modal:false, today:false };
+  let modalDate = null;
 
   const today = new Date(); today.setHours(0,0,0,0);
 
@@ -1247,10 +1265,26 @@
         <div class="cal-dots">${dots}${more}</div>
       </div>`;
     }).join('');
-    renderAgenda();
+    renderDayModal();
   }
-  function renderAgenda(){
-    document.getElementById('agenda').innerHTML = `<h4>${fmtDate(selectedDay)}</h4>` + dayPanelHtml(selectedDay, 'cal');
+
+  function fmtDateLong(dateStr){
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const label = new Date(y, m-1, d).toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
+  function openDayModal(dateStr){
+    modalDate = dateStr;
+    renderDayModal();
+    document.getElementById('day-modal-overlay').classList.add('open');
+  }
+  function closeDayModal(){
+    document.getElementById('day-modal-overlay').classList.remove('open');
+  }
+  function renderDayModal(){
+    if(!modalDate) return;
+    document.getElementById('day-modal-title').textContent = fmtDateLong(modalDate);
+    document.getElementById('day-modal-body').innerHTML = dayPanelHtml(modalDate, 'modal');
   }
 
   /* ---------------- Render all ---------------- */
@@ -1630,6 +1664,16 @@
     const [y,m] = selectedDay.split('-').map(Number);
     calYear = y; calMonth = m-1;
     renderCalendar();
+    assignPanelOpen.modal = false;
+    openDayModal(selectedDay);
+  });
+
+  document.getElementById('day-modal-close').addEventListener('click', closeDayModal);
+  document.getElementById('day-modal-overlay').addEventListener('click', (e) => {
+    if(e.target.id === 'day-modal-overlay') closeDayModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeDayModal();
   });
 
   /* ---------------- Day-panel interactions (shared: Calendar + Aujourd'hui) ---------------- */
@@ -1644,17 +1688,18 @@
     if(toggleAssign){
       const suffix = toggleAssign.dataset.toggleAssign;
       assignPanelOpen[suffix] = !assignPanelOpen[suffix];
-      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
+      if(suffix === 'modal') renderDayModal(); else renderTodayPanel();
       return;
     }
     if(cancelAssign){
       const suffix = cancelAssign.dataset.cancelAssign;
       assignPanelOpen[suffix] = false;
-      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
+      if(suffix === 'modal') renderDayModal(); else renderTodayPanel();
       return;
     }
     if(viewProject){
       const pid = Number(viewProject.dataset.viewProject);
+      closeDayModal();
       document.querySelector('nav.tabs button[data-tab="projects"]').click();
       openProjectIds.add(pid);
       projectFilter = 'Tous';
@@ -1664,7 +1709,7 @@
     if(finishBtn){
       const id = Number(finishBtn.dataset.finishAssign);
       const a = data.assignments.find(x=>x.id===id);
-      if(a){ a.status = 'Terminé'; await saveData(); renderAgenda(); renderTodayPanel(); renderKpis(); }
+      if(a){ a.status = 'Terminé'; await saveData(); renderDayModal(); renderTodayPanel(); renderKpis(); }
       return;
     }
     if(reassignBtn){
@@ -1676,13 +1721,13 @@
       const newTask = input.value.trim();
       if(!newTask) return;
       a.task = newTask; a.status = 'À faire'; a.linkedProjectId = null; a.linkedTicketId = null;
-      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis();
+      await saveData(); renderDayModal(); renderTodayPanel(); renderKpis();
       return;
     }
     if(delAssignBtn){
       const id = Number(delAssignBtn.dataset.delAssign);
       data.assignments = data.assignments.filter(x=>x.id!==id);
-      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis();
+      await saveData(); renderDayModal(); renderTodayPanel(); renderKpis();
       return;
     }
   });
@@ -1712,7 +1757,7 @@
     data.assignments.push(newAssign);
     assignPanelOpen[suffix] = false;
     await saveData();
-    renderAgenda(); renderTodayPanel(); renderKpis();
+    renderDayModal(); renderTodayPanel(); renderKpis();
   });
 
   loadData();
