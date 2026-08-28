@@ -342,13 +342,22 @@
   </section>
 
   <nav class="tabs">
-    <button data-tab="calendar" class="active">Calendrier</button>
+    <button data-tab="today" class="active">Aujourd'hui</button>
+    <button data-tab="calendar">Calendrier</button>
     <button data-tab="projects">Chantiers</button>
     <button data-tab="tickets">Interventions</button>
     <button data-tab="controls">Contrôles réglementaires</button>
     <button data-tab="stock">Stock</button>
     <button data-tab="providers">Prestataires</button>
   </nav>
+
+  <!-- ================= TODAY VIEW ================= -->
+  <section class="view" id="view-today">
+    <p class="today-date" id="today-date-label"></p>
+    <div id="hero-card"></div>
+    <div class="team-strip" id="team-strip"></div>
+    <div id="today-panel"></div>
+  </section>
 
   <!-- ================= PROJECTS VIEW ================= -->
   <section class="view" id="view-projects" style="display:none">
@@ -619,10 +628,7 @@
   </section>
 
   <!-- ================= CALENDAR VIEW ================= -->
-  <section class="view" id="view-calendar">
-    <div id="hero-card"></div>
-    <div class="team-strip" id="team-strip"></div>
-
+  <section class="view" id="view-calendar" style="display:none">
     <div class="cal-head">
       <button class="cal-nav-btn" id="cal-prev">‹</button>
       <span class="cal-title" id="cal-title"></span>
@@ -664,7 +670,7 @@
   const STORAGE_KEY = 'filandiere:technique:v5';
   const PROFILE_KEY = 'filandiere:profile:v1';
   let currentProfile = null;
-  let activeTab = 'calendar';
+  let activeTab = 'today';
   let ticketFilter = 'Tous';
   let controlFilter = 'Tous';
   let projectFilter = 'Tous';
@@ -672,7 +678,7 @@
   let siteFilter = 'Tous les sites';
   let openProjectIds = new Set([1]);
   let pendingConversionTicketId = null;
-  let assignPanelOpen = { modal:false };
+  let assignPanelOpen = { modal:false, today:false };
   let modalDate = null;
 
   const EMPLOYEES = [
@@ -1332,6 +1338,14 @@
       </div>`;
   }
 
+  function renderTodayHeader(){
+    const label = today.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('today-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+  }
+  function renderTodayPanel(){
+    document.getElementById('today-panel').innerHTML = dayPanelHtml(iso(today), 'today');
+  }
+
   function renderHero(){
     const el = document.getElementById('hero-card');
     if(typeof currentProfile !== 'number'){ el.innerHTML = ''; return; }
@@ -1560,8 +1574,10 @@
     renderStockFilters();
     renderStock();
     renderProviders();
+    renderTodayHeader();
     renderHero();
     renderTeamStrip();
+    renderTodayPanel();
     renderEmpLegend();
     renderCalendar();
   }
@@ -1579,6 +1595,7 @@
     btn.addEventListener('click', () => {
       activeTab = btn.dataset.tab;
       document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b === btn));
+      document.getElementById('view-today').style.display = activeTab === 'today' ? '' : 'none';
       document.getElementById('view-projects').style.display = activeTab === 'projects' ? '' : 'none';
       document.getElementById('view-tickets').style.display = activeTab === 'tickets' ? '' : 'none';
       document.getElementById('view-controls').style.display = activeTab === 'controls' ? '' : 'none';
@@ -1848,14 +1865,14 @@
       const p = data.projects.find(x=>x.id===pid);
       const s = p.steps.find(x=>x.id===sid);
       s.done = !s.done;
-      await saveData(); renderProjects(); renderKpis(); renderCalendar();
+      await saveData(); renderProjects(); renderKpis(); renderCalendar(); renderTodayPanel();
       return;
     }
     if(delStep){
       const [pid,sid] = delStep.dataset.delStep.split('|').map(Number);
       const p = data.projects.find(x=>x.id===pid);
       p.steps = p.steps.filter(x=>x.id!==sid);
-      await saveData(); renderProjects(); renderCalendar();
+      await saveData(); renderProjects(); renderCalendar(); renderTodayPanel();
       return;
     }
     if(addStep){
@@ -1868,7 +1885,7 @@
       if(!label || !dateVal) return;
       const nextId = p.steps.length ? Math.max(...p.steps.map(s=>s.id))+1 : 1;
       p.steps.push({ id:nextId, label, date:dateVal, done:false });
-      await saveData(); renderProjects(); renderCalendar();
+      await saveData(); renderProjects(); renderCalendar(); renderTodayPanel();
       return;
     }
     if(cycleMat){
@@ -1904,7 +1921,7 @@
       const id = Number(delProject.dataset.delProject);
       data.projects = data.projects.filter(x=>x.id!==id);
       openProjectIds.delete(id);
-      await saveData(); renderProjects(); renderKpis(); renderCalendar();
+      await saveData(); renderProjects(); renderKpis(); renderCalendar(); renderTodayPanel();
       return;
     }
   });
@@ -1949,13 +1966,13 @@
     if(toggleAssign){
       const suffix = toggleAssign.dataset.toggleAssign;
       assignPanelOpen[suffix] = !assignPanelOpen[suffix];
-      renderDayModal();
+      if(suffix === 'today') renderTodayPanel(); else renderDayModal();
       return;
     }
     if(cancelAssign){
       const suffix = cancelAssign.dataset.cancelAssign;
       assignPanelOpen[suffix] = false;
-      renderDayModal();
+      if(suffix === 'today') renderTodayPanel(); else renderDayModal();
       return;
     }
     if(viewProject){
@@ -1973,7 +1990,7 @@
       if(a){
         data.history.push({ member: a.member, team: a.team, task: a.task, date: a.date, completedAt: iso(today) });
         a.status = 'Terminé';
-        await saveData(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+        await saveData(); renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
       }
       return;
     }
@@ -1986,13 +2003,13 @@
       const newTask = input.value.trim();
       if(!newTask) return;
       a.task = newTask; a.status = 'À faire'; a.linkedProjectId = null; a.linkedTicketId = null;
-      await saveData(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+      await saveData(); renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
       return;
     }
     if(delAssignBtn){
       const id = Number(delAssignBtn.dataset.delAssign);
       data.assignments = data.assignments.filter(x=>x.id!==id);
-      await saveData(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+      await saveData(); renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
       return;
     }
     if(openToday){
@@ -2033,7 +2050,7 @@
     data.assignments.push(newAssign);
     assignPanelOpen[suffix] = false;
     await saveData();
-    renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+    renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
   });
 
   /* ---------------- Profile interactions ---------------- */
