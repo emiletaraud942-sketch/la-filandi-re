@@ -36,11 +36,23 @@
   :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
 
   header.topbar{background:var(--navy);color:#F3F5F2;padding:22px 0;border-bottom:3px solid var(--amber);}
-  header.topbar .row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  header.topbar .row{max-width:1080px;margin:0 auto;padding:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
   .brand-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9FC3BC;margin:0 0 6px;}
   .brand-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;letter-spacing:.01em;margin:0;text-transform:uppercase;}
   .brand-sub{font-size:13px;color:#C7D3CF;margin:6px 0 0;}
   .demo-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;background:rgba(224,153,58,0.16);color:#F0B968;border:1px solid rgba(224,153,58,0.4);padding:5px 10px;border-radius:999px;white-space:nowrap;}
+
+  .picker-screen{min-height:65vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+  .picker-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:32px;max-width:420px;width:100%;text-align:center;}
+  .picker-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;text-transform:uppercase;margin:8px 0 4px;color:var(--navy);}
+  .picker-sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
+  .picker-list{display:flex;flex-direction:column;gap:10px;}
+  .picker-option{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#FCFCFB;cursor:pointer;text-align:left;width:100%;font-family:inherit;}
+  .picker-option:hover{border-color:var(--teal);background:var(--teal-soft);}
+  .picker-option .pname{font-weight:600;font-size:14.5px;display:block;}
+  .picker-option .ptrade{font-size:11.5px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
+  .picker-divider{margin:18px 0 14px;border-top:1px solid var(--line);position:relative;}
+  .picker-divider span{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--surface);padding:0 10px;font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;}
 
   .site-bar{display:flex;align-items:center;gap:10px;padding-top:18px;flex-wrap:wrap;}
   .site-bar-label{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);}
@@ -58,9 +70,10 @@
   .kpi.tone-teal .num{color:var(--teal);}
 
   nav.tabs{display:flex;gap:0;margin:26px 0 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
-  nav.tabs button{background:none;border:none;cursor:pointer;padding:10px 4px;margin-right:18px;font-family:'Barlow Condensed',sans-serif;font-size:16.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-faint);border-bottom:3px solid transparent;text-transform:uppercase;}
+  nav.tabs button{background:none;border:none;cursor:pointer;padding:10px 4px;margin-right:15px;font-family:'Barlow Condensed',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.01em;color:var(--ink-faint);border-bottom:3px solid transparent;text-transform:uppercase;}
   nav.tabs button.active{color:var(--navy);border-bottom-color:var(--amber);}
   nav.tabs button:hover{color:var(--navy);}
+  .tab-badge{display:inline-block;background:var(--rust);color:#fff;font-size:10px;font-family:'IBM Plex Mono',monospace;border-radius:999px;padding:1px 6px;margin-left:4px;vertical-align:middle;}
 
   section.view{padding:22px 0 10px;animation:fade .2s ease;}
   @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
@@ -177,7 +190,7 @@
   .legend span.sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
   .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
   .cal-weekday{text-align:center;font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;padding-bottom:4px;}
-  .cal-cell{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:74px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:4px;}
+  .cal-cell{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:64px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:5px;}
   .cal-cell:hover{border-color:var(--teal);}
   .cal-cell.out{opacity:.4;}
   .cal-cell.today{border-color:var(--navy);border-width:2px;}
@@ -186,6 +199,8 @@
   .cal-dots{display:flex;gap:3px;flex-wrap:wrap;align-items:center;}
   .cal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
   .cal-more{font-size:10px;color:var(--ink-faint);}
+  .agenda{margin-top:20px;}
+  .agenda h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;margin:0 0 10px;letter-spacing:.02em;}
   .agenda-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #EFF1EC;font-size:13.5px;}
   .agenda-item:last-child{border-bottom:none;}
   .agenda-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
@@ -202,6 +217,8 @@
   .reassign-form{display:flex;gap:6px;align-items:center;}
   .reassign-form input{font-size:12px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;width:150px;}
 
+  .workload-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:8px;}
+
   .provider-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;}
   .provider-name{font-weight:600;font-size:15px;margin:0 0 4px;}
   .provider-specialty{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);background:var(--teal-soft);padding:3px 9px;border-radius:999px;display:inline-block;margin-bottom:6px;}
@@ -210,78 +227,22 @@
   .provider-contact a:hover{text-decoration:underline;}
   .provider-notes{font-size:12.5px;color:var(--ink-faint);margin:6px 0 0;font-style:italic;}
 
-  .day-modal-overlay{position:fixed;inset:0;background:rgba(20,28,26,0.5);display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;z-index:1000;opacity:0;pointer-events:none;transition:opacity .18s ease;overflow-y:auto;}
-  .day-modal-overlay.open{opacity:1;pointer-events:auto;}
-  .day-modal{background:var(--surface);border-radius:14px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 50px rgba(20,28,26,0.35);transform:translateY(10px) scale(.97);transition:transform .18s ease;margin:auto 0;}
-  .day-modal-overlay.open .day-modal{transform:translateY(0) scale(1);}
-  .day-modal-head{position:sticky;top:0;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line);border-radius:14px 14px 0 0;}
-  .day-modal-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;color:var(--navy);margin:0;}
-  .day-modal-close{background:none;border:1px solid var(--line);border-radius:8px;width:32px;height:32px;font-size:17px;line-height:1;color:var(--ink-soft);cursor:pointer;flex-shrink:0;}
-  .day-modal-close:hover{background:var(--rust-soft);color:var(--rust);border-color:var(--rust-soft);}
-  .day-modal-body{padding:18px 20px 22px;}
-
-  .topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-  .profile-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#F3F5F2;padding:5px 12px 5px 5px;border-radius:999px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;}
-  .profile-pill:hover{background:rgba(255,255,255,0.16);}
-  .profile-pill .pill-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;font-family:'Barlow Condensed',sans-serif;flex-shrink:0;}
-  .profile-pill .pill-change{color:#9FC3BC;font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;}
-
-  .profile-gate{position:fixed;inset:0;background:var(--bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
-  .profile-gate-inner{max-width:760px;width:100%;text-align:center;position:relative;}
-  .profile-gate-close{position:absolute;top:-6px;right:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;width:34px;height:34px;font-size:17px;color:var(--ink-soft);cursor:pointer;}
-  .profile-gate-close:hover{background:var(--rust-soft);color:var(--rust);border-color:var(--rust-soft);}
-  .profile-gate-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 8px;}
-  .profile-gate-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;letter-spacing:.01em;text-transform:uppercase;color:var(--navy);margin:0 0 10px;}
-  .profile-gate-sub{font-size:14.5px;color:var(--ink-soft);margin:0 0 30px;}
-  .profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
-  .profile-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 16px;cursor:pointer;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .15s ease,border-color .15s ease;}
-  .profile-card:hover{border-color:var(--teal);transform:translateY(-3px);}
-  .profile-card.manager{border-style:dashed;}
-  .profile-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color:#fff;}
-  .profile-name{font-weight:600;font-size:15.5px;}
-  .profile-trade{font-size:12.5px;color:var(--ink-soft);}
-
-  .hero-card{background:linear-gradient(135deg,var(--navy),#24393f);color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
-  .hero-name{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#9FC3BC;margin:0 0 10px;}
-  .hero-name .hero-trade{color:#C7D3CF;text-transform:none;letter-spacing:0;}
-  .hero-status{font-family:'Barlow Condensed',sans-serif;font-size:25px;font-weight:700;margin:0 0 6px;line-height:1.15;}
-  .hero-detail{font-size:14px;color:#C7D3CF;margin:0 0 14px;}
-  .hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-  .hero-btn{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:13.5px;background:#fff;color:var(--navy);border:none;padding:9px 16px;border-radius:8px;cursor:pointer;}
-  .hero-btn:hover{background:#E4EDEC;}
-
-  .team-strip{margin-bottom:22px;}
-  .team-strip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;}
-  .team-chip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;display:flex;gap:10px;align-items:center;cursor:pointer;box-shadow:var(--shadow);text-align:left;font-family:inherit;}
-  .team-chip:hover{border-color:var(--teal);}
-  .avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;font-family:'Barlow Condensed',sans-serif;flex-shrink:0;}
-  .team-chip .info{min-width:0;}
-  .team-chip .t-name{display:block;font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .team-chip .t-status{display:block;font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .team-chip .t-status.st-conge{color:var(--amber);font-weight:600;}
-  .team-chip .t-status.st-libre{color:var(--ink-faint);}
-
-  .emp-legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 14px;font-size:12px;color:var(--ink-soft);}
-  .emp-legend-item{display:flex;align-items:center;gap:6px;}
-  .emp-legend-item .sw-square{width:9px;height:9px;border-radius:3px;display:inline-block;}
-  .emp-legend-item .sw-square.conge{opacity:.5;background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.7) 0 2px, transparent 2px 4px);}
-
-  .cal-emp-dots{display:flex;gap:3px;flex-wrap:wrap;}
-  .emp-dot{width:8px;height:8px;border-radius:3px;flex-shrink:0;}
-  .emp-dot.conge{opacity:.5;background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.7) 0 2px, transparent 2px 4px);}
-
-  .emp-list{display:flex;flex-direction:column;gap:8px;}
-  .emp-row{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;}
-  .emp-row.is-self{border-color:var(--teal);background:var(--teal-soft);}
-  .emp-row-main{flex:1;min-width:0;}
-  .emp-row-name{font-weight:600;font-size:13.5px;margin:0;}
-  .you-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--teal);}
-  .emp-row-trade{font-weight:400;font-size:11.5px;color:var(--ink-soft);}
-  .emp-row-status{display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap;}
-  .emp-task{font-size:12.5px;color:var(--ink);}
-  .emp-status-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 9px;border-radius:999px;}
-  .emp-status-badge.badge-conge{background:var(--amber-soft);color:var(--amber);}
-  .emp-status-badge.badge-libre{background:#EEEFEC;color:var(--ink-faint);}
+  .worker-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding-top:24px;flex-wrap:wrap;}
+  .worker-greeting{font-family:'Barlow Condensed',sans-serif;font-size:30px;text-transform:uppercase;margin:4px 0 0;color:var(--navy);}
+  .worker-task-card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--teal);border-radius:14px;box-shadow:var(--shadow);padding:20px;margin-bottom:14px;}
+  .worker-task-card.urgent{border-left-color:var(--rust);}
+  .wt-time{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);margin:0 0 6px;}
+  .wt-title{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:700;color:var(--ink);margin:0 0 8px;line-height:1.15;}
+  .wt-meta{font-size:13px;color:var(--ink-soft);margin:0 0 6px;}
+  .wt-urgent-tag{display:inline-block;background:var(--rust-soft);color:var(--rust);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 9px;border-radius:999px;margin-bottom:8px;}
+  .wt-finish-btn{width:100%;padding:16px;font-size:16px;border-radius:12px;background:var(--green);border-color:var(--green);margin-top:10px;}
+  .wt-finish-btn:hover{background:#336a41;}
+  .wt-done-note{text-align:center;color:var(--green);font-weight:600;font-size:14px;padding:12px;background:var(--green-soft);border-radius:10px;margin-top:10px;}
+  .worker-upcoming{margin-top:26px;}
+  .worker-upcoming h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.04em;margin:0 0 10px;}
+  .worker-mini-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;gap:10px;}
+  .worker-report-block{margin-top:30px;text-align:center;padding-top:20px;border-top:1px solid var(--line);}
+  .worker-report-confirm{color:var(--green);font-size:13px;font-weight:600;margin-top:10px;}
 
   footer{max-width:1080px;margin:36px auto 0;padding:16px 24px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
 
@@ -293,34 +254,98 @@
     table.materials{display:block;overflow-x:auto;white-space:nowrap;}
   }
   @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+
+  @media print{
+    header.topbar, .site-bar, nav.tabs, .worker-report-block, .btn, .mini-btn, .panel, footer, #profile-picker-screen, #worker-app{ display:none !important; }
+    body{ background:#fff; padding:0; }
+    .kpi, .provider-card, .workload-row, .mini-project-row, .gauge-card{ box-shadow:none; border:1px solid #ccc; }
+    section.view{ display:block !important; }
+  }
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="wrap row">
+  <div class="row">
     <div>
       <p class="brand-eyebrow">CHG La Filandière · Déville-lès-Rouen &amp; Bethel</p>
       <h1 class="brand-title">Service Technique</h1>
-      <p class="brand-sub">Chantiers, interventions, matériel, stock, prestataires et calendrier partagé</p>
+      <p class="brand-sub">Chantiers, interventions, équipements, stock, équipe et calendrier partagé</p>
     </div>
-    <div class="topbar-actions">
-      <span class="demo-tag">Prototype de démonstration</span>
-      <button type="button" class="profile-pill" id="profile-pill"></button>
-    </div>
+    <span class="demo-tag">Prototype de démonstration</span>
   </div>
 </header>
 
-<div class="profile-gate" id="profile-gate">
-  <div class="profile-gate-inner">
-    <button type="button" class="profile-gate-close" id="profile-gate-close" aria-label="Fermer">×</button>
-    <p class="profile-gate-eyebrow">CHG La Filandière · Service Technique</p>
-    <h2 class="profile-gate-title">Qui êtes-vous ?</h2>
-    <p class="profile-gate-sub">Touchez votre nom pour voir votre planning du jour.</p>
-    <div class="profile-grid" id="profile-grid"></div>
+<!-- ================= PROFILE PICKER ================= -->
+<div id="profile-picker-screen" style="display:none">
+  <div class="wrap">
+    <div class="picker-screen">
+      <div class="picker-card">
+        <p class="brand-eyebrow" style="color:var(--ink-faint);">Sélection du profil</p>
+        <h2 class="picker-title">Qui êtes-vous ?</h2>
+        <p class="picker-sub">Choisissez votre profil pour accéder à votre espace.</p>
+        <div class="picker-list" id="picker-team-list"></div>
+        <div class="picker-divider"><span>ou</span></div>
+        <button type="button" class="btn" id="picker-manager-btn" style="width:100%;">Je suis responsable / direction</button>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- ================= WORKER APP ================= -->
+<div id="worker-app" style="display:none">
+  <div class="wrap">
+    <div class="worker-header">
+      <div>
+        <p class="brand-eyebrow" style="color:var(--ink-faint);">Mon espace</p>
+        <h1 class="worker-greeting" id="worker-greeting"></h1>
+        <p class="today-date" id="worker-date-label" style="margin:2px 0 0;"></p>
+      </div>
+      <button type="button" class="mini-btn" id="worker-switch-profile">Changer de profil</button>
+    </div>
+
+    <div id="worker-tasks"></div>
+
+    <div class="worker-report-block">
+      <button type="button" class="btn" id="worker-toggle-report">🛠️ Signaler un problème</button>
+      <div class="panel" id="worker-report-panel" style="text-align:left;margin-top:14px;">
+        <h3>Signaler un problème</h3>
+        <form id="worker-report-form">
+          <div class="field-grid">
+            <div class="field full">
+              <label for="wr-title">Que se passe-t-il ?</label>
+              <input id="wr-title" required placeholder="Ex : Ampoule grillée couloir Le Moulin">
+            </div>
+            <div class="field">
+              <label for="wr-location">Localisation</label>
+              <input id="wr-location" placeholder="Ex : Chambre 12, couloir...">
+            </div>
+            <div class="field">
+              <label for="wr-priority">Priorité</label>
+              <select id="wr-priority">
+                <option value="normale">Normale</option>
+                <option value="urgente">Urgente</option>
+                <option value="basse">Basse</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="wr-desc">Précisions (optionnel)</label>
+              <textarea id="wr-desc"></textarea>
+            </div>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="btn ghost" id="worker-cancel-report">Annuler</button>
+            <button type="submit" class="btn">Envoyer</button>
+          </div>
+        </form>
+        <p class="worker-report-confirm" id="worker-report-confirm" style="display:none;">✓ Signalement envoyé au service technique.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MANAGER APP ================= -->
+<div id="manager-app" style="display:none">
 <div class="wrap">
 
   <div class="site-bar">
@@ -330,6 +355,7 @@
       <button class="chip" data-site="Déville-lès-Rouen">Déville-lès-Rouen</button>
       <button class="chip" data-site="Bethel">Bethel</button>
     </div>
+    <button type="button" class="mini-btn" id="manager-switch-profile" style="margin-left:auto;">Changer de profil</button>
   </div>
 
   <section class="overview">
@@ -343,20 +369,180 @@
 
   <nav class="tabs">
     <button data-tab="today" class="active">Aujourd'hui</button>
-    <button data-tab="calendar">Calendrier</button>
+    <button data-tab="dashboard">Tableau de bord</button>
+    <button data-tab="team">Équipe</button>
+    <button data-tab="equipment">Équipements</button>
     <button data-tab="projects">Chantiers</button>
     <button data-tab="tickets">Interventions</button>
     <button data-tab="controls">Contrôles réglementaires</button>
     <button data-tab="stock">Stock</button>
     <button data-tab="providers">Prestataires</button>
+    <button data-tab="calendar">Calendrier</button>
   </nav>
 
   <!-- ================= TODAY VIEW ================= -->
   <section class="view" id="view-today">
     <p class="today-date" id="today-date-label"></p>
-    <div id="hero-card"></div>
-    <div class="team-strip" id="team-strip"></div>
     <div id="today-panel"></div>
+  </section>
+
+  <!-- ================= DASHBOARD VIEW ================= -->
+  <section class="view" id="view-dashboard" style="display:none">
+    <div class="view-head">
+      <div></div>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn ghost" id="print-dashboard">🖨️ Imprimer ce rapport</button>
+        <button type="button" class="btn ghost" id="export-dashboard-csv">⬇ Exporter en CSV</button>
+      </div>
+    </div>
+
+    <p class="subsection-title">Conformité réglementaire</p>
+    <div class="list" id="dash-compliance"></div>
+
+    <p class="subsection-title">Finances</p>
+    <div class="list" id="dash-finance"></div>
+
+    <p class="subsection-title">Interventions</p>
+    <div class="list" id="dash-tickets"></div>
+
+    <p class="subsection-title">Chantiers</p>
+    <div class="list" id="dash-projects"></div>
+
+    <p class="subsection-title">Équipe — 7 derniers jours</p>
+    <div class="list" id="dash-team"></div>
+  </section>
+
+  <!-- ================= TEAM VIEW ================= -->
+  <section class="view" id="view-team" style="display:none">
+    <div class="view-head" style="justify-content:flex-end;">
+      <button class="btn" id="toggle-team-form">+ Ajouter un membre</button>
+    </div>
+
+    <div class="panel" id="team-panel">
+      <h3>Nouveau membre de l'équipe</h3>
+      <form id="team-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="tm-name">Nom</label>
+            <input id="tm-name" required placeholder="Ex : Julien Marchand">
+          </div>
+          <div class="field">
+            <label for="tm-trade">Corps de métier</label>
+            <select id="tm-trade">
+              <option>Plomberie</option>
+              <option>Électricité</option>
+              <option>Chauffage / CVC</option>
+              <option>Agent polyvalent</option>
+              <option>Direction / achats</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tm-site">Site principal</label>
+            <select id="tm-site">
+              <option>Déville-lès-Rouen</option>
+              <option>Bethel</option>
+              <option>Les deux sites</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tm-phone">Téléphone</label>
+            <input id="tm-phone" placeholder="06 XX XX XX XX">
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-team">Annuler</button>
+          <button type="submit" class="btn">Ajouter</button>
+        </div>
+      </form>
+    </div>
+
+    <p class="subsection-title">Charge de travail aujourd'hui</p>
+    <div class="list" id="team-workload"></div>
+
+    <p class="subsection-title">Équipe</p>
+    <div class="list" id="team-list"></div>
+
+    <p class="subsection-title">Dernières tâches terminées</p>
+    <div class="list" id="team-history"></div>
+  </section>
+
+  <!-- ================= EQUIPMENT VIEW ================= -->
+  <section class="view" id="view-equipment" style="display:none">
+    <div class="view-head" style="justify-content:flex-end;">
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn ghost" id="export-equipment-csv">⬇ Exporter CSV</button>
+        <button class="btn" id="toggle-equipment-form">+ Ajouter un équipement</button>
+      </div>
+    </div>
+
+    <div class="panel" id="equipment-panel">
+      <h3>Nouvel équipement</h3>
+      <form id="equipment-form">
+        <div class="field-grid">
+          <div class="field full">
+            <label for="eq-name">Nom</label>
+            <input id="eq-name" required placeholder="Ex : Chaudière collective">
+          </div>
+          <div class="field">
+            <label for="eq-category">Catégorie</label>
+            <select id="eq-category">
+              <option>Chauffage / CVC</option>
+              <option>Ascenseur</option>
+              <option>Électrique</option>
+              <option>Plomberie</option>
+              <option>Sécurité incendie</option>
+              <option>Mobilier médical</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="eq-site">Site</label>
+            <select id="eq-site">
+              <option>Déville-lès-Rouen</option>
+              <option>Bethel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="eq-location">Emplacement</label>
+            <input id="eq-location" placeholder="Ex : Chaufferie principale">
+          </div>
+          <div class="field">
+            <label for="eq-brand">Marque</label>
+            <input id="eq-brand" placeholder="Ex : De Dietrich">
+          </div>
+          <div class="field">
+            <label for="eq-model">Modèle</label>
+            <input id="eq-model" placeholder="Ex : GTU 130">
+          </div>
+          <div class="field">
+            <label for="eq-serial">N° de série</label>
+            <input id="eq-serial" placeholder="Ex : DD-2014-0472">
+          </div>
+          <div class="field">
+            <label for="eq-purchase">Mise en service</label>
+            <input id="eq-purchase" type="date">
+          </div>
+          <div class="field">
+            <label for="eq-warranty">Fin de garantie</label>
+            <input id="eq-warranty" type="date">
+          </div>
+          <div class="field">
+            <label for="eq-supplier">Fournisseur</label>
+            <input id="eq-supplier" placeholder="Ex : ThermoNormandie">
+          </div>
+          <div class="field full">
+            <label for="eq-notes">Notes (optionnel)</label>
+            <textarea id="eq-notes"></textarea>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn ghost" id="cancel-equipment">Annuler</button>
+          <button type="submit" class="btn">Ajouter</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="list" id="equipment-list"></div>
   </section>
 
   <!-- ================= PROJECTS VIEW ================= -->
@@ -407,7 +593,6 @@
               <label class="team-check"><input type="checkbox" value="Plomberie"> Plomberie</label>
               <label class="team-check"><input type="checkbox" value="Électricité"> Électricité</label>
               <label class="team-check"><input type="checkbox" value="Chauffage / CVC"> Chauffage / CVC</label>
-              <label class="team-check"><input type="checkbox" value="Entretien général"> Entretien général</label>
               <label class="team-check"><input type="checkbox" value="Prestataire externe"> Prestataire externe</label>
               <label class="team-check"><input type="checkbox" value="Direction / achats"> Direction / achats</label>
             </div>
@@ -526,7 +711,10 @@
   <section class="view" id="view-stock" style="display:none">
     <div class="view-head">
       <div class="filters" id="stock-filters"></div>
-      <button class="btn" id="toggle-stock-form">+ Ajouter une pièce</button>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn ghost" id="export-stock-csv">⬇ Exporter CSV</button>
+        <button class="btn" id="toggle-stock-form">+ Ajouter une pièce</button>
+      </div>
     </div>
 
     <div class="panel" id="stock-panel">
@@ -567,6 +755,10 @@
             <label for="s-unit">Unité</label>
             <input id="s-unit" value="unité" placeholder="unité, boîte, lot, ml...">
           </div>
+          <div class="field">
+            <label for="s-cost">Coût unitaire € (optionnel)</label>
+            <input id="s-cost" type="number" min="0" step="0.01" placeholder="0.00">
+          </div>
           <div class="field full">
             <label for="s-location">Emplacement (optionnel)</label>
             <input id="s-location" placeholder="Ex : Atelier technique Déville">
@@ -580,6 +772,9 @@
     </div>
 
     <div class="list" id="stock-list"></div>
+
+    <p class="subsection-title">Historique des mouvements</p>
+    <div class="list" id="stock-movements"></div>
   </section>
 
   <!-- ================= PROVIDERS VIEW ================= -->
@@ -634,7 +829,6 @@
       <span class="cal-title" id="cal-title"></span>
       <button class="cal-nav-btn" id="cal-next">›</button>
     </div>
-    <div class="emp-legend" id="emp-legend"></div>
     <div class="legend">
       <span><span class="sw" style="background:var(--teal)"></span>Intervention</span>
       <span><span class="sw" style="background:var(--rust)"></span>Urgent / en retard</span>
@@ -647,18 +841,12 @@
       <div class="cal-weekday">Jeu</div><div class="cal-weekday">Ven</div><div class="cal-weekday">Sam</div><div class="cal-weekday">Dim</div>
     </div>
     <div class="cal-grid" id="cal-grid" style="margin-top:6px;"></div>
+    <div class="agenda" id="agenda"></div>
   </section>
 
-</div>
+  <datalist id="team-datalist"></datalist>
 
-<div class="day-modal-overlay" id="day-modal-overlay">
-  <div class="day-modal" role="dialog" aria-modal="true" aria-labelledby="day-modal-title">
-    <div class="day-modal-head">
-      <p class="day-modal-title" id="day-modal-title"></p>
-      <button type="button" class="day-modal-close" id="day-modal-close" aria-label="Fermer">×</button>
-    </div>
-    <div class="day-modal-body" id="day-modal-body"></div>
-  </div>
+</div>
 </div>
 
 <footer class="wrap">
@@ -667,9 +855,7 @@
 
 <script>
 (function(){
-  const STORAGE_KEY = 'filandiere:technique:v5';
-  const PROFILE_KEY = 'filandiere:profile:v1';
-  let currentProfile = null;
+  const STORAGE_KEY = 'filandiere:technique:v6';
   let activeTab = 'today';
   let ticketFilter = 'Tous';
   let controlFilter = 'Tous';
@@ -678,34 +864,7 @@
   let siteFilter = 'Tous les sites';
   let openProjectIds = new Set([1]);
   let pendingConversionTicketId = null;
-  let assignPanelOpen = { modal:false, today:false };
-  let modalDate = null;
-
-  const EMPLOYEES = [
-    { id:1, name:"Julien Marchand", initials:"JM", trade:"Plomberie", site:"Déville-lès-Rouen", phone:"06 14 82 35 09", color:"#2E6E68" },
-    { id:2, name:"Karim Haddad", initials:"KH", trade:"Électricité", site:"Déville-lès-Rouen", phone:"06 27 91 44 58", color:"#C97F1F" },
-    { id:3, name:"Nicolas Fournier", initials:"NF", trade:"Chauffage / CVC", site:"Déville-lès-Rouen", phone:"06 33 05 78 12", color:"#B14B33" },
-    { id:4, name:"Sophie Lenoir", initials:"SL", trade:"Entretien général", site:"Bethel", phone:"06 51 22 40 17", color:"#3E7A4E" }
-  ];
-
-  const LEAVES = [
-    { id:1, employeeId:3, start:"2026-08-31", end:"2026-09-03", reason:"Congés" }
-  ];
-
-  function employeeById(id){ return EMPLOYEES.find(e => e.id === id); }
-  function leaveOnDay(employeeId, dateStr){
-    return LEAVES.find(l => l.employeeId === employeeId && l.start <= dateStr && dateStr <= l.end);
-  }
-  function assignmentsForEmployeeOnDay(employeeId, dateStr){
-    return data.assignments.filter(a => a.employeeId === employeeId && a.date === dateStr);
-  }
-  function employeeStatusOnDay(employeeId, dateStr){
-    const leave = leaveOnDay(employeeId, dateStr);
-    if(leave) return { kind:'conge', leave };
-    const assigns = assignmentsForEmployeeOnDay(employeeId, dateStr);
-    if(assigns.length) return { kind:'travail', assignment: assigns[0] };
-    return { kind:'libre' };
-  }
+  let assignPanelOpen = { cal:false, today:false };
 
   const today = new Date(); today.setHours(0,0,0,0);
 
@@ -723,6 +882,13 @@
     const [y,m,d] = dateStr.split('-').map(Number);
     const target = new Date(y, m-1, d); target.setHours(0,0,0,0);
     return Math.round((target - today) / 86400000);
+  }
+  function daysDiff(dateStr1, dateStr2){
+    const [y1,m1,d1] = dateStr1.split('-').map(Number);
+    const [y2,m2,d2] = dateStr2.split('-').map(Number);
+    const t1 = new Date(y1,m1-1,d1).getTime();
+    const t2 = new Date(y2,m2-1,d2).getTime();
+    return Math.round((t2-t1) / 86400000);
   }
   function addMonths(dateStr, months){
     const [y,m,d] = dateStr.split('-').map(Number);
@@ -742,23 +908,40 @@
     if(siteFilter === 'Tous les sites') return true;
     return site === siteFilter || site === 'Les deux sites';
   }
+  function statRow(label, value){
+    return `<div class="workload-row"><div class="project-name" style="font-size:14px;">${escapeHtml(label)}</div><div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600;">${escapeHtml(String(value))}</div></div>`;
+  }
+  function exportCSV(filename, headers, rows){
+    const esc = (v) => {
+      const s = String(v == null ? '' : v);
+      return /[",\n;]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+    };
+    const lines = [headers.map(esc).join(';')].concat(rows.map(r => r.map(esc).join(';')));
+    const csv = '\uFEFF' + lines.join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
   const defaultTickets = [
     { id: 1, title: "Lit médicalisé bloqué", site: "Déville-lès-Rouen", location: "Chambre 12 – L'Étang",
       requester: "Équipe soignante", priority: "urgente", status: "Nouveau",
       desc: "Le bouton de réglage de hauteur ne répond plus, résidente à mobilité réduite.",
-      dateSouhaitee: "2026-08-28", createdAt: "2026-08-25", convertedProjectId: null },
+      dateSouhaitee: "2026-08-28", createdAt: "2026-08-25", convertedProjectId: null, completedAt: null },
     { id: 2, title: "Fuite robinetterie salle de bain", site: "Déville-lès-Rouen", location: "Chambre 45 – Le Moulin",
       requester: "ASH", priority: "normale", status: "En cours",
       desc: "Fuite légère sous le lavabo, seau posé en attendant l'intervention.",
-      dateSouhaitee: "2026-08-30", createdAt: "2026-08-22", convertedProjectId: null },
+      dateSouhaitee: "2026-08-30", createdAt: "2026-08-22", convertedProjectId: null, completedAt: null },
     { id: 3, title: "Volet roulant bloqué", site: "Déville-lès-Rouen", location: "Salon – La Clairière",
       requester: "Équipe animation", priority: "basse", status: "Nouveau",
-      desc: "", dateSouhaitee: null, createdAt: "2026-08-26", convertedProjectId: null },
+      desc: "", dateSouhaitee: null, createdAt: "2026-08-26", convertedProjectId: null, completedAt: null },
     { id: 4, title: "Contrôle chauffage avant hiver", site: "Bethel", location: "Aile Petite Maison",
       requester: "Direction", priority: "normale", status: "Terminé",
       desc: "Vérification annuelle demandée en amont de la saison froide.",
-      dateSouhaitee: null, createdAt: "2026-08-10", convertedProjectId: null }
+      dateSouhaitee: null, createdAt: "2026-08-10", convertedProjectId: null, completedAt: "2026-08-12" }
   ];
 
   const defaultControls = [
@@ -830,44 +1013,72 @@
   ];
 
   const defaultStock = [
-    { id: 1, name: "Ampoules LED E27", category: "Consommable", site: "Les deux sites", qty: 34, threshold: 20, unit: "unité", location: "Atelier technique Déville" },
-    { id: 2, name: "Piles LR6 (AA)", category: "Consommable", site: "Les deux sites", qty: 12, threshold: 15, unit: "unité", location: "Atelier technique Déville" },
-    { id: 3, name: "Joints robinetterie (assortiment)", category: "Plomberie", site: "Déville-lès-Rouen", qty: 8, threshold: 10, unit: "lot", location: "Atelier technique Déville" },
-    { id: 4, name: "Disjoncteurs 16A", category: "Électrique", site: "Les deux sites", qty: 6, threshold: 4, unit: "unité", location: "Atelier technique Déville" },
-    { id: 5, name: "Visserie assortiment", category: "Visserie", site: "Les deux sites", qty: 3, threshold: 5, unit: "boîte", location: "Atelier technique Déville" },
-    { id: 6, name: "Filtres VMC", category: "Consommable", site: "Bethel", qty: 18, threshold: 10, unit: "unité", location: "Local technique Bethel" },
-    { id: 7, name: "Gants de protection", category: "Consommable", site: "Les deux sites", qty: 25, threshold: 15, unit: "paire", location: "Atelier technique Déville" },
-    { id: 8, name: "Tube PVC évacuation Ø100", category: "Plomberie", site: "Déville-lès-Rouen", qty: 4, threshold: 3, unit: "ml", location: "Atelier technique Déville" }
+    { id: 1, name: "Ampoules LED E27", category: "Consommable", site: "Les deux sites", qty: 34, threshold: 20, unit: "unité", unitCost: 2.5, location: "Atelier technique Déville" },
+    { id: 2, name: "Piles LR6 (AA)", category: "Consommable", site: "Les deux sites", qty: 12, threshold: 15, unit: "unité", unitCost: 0.8, location: "Atelier technique Déville" },
+    { id: 3, name: "Joints robinetterie (assortiment)", category: "Plomberie", site: "Déville-lès-Rouen", qty: 8, threshold: 10, unit: "lot", unitCost: 4, location: "Atelier technique Déville" },
+    { id: 4, name: "Disjoncteurs 16A", category: "Électrique", site: "Les deux sites", qty: 6, threshold: 4, unit: "unité", unitCost: 12, location: "Atelier technique Déville" },
+    { id: 5, name: "Visserie assortiment", category: "Visserie", site: "Les deux sites", qty: 3, threshold: 5, unit: "boîte", unitCost: 18, location: "Atelier technique Déville" },
+    { id: 6, name: "Filtres VMC", category: "Consommable", site: "Bethel", qty: 18, threshold: 10, unit: "unité", unitCost: 15, location: "Local technique Bethel" },
+    { id: 7, name: "Gants de protection", category: "Consommable", site: "Les deux sites", qty: 25, threshold: 15, unit: "paire", unitCost: 3, location: "Atelier technique Déville" },
+    { id: 8, name: "Tube PVC évacuation Ø100", category: "Plomberie", site: "Déville-lès-Rouen", qty: 4, threshold: 3, unit: "ml", unitCost: 6, location: "Atelier technique Déville" }
+  ];
+
+  const defaultStockMovements = [
+    { id: 1, stockItemId: 1, itemName: "Ampoules LED E27", type: "Entrée", qty: 20, date: "2026-08-05", note: "Réapprovisionnement" },
+    { id: 2, stockItemId: 2, itemName: "Piles LR6 (AA)", type: "Sortie", qty: 8, date: "2026-08-20", note: "Remplacement piles télécommandes" },
+    { id: 3, stockItemId: 3, itemName: "Joints robinetterie (assortiment)", type: "Sortie", qty: 2, date: "2026-08-22", note: "Fuite chambre 45" }
+  ];
+
+  const defaultEquipment = [
+    { id: 1, name: "Chaudière collective", category: "Chauffage / CVC", site: "Bethel", location: "Chaufferie principale",
+      brand: "De Dietrich", model: "GTU 130", serialNumber: "DD-2014-0472", purchaseDate: "2014-03-10", warrantyEnd: "2016-03-10",
+      supplier: "ThermoNormandie", notes: "En fin de vie, remplacement prévu (voir chantier associé)." },
+    { id: 2, name: "Ascenseur bâtiment principal", category: "Ascenseur", site: "Déville-lès-Rouen", location: "Hall principal",
+      brand: "Otis", model: "GeN2", serialNumber: "OT-2011-8834", purchaseDate: "2011-06-01", warrantyEnd: "2013-06-01",
+      supplier: "Ascenseurs Rouen Services", notes: "Contrat de maintenance semestriel en cours." },
+    { id: 3, name: "Groupe électrogène", category: "Électrique", site: "Déville-lès-Rouen", location: "Local technique extérieur",
+      brand: "SDMO", model: "V440K2", serialNumber: "SD-2018-1102", purchaseDate: "2018-09-15", warrantyEnd: "2020-09-15",
+      supplier: "GroupElec Services", notes: "" },
+    { id: 4, name: "Système de désenfumage — La Clairière", category: "Sécurité incendie", site: "Déville-lès-Rouen", location: "Bâtiment La Clairière",
+      brand: "Normandie Sécurité Incendie", model: "Exutoires série E4", serialNumber: "NSI-2015-330", purchaseDate: "2015-01-20", warrantyEnd: "2017-01-20",
+      supplier: "Normandie Sécurité Incendie", notes: "Mise aux normes en cours (voir chantier associé)." },
+    { id: 5, name: "Lève-personne mobile", category: "Mobilier médical", site: "Déville-lès-Rouen", location: "Aile Le Moulin",
+      brand: "Arjo", model: "Maxi Move", serialNumber: "ARJ-2019-556", purchaseDate: "2019-05-12", warrantyEnd: "2021-05-12",
+      supplier: "Sanitaire Pro", notes: "" },
+    { id: 6, name: "Adoucisseur d'eau", category: "Plomberie", site: "Bethel", location: "Local technique",
+      brand: "Culligan", model: "Aquaset SF", serialNumber: "CUL-2020-771", purchaseDate: "2020-02-28", warrantyEnd: "2022-02-28",
+      supplier: "ThermoNormandie", notes: "" }
+  ];
+
+  const defaultTeam = [
+    { id: 1, name: "Julien Marchand", trade: "Plomberie", site: "Déville-lès-Rouen", phone: "06 14 82 35 09", active: true },
+    { id: 2, name: "Karim Haddad", trade: "Électricité", site: "Déville-lès-Rouen", phone: "06 27 91 44 58", active: true },
+    { id: 3, name: "Nicolas Fournier", trade: "Chauffage / CVC", site: "Les deux sites", phone: "06 33 05 78 12", active: true },
+    { id: 4, name: "Marc Delaunay", trade: "Agent polyvalent", site: "Bethel", phone: "06 50 22 18 44", active: true }
   ];
 
   const defaultAssignments = [
-    { id: 1, date: "2026-08-27", employeeId: 1, member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 1, date: "2026-08-27", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 14 82 35 09",
       task: "Dépose des anciens équipements – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
-    { id: 2, date: "2026-08-27", employeeId: 2, member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+    { id: 2, date: "2026-08-27", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
       task: "Vérification tableau électrique – aile La Clairière", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 3, date: "2026-08-28", employeeId: 1, member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 3, date: "2026-08-28", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
       task: "Lit médicalisé bloqué – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: 1, status: "À faire" },
-    { id: 4, date: "2026-08-30", employeeId: 1, member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 4, date: "2026-08-30", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
       horaireStart: "13:00", horaireEnd: "17:00", phone: "06 14 82 35 09",
       task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
-    { id: 5, date: "2026-09-05", employeeId: 3, member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
+    { id: 5, date: "2026-09-01", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
       task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 6, date: "2026-09-10", employeeId: null, member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Déville-lès-Rouen",
+    { id: 6, date: "2026-09-10", member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Déville-lès-Rouen",
       horaireStart: "09:00", horaireEnd: "12:00", phone: "06 45 60 12 78",
       task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" },
-    { id: 7, date: "2026-08-27", employeeId: 3, member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
-      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 33 05 78 12",
-      task: "Contrôle de la chaudière secondaire – bâtiment L'Étang", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 8, date: "2026-08-27", employeeId: 4, member: "Sophie Lenoir", team: "Entretien général", site: "Bethel",
-      horaireStart: "08:00", horaireEnd: "15:00", phone: "06 51 22 40 17",
-      task: "Entretien des espaces verts et contrôle visuel des extérieurs", linkedProjectId: null, linkedTicketId: null, status: "En cours" },
-    { id: 9, date: "2026-08-28", employeeId: 4, member: "Sophie Lenoir", team: "Entretien général", site: "Bethel",
-      horaireStart: "08:00", horaireEnd: "15:00", phone: "06 51 22 40 17",
-      task: "Nettoyage et rangement du local technique", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
+    { id: 7, date: "2026-08-27", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
+      task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
   ];
 
   const defaultProviders = [
@@ -878,23 +1089,26 @@
     { id: 5, name: "Ascenseurs Rouen Services", specialty: "Ascenseurs", contact: "M. Girard", phone: "02 35 60 17 92", email: "sav@ars-ascenseurs.fr", notes: "Contrat de maintenance semestriel." }
   ];
 
-  let data = { tickets: [], controls: [], projects: [], stock: [], assignments: [], providers: [], history: [] };
+  let data = { tickets: [], controls: [], projects: [], stock: [], stockMovements: [], assignments: [], providers: [], team: [], equipment: [], history: [], currentProfileId: null };
 
   async function loadData(){
     try{
       const res = await window.storage.get(STORAGE_KEY, false);
       if(res && res.value){
         data = JSON.parse(res.value);
-        if(!data.history) data.history = [];
       } else {
-        data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders, history: [] };
+        data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock,
+                  stockMovements: defaultStockMovements, assignments: defaultAssignments, providers: defaultProviders,
+                  team: defaultTeam, equipment: defaultEquipment, history: [], currentProfileId: null };
         await saveData();
       }
     }catch(e){
-      data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock, assignments: defaultAssignments, providers: defaultProviders, history: [] };
+      data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock,
+                stockMovements: defaultStockMovements, assignments: defaultAssignments, providers: defaultProviders,
+                team: defaultTeam, equipment: defaultEquipment, history: [], currentProfileId: null };
       try{ await saveData(); }catch(e2){ console.error('Storage init failed', e2); }
     }
-    render();
+    renderApp();
   }
   async function saveData(){
     try{ await window.storage.set(STORAGE_KEY, JSON.stringify(data), false); }
@@ -915,7 +1129,35 @@
     return `À jour`;
   }
 
-  /* ---------------- Gauge & KPIs ---------------- */
+  /* ---------------- Top-level mode router ---------------- */
+  function renderApp(){
+    document.getElementById('profile-picker-screen').style.display = 'none';
+    document.getElementById('manager-app').style.display = 'none';
+    document.getElementById('worker-app').style.display = 'none';
+
+    if(!data.currentProfileId){
+      document.getElementById('profile-picker-screen').style.display = '';
+      renderPicker();
+    } else if(data.currentProfileId === 'manager'){
+      document.getElementById('manager-app').style.display = '';
+      renderManagerApp();
+    } else {
+      const member = data.team.find(m => m.id === data.currentProfileId);
+      if(!member){ data.currentProfileId = null; renderApp(); return; }
+      document.getElementById('worker-app').style.display = '';
+      renderWorkerApp();
+    }
+  }
+
+  function renderPicker(){
+    document.getElementById('picker-team-list').innerHTML = data.team.filter(m=>m.active).map(m => `
+      <button type="button" class="picker-option" data-pick-profile="${m.id}">
+        <span><span class="pname">${escapeHtml(m.name)}</span><br><span class="ptrade">${escapeHtml(m.trade)} · ${escapeHtml(m.site)}</span></span>
+        <span class="chevron">›</span>
+      </button>`).join('');
+  }
+
+  /* ---------------- Gauge & KPIs (manager) ---------------- */
   function renderGauge(){
     const controls = data.controls.filter(c => matchesSite(c.site));
     const total = controls.length || 1;
@@ -961,6 +1203,86 @@
       <div class="kpi tone-rust"><div class="num">${lowStock}</div><div class="lbl">Pièces en stock bas</div></div>
       <div class="kpi tone-amber"><div class="num">${fmtEUR(totalBudget)}</div><div class="lbl">Budget matériaux engagé</div></div>
     `;
+  }
+
+  function renderTodayTabBadge(){
+    const todayStr = iso(today);
+    const count = data.assignments.filter(a => a.date === todayStr && matchesSite(a.site) && a.status !== 'Terminé').length;
+    const btn = document.querySelector('nav.tabs button[data-tab="today"]');
+    if(!btn) return;
+    btn.innerHTML = count > 0 ? `Aujourd'hui <span class="tab-badge">${count}</span>` : `Aujourd'hui`;
+  }
+
+  /* ---------------- Dashboard ---------------- */
+  function renderDashboardConformity(){
+    const controls = data.controls.filter(c=>matchesSite(c.site));
+    const total = controls.length || 1;
+    const overdue = controls.filter(c=>controlStatus(c.nextDue)==='overdue').length;
+    const soon = controls.filter(c=>controlStatus(c.nextDue)==='soon').length;
+    const ok = controls.length - overdue - soon;
+    const pct = Math.round(((total-overdue)/total)*100);
+    document.getElementById('dash-compliance').innerHTML =
+      statRow('Taux de conformité (non en retard)', pct+'%') +
+      statRow('Contrôles à jour', ok) +
+      statRow('Contrôles bientôt dus (moins de 30 j)', soon) +
+      statRow('Contrôles en retard', overdue);
+  }
+  function renderDashboardFinance(){
+    const projects = data.projects.filter(p=>matchesSite(p.site));
+    const stock = data.stock.filter(s=>matchesSite(s.site));
+    const budgetMateriaux = projects.reduce((sum,p)=>sum+p.materials.reduce((s,m)=>s+m.qty*m.unitCost,0),0);
+    const valeurStock = stock.reduce((sum,s)=>sum+(s.qty*(s.unitCost||0)),0);
+    document.getElementById('dash-finance').innerHTML =
+      statRow('Budget matériaux engagé (chantiers)', fmtEUR(budgetMateriaux)) +
+      statRow('Valeur du stock en magasin', fmtEUR(valeurStock)) +
+      statRow('Total immobilisé', fmtEUR(budgetMateriaux+valeurStock));
+  }
+  function renderDashboardTickets(){
+    const tickets = data.tickets.filter(t=>matchesSite(t.site));
+    const byStatus = { 'Nouveau':0,'En cours':0,'Terminé':0 };
+    let urgentCount = 0, totalDelay = 0, countDelay = 0;
+    tickets.forEach(t=>{
+      byStatus[t.status] = (byStatus[t.status]||0)+1;
+      if(t.priority==='urgente') urgentCount++;
+      if(t.completedAt){ totalDelay += daysDiff(t.createdAt, t.completedAt); countDelay++; }
+    });
+    const avgDelay = countDelay>0 ? Math.round((totalDelay/countDelay)*10)/10 : null;
+    document.getElementById('dash-tickets').innerHTML =
+      statRow('Total interventions', tickets.length) +
+      statRow('Nouveau', byStatus['Nouveau']) +
+      statRow('En cours', byStatus['En cours']) +
+      statRow('Terminé', byStatus['Terminé']) +
+      statRow('Dont urgentes', urgentCount) +
+      statRow('Délai moyen de traitement', avgDelay!=null ? avgDelay+' j' : '—');
+  }
+  function renderDashboardProjects(){
+    const projects = data.projects.filter(p=>matchesSite(p.site));
+    const byStatus = { 'À venir':0,'En cours':0,'En pause':0,'Terminé':0 };
+    projects.forEach(p=> byStatus[p.status] = (byStatus[p.status]||0)+1 );
+    document.getElementById('dash-projects').innerHTML =
+      statRow('Total chantiers', projects.length) +
+      statRow('À venir', byStatus['À venir']) +
+      statRow('En cours', byStatus['En cours']) +
+      statRow('En pause', byStatus['En pause']) +
+      statRow('Terminé', byStatus['Terminé']);
+  }
+  function renderDashboardTeam(){
+    const cutoff = new Date(today); cutoff.setDate(cutoff.getDate()-7);
+    const cutoffStr = iso(cutoff);
+    const recent = data.history.filter(h => h.completedAt >= cutoffStr);
+    const byMember = {};
+    recent.forEach(h => { byMember[h.member] = (byMember[h.member]||0)+1; });
+    const rows = Object.keys(byMember).sort((a,b)=>byMember[b]-byMember[a]).map(m=>statRow(m, byMember[m]+' tâche(s)')).join('');
+    document.getElementById('dash-team').innerHTML =
+      statRow('Tâches terminées (7 derniers jours)', recent.length) +
+      (rows || `<div class="empty">Aucune tâche terminée sur la période.</div>`);
+  }
+  function renderDashboard(){
+    renderDashboardConformity();
+    renderDashboardFinance();
+    renderDashboardTickets();
+    renderDashboardProjects();
+    renderDashboardTeam();
   }
 
   /* ---------------- Tickets ---------------- */
@@ -1056,11 +1378,12 @@
     if(items.length === 0){ list.innerHTML = `<div class="empty">Aucune pièce dans ce filtre.</div>`; return; }
     list.innerHTML = items.map(s => {
       const low = s.qty <= s.threshold;
+      const valLine = (s.unitCost && s.unitCost>0) ? ` · valeur ${fmtEUR(s.qty*s.unitCost)}` : '';
       return `
       <div class="ctrl-row stock-row">
         <div>
           <div class="name">${escapeHtml(s.name)}</div>
-          <div class="tags">${escapeHtml(s.category)} · ${escapeHtml(s.site)}${s.location ? ' · '+escapeHtml(s.location) : ''} · seuil ${s.threshold}</div>
+          <div class="tags">${escapeHtml(s.category)} · ${escapeHtml(s.site)}${s.location ? ' · '+escapeHtml(s.location) : ''} · seuil ${s.threshold}${valLine}</div>
         </div>
         <div class="qty-adjust">
           <button type="button" class="mini-btn" data-stock-dec="${s.id}">−</button>
@@ -1071,6 +1394,40 @@
         <button class="icon-x" data-del-stock="${s.id}" title="Supprimer">×</button>
       </div>`;
     }).join('');
+  }
+  function renderStockMovements(){
+    const box = document.getElementById('stock-movements');
+    const items = data.stockMovements.slice().sort((a,b)=> (b.date.localeCompare(a.date)) || (b.id-a.id)).slice(0,20);
+    if(items.length === 0){ box.innerHTML = `<div class="empty">Aucun mouvement enregistré.</div>`; return; }
+    box.innerHTML = items.map(m => `
+      <div class="mini-project-row">
+        <div>
+          <strong>${m.type==='Entrée'?'+':'−'}${m.qty}</strong> — ${escapeHtml(m.itemName)}
+          <div class="assign-meta">${escapeHtml(m.type)} · ${fmtDate(m.date)}${m.note ? ' · '+escapeHtml(m.note) : ''}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---------------- Equipment ---------------- */
+  function renderEquipment(){
+    const list = document.getElementById('equipment-list');
+    const items = data.equipment.filter(e => matchesSite(e.site)).slice().sort((a,b)=>a.name.localeCompare(b.name));
+    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun équipement enregistré.</div>`; return; }
+    list.innerHTML = items.map(e => `
+      <div class="provider-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <p class="provider-name">${escapeHtml(e.name)}</p>
+            <span class="provider-specialty">${escapeHtml(e.category)}</span>
+            <p class="provider-contact">${escapeHtml(e.site)}${e.location ? ' · '+escapeHtml(e.location) : ''}</p>
+            ${(e.brand || e.model) ? `<p class="provider-contact">${escapeHtml(e.brand||'')} ${escapeHtml(e.model||'')}${e.serialNumber ? ' · n° série '+escapeHtml(e.serialNumber) : ''}</p>` : ''}
+            ${e.purchaseDate ? `<p class="provider-contact">Mise en service : ${fmtDate(e.purchaseDate)}${e.warrantyEnd ? (' · Garantie jusqu\'au ' + fmtDate(e.warrantyEnd)) : ''}</p>` : ''}
+            ${e.supplier ? `<p class="provider-contact">Fournisseur : ${escapeHtml(e.supplier)}</p>` : ''}
+            ${e.notes ? `<p class="provider-notes">${escapeHtml(e.notes)}</p>` : ''}
+          </div>
+          <button class="icon-x" data-del-equipment="${e.id}" title="Supprimer">×</button>
+        </div>
+      </div>`).join('');
   }
 
   /* ---------------- Providers ---------------- */
@@ -1091,6 +1448,65 @@
         </div>
       </div>`).join('');
   }
+
+  /* ---------------- Team (manager) ---------------- */
+  function renderTeamDatalist(){
+    document.getElementById('team-datalist').innerHTML = data.team.map(m=>`<option value="${escapeHtml(m.name)}"></option>`).join('');
+  }
+  function renderTeamWorkload(){
+    const todayStr = iso(today);
+    const box = document.getElementById('team-workload');
+    const members = data.team.filter(m=>m.active && matchesSite(m.site));
+    if(members.length === 0){ box.innerHTML = `<div class="empty">Aucun membre enregistré.</div>`; return; }
+    box.innerHTML = members.map(m => {
+      const activeTasks = data.assignments.filter(a=>a.member===m.name && a.date===todayStr && a.status!=='Terminé');
+      const doneTasks = data.assignments.filter(a=>a.member===m.name && a.date===todayStr && a.status==='Terminé');
+      let statusLabel, statusCls, subLine = '';
+      if(activeTasks.length > 0){ statusLabel = activeTasks[0].status; statusCls = statusClass[activeTasks[0].status]; subLine = activeTasks[0].task; }
+      else if(doneTasks.length > 0){ statusLabel = 'Terminé'; statusCls = 's-termine'; subLine = 'Tâches du jour terminées'; }
+      else { statusLabel = 'Disponible'; statusCls = 's-nouveau'; subLine = "Non affecté aujourd'hui"; }
+      return `
+        <div class="workload-row">
+          <div>
+            <p class="project-name" style="font-size:14.5px;">${escapeHtml(m.name)}</p>
+            <p class="project-meta">${escapeHtml(m.trade)} · ${escapeHtml(m.site)}</p>
+          </div>
+          <div style="text-align:right;">
+            <span class="badge ${statusCls}" style="cursor:default;">${escapeHtml(statusLabel)}</span>
+            <div class="assign-meta" style="margin-top:4px;">${escapeHtml(subLine)}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  function renderTeamList(){
+    const box = document.getElementById('team-list');
+    const members = data.team.slice().sort((a,b)=>a.name.localeCompare(b.name));
+    if(members.length === 0){ box.innerHTML = `<div class="empty">Aucun membre enregistré.</div>`; return; }
+    box.innerHTML = members.map(m => `
+      <div class="provider-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <p class="provider-name">${escapeHtml(m.name)}</p>
+            <span class="provider-specialty">${escapeHtml(m.trade)}</span>
+            <p class="provider-contact">${escapeHtml(m.site)}${m.phone ? ` · <a href="tel:${escapeHtml(m.phone.replace(/\s/g,''))}">${escapeHtml(m.phone)}</a>` : ''}</p>
+          </div>
+          <button class="icon-x" data-del-team="${m.id}" title="Retirer">×</button>
+        </div>
+      </div>`).join('');
+  }
+  function renderTeamHistory(){
+    const box = document.getElementById('team-history');
+    const items = data.history.slice().sort((a,b)=> (b.completedAt.localeCompare(a.completedAt)) || (b.id-a.id)).slice(0,15);
+    if(items.length === 0){ box.innerHTML = `<div class="empty">Aucune tâche terminée pour le moment.</div>`; return; }
+    box.innerHTML = items.map(h => `
+      <div class="mini-project-row">
+        <div>
+          <strong>${escapeHtml(h.member)}</strong> — ${escapeHtml(h.task)}
+          <div class="assign-meta">${escapeHtml(h.team)} · terminé le ${fmtDate(h.completedAt)}</div>
+        </div>
+      </div>`).join('');
+  }
+  function renderTeamTab(){ renderTeamWorkload(); renderTeamList(); renderTeamHistory(); }
 
   /* ---------------- Projects ---------------- */
   const projStatusClass = { 'À venir':'proj-avenir', 'En cours':'proj-encours', 'En pause':'proj-pause', 'Terminé':'proj-termine' };
@@ -1206,7 +1622,7 @@
     list.innerHTML = items.map(projectCardHtml).join('');
   }
 
-  /* ---------------- Day panel (shared by Calendar day-click and Aujourd'hui) ---------------- */
+  /* ---------------- Day panel (shared by Calendar day-click and Aujourd'hui, manager only) ---------------- */
   function assignmentCardHtml(a, suffix){
     const statusCls = { 'À faire':'s-nouveau', 'En cours':'s-encours', 'Terminé':'s-termine' }[a.status];
     const linkBtn = a.linkedProjectId ? `<button type="button" class="mini-btn" data-view-project="${a.linkedProjectId}">Voir le chantier →</button>` : '';
@@ -1232,44 +1648,11 @@
       </div>`;
   }
 
-  function employeeRowHtml(e, dateStr, isSelf){
-    const status = employeeStatusOnDay(e.id, dateStr);
-    let statusHtml;
-    if(status.kind === 'conge'){
-      statusHtml = `<span class="emp-status-badge badge-conge">En congé jusqu'au ${fmtDate(status.leave.end)}</span>`;
-    } else if(status.kind === 'travail'){
-      const a = status.assignment;
-      const cls = { 'À faire':'s-nouveau', 'En cours':'s-encours', 'Terminé':'s-termine' }[a.status];
-      statusHtml = `<span class="emp-task">${escapeHtml(a.task)}</span><span class="badge ${cls}">${a.status}</span>`;
-    } else {
-      statusHtml = `<span class="emp-status-badge badge-libre">Libre ce jour-là</span>`;
-    }
-    return `
-      <div class="emp-row ${isSelf ? 'is-self' : ''}">
-        <span class="avatar" style="background-color:${e.color}">${e.initials}</span>
-        <div class="emp-row-main">
-          <p class="emp-row-name">${escapeHtml(e.name)}${isSelf ? ' <span class="you-tag">Vous</span>' : ''} <span class="emp-row-trade">· ${escapeHtml(e.trade)}</span></p>
-          <div class="emp-row-status">${statusHtml}</div>
-        </div>
-      </div>`;
-  }
-
-  function teamSectionHtml(dateStr){
-    const emps = EMPLOYEES.filter(e => matchesSite(e.site));
-    if(emps.length === 0) return '';
-    const ordered = typeof currentProfile === 'number'
-      ? [...emps.filter(e => e.id === currentProfile), ...emps.filter(e => e.id !== currentProfile)]
-      : emps;
-    return `
-      <p class="subsection-title">Équipe ce jour-là</p>
-      <div class="emp-list">${ordered.map(e => employeeRowHtml(e, dateStr, e.id === currentProfile)).join('')}</div>`;
-  }
-
   function dayPanelHtml(dateStr, suffix){
     const evMap = eventsByDateMap();
     const evs = (evMap[dateStr] || []).slice().sort((a,b)=> a.type.localeCompare(b.type));
     const activeProjects = projectsActiveOnDay(dateStr);
-    const externalAssignments = data.assignments.filter(a => a.date === dateStr && matchesSite(a.site) && !a.employeeId);
+    const dayAssignments = data.assignments.filter(a => a.date === dateStr && matchesSite(a.site));
 
     const eventsBlock = evs.length === 0
       ? `<p class="empty">Rien de prévu ce jour-là.</p>`
@@ -1290,21 +1673,19 @@
           <button type="button" class="mini-btn" data-view-project="${p.id}">Voir →</button>
         </div>`).join('');
 
-    const externalBlock = externalAssignments.length === 0
-      ? `<p class="empty">Aucun prestataire externe affecté ce jour-là.</p>`
-      : externalAssignments.map(a => assignmentCardHtml(a, suffix)).join('');
+    const assignBlock = dayAssignments.length === 0
+      ? `<p class="empty">Personne d'affecté ce jour-là pour le moment.</p>`
+      : dayAssignments.map(a => assignmentCardHtml(a, suffix)).join('');
 
     return `
-      ${teamSectionHtml(dateStr)}
+      <p class="subsection-title">Agenda du jour</p>
+      ${eventsBlock}
 
       <p class="subsection-title">Chantiers en cours ce jour</p>
       ${projectsBlock}
 
-      <p class="subsection-title">Agenda du jour</p>
-      ${eventsBlock}
-
-      <p class="subsection-title">Prestataires externes</p>
-      ${externalBlock}
+      <p class="subsection-title">Équipes sur le terrain</p>
+      ${assignBlock}
       <div style="margin-top:12px;">
         <button type="button" class="btn ghost" data-toggle-assign="${suffix}">+ Affecter quelqu'un ce jour</button>
       </div>
@@ -1312,11 +1693,11 @@
         <h3>Nouvelle affectation — ${fmtDate(dateStr)}</h3>
         <form data-assign-form="${suffix}" data-assign-date="${dateStr}">
           <div class="field-grid">
-            <div class="field"><label>Nom</label><input id="a-member-${suffix}" required placeholder="Ex : Julien Marchand"></div>
+            <div class="field"><label>Nom</label><input id="a-member-${suffix}" list="team-datalist" required placeholder="Ex : Julien Marchand"></div>
             <div class="field"><label>Corps de métier</label>
               <select id="a-team-${suffix}">
                 <option>Plomberie</option><option>Électricité</option><option>Chauffage / CVC</option>
-                <option>Entretien général</option><option>Prestataire externe</option><option>Direction / achats</option>
+                <option>Prestataire externe</option><option>Direction / achats</option>
               </select>
             </div>
             <div class="field"><label>Site</label>
@@ -1344,65 +1725,6 @@
   }
   function renderTodayPanel(){
     document.getElementById('today-panel').innerHTML = dayPanelHtml(iso(today), 'today');
-  }
-
-  function renderHero(){
-    const el = document.getElementById('hero-card');
-    if(typeof currentProfile !== 'number'){ el.innerHTML = ''; return; }
-    const emp = employeeById(currentProfile);
-    if(!emp){ el.innerHTML = ''; return; }
-    const todayStr = iso(today);
-    const status = employeeStatusOnDay(emp.id, todayStr);
-    let body;
-    if(status.kind === 'conge'){
-      body = `<p class="hero-status">🌴 Vous êtes en congé aujourd'hui</p><p class="hero-detail">Retour prévu le ${fmtDate(status.leave.end)}</p>`;
-    } else if(status.kind === 'travail'){
-      const a = status.assignment;
-      const cls = { 'À faire':'s-nouveau', 'En cours':'s-encours', 'Terminé':'s-termine' }[a.status];
-      body = `
-        <p class="hero-status">${escapeHtml(a.task)}</p>
-        <p class="hero-detail">${escapeHtml(a.site)} · ${escapeHtml(a.horaireStart)}–${escapeHtml(a.horaireEnd)}</p>
-        <div class="hero-actions">
-          <span class="badge ${cls}">${a.status}</span>
-          ${a.status !== 'Terminé' ? `<button type="button" class="hero-btn" data-finish-assign="${a.id}">Marquer comme terminé</button>` : ''}
-        </div>`;
-    } else {
-      body = `<p class="hero-status">Aucune tâche prévue pour vous aujourd'hui</p><p class="hero-detail">Regardez ci-dessous si une autre équipe a besoin d'aide.</p>`;
-    }
-    el.innerHTML = `<div class="hero-card"><p class="hero-name">${escapeHtml(emp.name)} <span class="hero-trade">· ${escapeHtml(emp.trade)}</span></p>${body}</div>`;
-  }
-
-  function renderTeamStrip(){
-    const el = document.getElementById('team-strip');
-    const todayStr = iso(today);
-    const list = EMPLOYEES.filter(e => matchesSite(e.site));
-    const others = typeof currentProfile === 'number' ? list.filter(e => e.id !== currentProfile) : list;
-    if(others.length === 0){ el.innerHTML = ''; return; }
-    const title = typeof currentProfile === 'number' ? "Vos collègues aujourd'hui" : "Équipe aujourd'hui";
-    el.innerHTML = `<p class="subsection-title">${title}</p><div class="team-strip-grid">` + others.map(e => {
-      const status = employeeStatusOnDay(e.id, todayStr);
-      const cls = status.kind === 'conge' ? 'st-conge' : (status.kind === 'libre' ? 'st-libre' : '');
-      const label = status.kind === 'conge' ? 'En congé' : (status.kind === 'libre' ? 'Libre aujourd\'hui' : status.assignment.task);
-      return `<button type="button" class="team-chip" data-open-today="1">
-        <span class="avatar" style="background-color:${e.color}">${e.initials}</span>
-        <span class="info"><span class="t-name">${escapeHtml(e.name)}</span><span class="t-status ${cls}">${escapeHtml(label)}</span></span>
-      </button>`;
-    }).join('') + `</div>`;
-  }
-
-  function employeeDotsHtml(dateStr){
-    return EMPLOYEES.filter(e => matchesSite(e.site)).map(e => {
-      const status = employeeStatusOnDay(e.id, dateStr);
-      if(status.kind === 'libre') return '';
-      const cls = status.kind === 'conge' ? 'emp-dot conge' : 'emp-dot';
-      return `<span class="${cls}" style="background-color:${e.color}" title="${escapeHtml(e.name)}"></span>`;
-    }).join('');
-  }
-
-  function renderEmpLegend(){
-    document.getElementById('emp-legend').innerHTML = EMPLOYEES.map(e =>
-      `<span class="emp-legend-item"><span class="sw-square" style="background-color:${e.color}"></span>${escapeHtml(e.name)}</span>`
-    ).join('') + `<span class="emp-legend-item"><span class="sw-square conge" style="background-color:${'#8B948F'}"></span>En congé</span>`;
   }
 
   /* ---------------- Calendar ---------------- */
@@ -1474,97 +1796,25 @@
       if(c.dateStr === selectedDay) classes.push('selected');
       return `<div class="${classes.join(' ')}" data-cal-day="${c.dateStr}">
         <span class="cal-daynum">${c.dayNum}</span>
-        <div class="cal-emp-dots">${employeeDotsHtml(c.dateStr)}</div>
         <div class="cal-dots">${dots}${more}</div>
       </div>`;
     }).join('');
-    renderDayModal();
+    renderAgenda();
+  }
+  function renderAgenda(){
+    document.getElementById('agenda').innerHTML = `<h4>${fmtDate(selectedDay)}</h4>` + dayPanelHtml(selectedDay, 'cal');
   }
 
-  function fmtDateLong(dateStr){
-    const [y,m,d] = dateStr.split('-').map(Number);
-    const label = new Date(y, m-1, d).toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    return label.charAt(0).toUpperCase() + label.slice(1);
-  }
-  function openDayModal(dateStr){
-    modalDate = dateStr;
-    renderDayModal();
-    document.getElementById('day-modal-overlay').classList.add('open');
-  }
-  function closeDayModal(){
-    document.getElementById('day-modal-overlay').classList.remove('open');
-  }
-  function renderDayModal(){
-    if(!modalDate) return;
-    document.getElementById('day-modal-title').textContent = fmtDateLong(modalDate);
-    document.getElementById('day-modal-body').innerHTML = dayPanelHtml(modalDate, 'modal');
-  }
-
-  /* ---------------- Profile ---------------- */
-  async function loadProfile(){
-    try{
-      const res = await window.storage.get(PROFILE_KEY, false);
-      if(res && res.value) currentProfile = /^\d+$/.test(res.value) ? Number(res.value) : res.value;
-    }catch(e){}
-  }
-  async function saveProfile(){
-    try{ await window.storage.set(PROFILE_KEY, String(currentProfile), false); }
-    catch(e){ console.error('Profile save failed', e); }
-  }
-  function syncSiteChips(){
-    document.querySelectorAll('#site-filters .chip').forEach(c => c.classList.toggle('active', c.dataset.site === siteFilter));
-  }
-  function renderProfileGrid(){
-    document.getElementById('profile-grid').innerHTML = EMPLOYEES.map(e => `
-      <button type="button" class="profile-card" data-select-profile="${e.id}">
-        <span class="profile-avatar" style="background-color:${e.color}">${e.initials}</span>
-        <span class="profile-name">${escapeHtml(e.name)}</span>
-        <span class="profile-trade">${escapeHtml(e.trade)}</span>
-      </button>`).join('') + `
-      <button type="button" class="profile-card manager" data-select-profile="manager">
-        <span class="profile-avatar" style="background-color:#5B6864">RT</span>
-        <span class="profile-name">Responsable technique</span>
-        <span class="profile-trade">Vue complète</span>
-      </button>`;
-  }
-  function renderProfilePill(){
-    const el = document.getElementById('profile-pill');
-    if(currentProfile === 'manager'){
-      el.innerHTML = `<span class="pill-avatar" style="background-color:#5B6864">RT</span><span>Responsable technique</span><span class="pill-change">Changer</span>`;
-    } else if(typeof currentProfile === 'number'){
-      const emp = employeeById(currentProfile);
-      el.innerHTML = emp ? `<span class="pill-avatar" style="background-color:${emp.color}">${emp.initials}</span><span>${escapeHtml(emp.name)}</span><span class="pill-change">Changer</span>` : '';
-    } else {
-      el.innerHTML = `<span>Choisir un profil</span>`;
-    }
-  }
-  function openProfileGate(){
-    renderProfileGrid();
-    document.getElementById('profile-gate-close').style.display = currentProfile ? '' : 'none';
-    document.getElementById('profile-gate').style.display = 'flex';
-  }
-  function closeProfileGate(){
-    if(!currentProfile) return;
-    document.getElementById('profile-gate').style.display = 'none';
-  }
-  async function selectProfile(rawId){
-    currentProfile = rawId === 'manager' ? 'manager' : Number(rawId);
-    await saveProfile();
-    siteFilter = typeof currentProfile === 'number' ? employeeById(currentProfile).site : 'Tous les sites';
-    syncSiteChips();
-    document.getElementById('profile-gate').style.display = 'none';
-    renderProfilePill();
-    render();
-  }
-  function applyProfileVisibility(){
-    document.querySelector('section.overview').style.display = currentProfile === 'manager' ? '' : 'none';
-  }
-
-  /* ---------------- Render all ---------------- */
-  function render(){
-    applyProfileVisibility();
+  /* ---------------- Manager render-all ---------------- */
+  function renderManagerApp(){
+    renderTodayHeader();
     renderGauge();
     renderKpis();
+    renderTodayTabBadge();
+    renderTeamDatalist();
+    renderDashboard();
+    renderTeamTab();
+    renderEquipment();
     renderProjectFilters();
     renderProjects();
     renderTicketFilters();
@@ -1573,29 +1823,84 @@
     renderControls();
     renderStockFilters();
     renderStock();
+    renderStockMovements();
     renderProviders();
-    renderTodayHeader();
-    renderHero();
-    renderTeamStrip();
     renderTodayPanel();
-    renderEmpLegend();
     renderCalendar();
   }
 
-  /* ---------------- Site filter ---------------- */
+  /* ---------------- Worker mode ---------------- */
+  function workerTaskCardHtml(a){
+    let urgent = false;
+    if(a.linkedTicketId){
+      const t = data.tickets.find(x=>x.id===a.linkedTicketId);
+      if(t && t.priority === 'urgente') urgent = true;
+    }
+    let projectNote = '';
+    if(a.linkedProjectId){
+      const p = data.projects.find(x=>x.id===a.linkedProjectId);
+      if(p) projectNote = `<p class="wt-meta">Rattaché au chantier : ${escapeHtml(p.name)}</p>`;
+    }
+    const body = a.status === 'Terminé'
+      ? `<div class="wt-done-note">✓ Terminé — en attente d'une nouvelle tâche</div>`
+      : `<button type="button" class="btn wt-finish-btn" data-worker-finish="${a.id}">✓ Marquer comme terminé</button>`;
+    return `
+      <div class="worker-task-card ${urgent?'urgent':''}">
+        ${urgent ? `<span class="wt-urgent-tag">Urgent</span>` : ''}
+        <p class="wt-time">${escapeHtml(a.horaireStart)} – ${escapeHtml(a.horaireEnd)} · ${escapeHtml(a.site)}</p>
+        <p class="wt-title">${escapeHtml(a.task)}</p>
+        ${projectNote}
+        ${body}
+      </div>`;
+  }
+
+  function renderWorkerApp(){
+    const member = data.team.find(m => m.id === data.currentProfileId);
+    if(!member) return;
+    document.getElementById('worker-greeting').textContent = `Bonjour, ${member.name.split(' ')[0]}`;
+    const label = today.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('worker-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+
+    const todayStr = iso(today);
+    const todaysTasks = data.assignments.filter(a => a.member === member.name && a.date === todayStr)
+      .sort((a,b)=> a.horaireStart.localeCompare(b.horaireStart));
+    const upcoming = data.assignments.filter(a => a.member === member.name && a.date > todayStr)
+      .sort((a,b)=> a.date.localeCompare(b.date)).slice(0,5);
+
+    const tasksHtml = todaysTasks.length === 0
+      ? `<div class="empty">Aucune tâche affectée aujourd'hui. N'hésitez pas à signaler un problème si vous en repérez un.</div>`
+      : todaysTasks.map(workerTaskCardHtml).join('');
+
+    const upcomingHtml = upcoming.length === 0 ? '' : `
+      <div class="worker-upcoming">
+        <h3>Vos prochaines tâches</h3>
+        ${upcoming.map(a => `
+          <div class="worker-mini-row">
+            <span>${fmtDate(a.date)} · ${escapeHtml(a.task)}</span>
+            <span class="due-date">${escapeHtml(a.horaireStart)}</span>
+          </div>`).join('')}
+      </div>`;
+
+    document.getElementById('worker-tasks').innerHTML = tasksHtml + upcomingHtml;
+  }
+
+  /* ---------------- Site filter (manager) ---------------- */
   document.getElementById('site-filters').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-site]'); if(!btn) return;
     siteFilter = btn.dataset.site;
     document.querySelectorAll('#site-filters .chip').forEach(c => c.classList.toggle('active', c === btn));
-    render();
+    renderManagerApp();
   });
 
-  /* ---------------- Tab switching ---------------- */
+  /* ---------------- Tab switching (manager) ---------------- */
   document.querySelectorAll('nav.tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
       activeTab = btn.dataset.tab;
       document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b === btn));
       document.getElementById('view-today').style.display = activeTab === 'today' ? '' : 'none';
+      document.getElementById('view-dashboard').style.display = activeTab === 'dashboard' ? '' : 'none';
+      document.getElementById('view-team').style.display = activeTab === 'team' ? '' : 'none';
+      document.getElementById('view-equipment').style.display = activeTab === 'equipment' ? '' : 'none';
       document.getElementById('view-projects').style.display = activeTab === 'projects' ? '' : 'none';
       document.getElementById('view-tickets').style.display = activeTab === 'tickets' ? '' : 'none';
       document.getElementById('view-controls').style.display = activeTab === 'controls' ? '' : 'none';
@@ -1603,6 +1908,84 @@
       document.getElementById('view-providers').style.display = activeTab === 'providers' ? '' : 'none';
       document.getElementById('view-calendar').style.display = activeTab === 'calendar' ? '' : 'none';
     });
+  });
+
+  /* ---------------- Dashboard actions ---------------- */
+  document.getElementById('print-dashboard').addEventListener('click', () => window.print());
+  document.getElementById('export-dashboard-csv').addEventListener('click', () => {
+    const controls = data.controls.filter(c=>matchesSite(c.site));
+    const total = controls.length || 1;
+    const overdue = controls.filter(c=>controlStatus(c.nextDue)==='overdue').length;
+    const pct = Math.round(((total-overdue)/total)*100);
+    const projects = data.projects.filter(p=>matchesSite(p.site));
+    const stock = data.stock.filter(s=>matchesSite(s.site));
+    const budgetMateriaux = projects.reduce((sum,p)=>sum+p.materials.reduce((s,m)=>s+m.qty*m.unitCost,0),0);
+    const valeurStock = stock.reduce((sum,s)=>sum+(s.qty*(s.unitCost||0)),0);
+    const tickets = data.tickets.filter(t=>matchesSite(t.site));
+    const rows = [
+      ['Taux de conformité réglementaire', pct+'%'],
+      ['Contrôles en retard', overdue],
+      ['Budget matériaux engagé', budgetMateriaux.toFixed(2)+' €'],
+      ['Valeur du stock', valeurStock.toFixed(2)+' €'],
+      ['Interventions totales', tickets.length],
+      ['Chantiers actifs', projects.filter(p=>p.status==='En cours').length],
+      ['Date export', fmtDate(iso(today))]
+    ];
+    exportCSV('tableau-de-bord-filandiere.csv', ['Indicateur','Valeur'], rows);
+  });
+
+  /* ---------------- Profile switching ---------------- */
+  document.getElementById('picker-manager-btn').addEventListener('click', async () => {
+    data.currentProfileId = 'manager';
+    await saveData();
+    renderApp();
+  });
+  document.getElementById('worker-switch-profile').addEventListener('click', async () => {
+    data.currentProfileId = null;
+    await saveData();
+    renderApp();
+  });
+  document.getElementById('manager-switch-profile').addEventListener('click', async () => {
+    data.currentProfileId = null;
+    await saveData();
+    renderApp();
+  });
+
+  /* ---------------- Worker report form ---------------- */
+  document.getElementById('worker-toggle-report').addEventListener('click', () => {
+    document.getElementById('worker-report-panel').classList.toggle('open');
+    document.getElementById('worker-report-confirm').style.display = 'none';
+  });
+  document.getElementById('worker-cancel-report').addEventListener('click', () => {
+    document.getElementById('worker-report-panel').classList.remove('open');
+    document.getElementById('worker-report-form').reset();
+  });
+  document.getElementById('worker-report-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const member = data.team.find(m => m.id === data.currentProfileId);
+    const newTicket = {
+      id: Date.now(),
+      title: document.getElementById('wr-title').value.trim(),
+      site: member ? member.site : 'Déville-lès-Rouen',
+      location: document.getElementById('wr-location').value.trim(),
+      requester: member ? member.name : 'Équipe technique',
+      priority: document.getElementById('wr-priority').value,
+      status: 'Nouveau',
+      desc: document.getElementById('wr-desc').value.trim(),
+      dateSouhaitee: null,
+      createdAt: iso(today),
+      convertedProjectId: null,
+      completedAt: null
+    };
+    if(!newTicket.title) return;
+    data.tickets.push(newTicket);
+    await saveData();
+    document.getElementById('worker-report-form').reset();
+    document.getElementById('worker-report-confirm').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('worker-report-panel').classList.remove('open');
+      document.getElementById('worker-report-confirm').style.display = 'none';
+    }, 1800);
   });
 
   /* ---------------- Ticket form ---------------- */
@@ -1624,14 +2007,15 @@
       desc: document.getElementById('t-desc').value.trim(),
       dateSouhaitee: document.getElementById('t-date').value || null,
       createdAt: iso(new Date()),
-      convertedProjectId: null
+      convertedProjectId: null,
+      completedAt: null
     };
     if(!newTicket.title) return;
     data.tickets.push(newTicket);
     await saveData();
     document.getElementById('ticket-form').reset();
     document.getElementById('ticket-panel').classList.remove('open');
-    render();
+    renderManagerApp();
   });
   document.getElementById('ticket-filters').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-filter]'); if(!btn) return;
@@ -1646,13 +2030,17 @@
     if(cycleBtn){
       const id = Number(cycleBtn.dataset.cycleTicket);
       const t = data.tickets.find(x => x.id === id);
-      if(t){ t.status = statusCycle[t.status]; await saveData(); render(); }
+      if(t){
+        t.status = statusCycle[t.status];
+        t.completedAt = (t.status === 'Terminé') ? iso(today) : null;
+        await saveData(); renderManagerApp();
+      }
       return;
     }
     if(delBtn){
       const id = Number(delBtn.dataset.delTicket);
       data.tickets = data.tickets.filter(x => x.id !== id);
-      await saveData(); render();
+      await saveData(); renderManagerApp();
       return;
     }
     if(convertBtn){
@@ -1699,7 +2087,7 @@
     await saveData();
     document.getElementById('control-form').reset();
     document.getElementById('control-panel').classList.remove('open');
-    render();
+    renderManagerApp();
   });
   document.getElementById('control-filters').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-cfilter]'); if(!btn) return;
@@ -1711,12 +2099,12 @@
     if(doneBtn){
       const id = Number(doneBtn.dataset.doneControl);
       const c = data.controls.find(x => x.id === id);
-      if(c){ c.lastDone = iso(today); c.nextDue = addMonths(iso(today), c.freq); await saveData(); render(); }
+      if(c){ c.lastDone = iso(today); c.nextDue = addMonths(iso(today), c.freq); await saveData(); renderManagerApp(); }
     }
     if(delBtn){
       const id = Number(delBtn.dataset.delControl);
       data.controls = data.controls.filter(x => x.id !== id);
-      await saveData(); render();
+      await saveData(); renderManagerApp();
     }
   });
 
@@ -1728,22 +2116,27 @@
   });
   document.getElementById('stock-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const qty0 = parseFloat(document.getElementById('s-qty').value) || 0;
     const newItem = {
       id: Date.now(),
       name: document.getElementById('s-name').value.trim(),
       category: document.getElementById('s-category').value,
       site: document.getElementById('s-site').value,
-      qty: parseFloat(document.getElementById('s-qty').value) || 0,
+      qty: qty0,
       threshold: parseFloat(document.getElementById('s-threshold').value) || 0,
       unit: document.getElementById('s-unit').value.trim() || 'unité',
+      unitCost: parseFloat(document.getElementById('s-cost').value) || 0,
       location: document.getElementById('s-location').value.trim()
     };
     if(!newItem.name) return;
     data.stock.push(newItem);
+    if(qty0 > 0){
+      data.stockMovements.push({ id: Date.now()+1, stockItemId: newItem.id, itemName: newItem.name, type: 'Entrée', qty: qty0, date: iso(today), note: 'Stock initial' });
+    }
     await saveData();
     document.getElementById('stock-form').reset();
     document.getElementById('stock-panel').classList.remove('open');
-    render();
+    renderManagerApp();
   });
   document.getElementById('stock-filters').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-sfilter]'); if(!btn) return;
@@ -1756,21 +2149,78 @@
     if(dec){
       const id = Number(dec.dataset.stockDec);
       const s = data.stock.find(x=>x.id===id);
-      if(s && s.qty>0){ s.qty -= 1; await saveData(); render(); }
+      if(s && s.qty>0){
+        s.qty -= 1;
+        data.stockMovements.push({ id: Date.now(), stockItemId: s.id, itemName: s.name, type: 'Sortie', qty: 1, date: iso(today), note: '' });
+        await saveData(); renderManagerApp();
+      }
       return;
     }
     if(inc){
       const id = Number(inc.dataset.stockInc);
       const s = data.stock.find(x=>x.id===id);
-      if(s){ s.qty += 1; await saveData(); render(); }
+      if(s){
+        s.qty += 1;
+        data.stockMovements.push({ id: Date.now(), stockItemId: s.id, itemName: s.name, type: 'Entrée', qty: 1, date: iso(today), note: '' });
+        await saveData(); renderManagerApp();
+      }
       return;
     }
     if(del){
       const id = Number(del.dataset.delStock);
       data.stock = data.stock.filter(x=>x.id!==id);
-      await saveData(); render();
+      await saveData(); renderManagerApp();
       return;
     }
+  });
+  document.getElementById('export-stock-csv').addEventListener('click', () => {
+    const headers = ['Nom','Catégorie','Site','Emplacement','Quantité','Unité','Seuil alerte','Coût unitaire €','Valeur totale €'];
+    const rows = data.stock.map(s => [s.name, s.category, s.site, s.location||'', s.qty, s.unit, s.threshold, (s.unitCost||0).toFixed(2), (s.qty*(s.unitCost||0)).toFixed(2)]);
+    exportCSV('stock-filandiere.csv', headers, rows);
+  });
+
+  /* ---------------- Equipment form ---------------- */
+  document.getElementById('toggle-equipment-form').addEventListener('click', () => document.getElementById('equipment-panel').classList.toggle('open'));
+  document.getElementById('cancel-equipment').addEventListener('click', () => {
+    document.getElementById('equipment-panel').classList.remove('open');
+    document.getElementById('equipment-form').reset();
+  });
+  document.getElementById('equipment-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newEquipment = {
+      id: Date.now(),
+      name: document.getElementById('eq-name').value.trim(),
+      category: document.getElementById('eq-category').value,
+      site: document.getElementById('eq-site').value,
+      location: document.getElementById('eq-location').value.trim(),
+      brand: document.getElementById('eq-brand').value.trim(),
+      model: document.getElementById('eq-model').value.trim(),
+      serialNumber: document.getElementById('eq-serial').value.trim(),
+      purchaseDate: document.getElementById('eq-purchase').value || null,
+      warrantyEnd: document.getElementById('eq-warranty').value || null,
+      supplier: document.getElementById('eq-supplier').value.trim(),
+      notes: document.getElementById('eq-notes').value.trim()
+    };
+    if(!newEquipment.name) return;
+    data.equipment.push(newEquipment);
+    await saveData();
+    document.getElementById('equipment-form').reset();
+    document.getElementById('equipment-panel').classList.remove('open');
+    renderEquipment();
+  });
+  document.getElementById('equipment-list').addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-del-equipment]');
+    if(del){
+      const id = Number(del.dataset.delEquipment);
+      data.equipment = data.equipment.filter(x=>x.id!==id);
+      await saveData(); renderEquipment();
+    }
+  });
+  document.getElementById('export-equipment-csv').addEventListener('click', () => {
+    const headers = ['Nom','Catégorie','Site','Emplacement','Marque','Modèle','N° série','Mise en service','Fin garantie','Fournisseur','Notes'];
+    const rows = data.equipment.map(e => [e.name, e.category, e.site, e.location||'', e.brand||'', e.model||'', e.serialNumber||'',
+      e.purchaseDate ? fmtDate(e.purchaseDate) : '', e.warrantyEnd ? fmtDate(e.warrantyEnd) : '', e.supplier||'', e.notes||'']);
+    exportCSV('equipements-filandiere.csv', headers, rows);
   });
 
   /* ---------------- Providers form ---------------- */
@@ -1806,6 +2256,43 @@
     }
   });
 
+  /* ---------------- Team form ---------------- */
+  document.getElementById('toggle-team-form').addEventListener('click', () => document.getElementById('team-panel').classList.toggle('open'));
+  document.getElementById('cancel-team').addEventListener('click', () => {
+    document.getElementById('team-panel').classList.remove('open');
+    document.getElementById('team-form').reset();
+  });
+  document.getElementById('team-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newMember = {
+      id: Date.now(),
+      name: document.getElementById('tm-name').value.trim(),
+      trade: document.getElementById('tm-trade').value,
+      site: document.getElementById('tm-site').value,
+      phone: document.getElementById('tm-phone').value.trim(),
+      active: true
+    };
+    if(!newMember.name) return;
+    data.team.push(newMember);
+    await saveData();
+    document.getElementById('team-form').reset();
+    document.getElementById('team-panel').classList.remove('open');
+    renderTeamTab();
+    renderTeamDatalist();
+    renderPicker();
+  });
+  document.getElementById('team-list').addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-del-team]');
+    if(del){
+      const id = Number(del.dataset.delTeam);
+      data.team = data.team.filter(x=>x.id!==id);
+      await saveData();
+      renderTeamTab();
+      renderTeamDatalist();
+      renderPicker();
+    }
+  });
+
   /* ---------------- Project form & interactions ---------------- */
   document.getElementById('toggle-project-form').addEventListener('click', () => document.getElementById('project-panel').classList.toggle('open'));
   document.getElementById('cancel-project').addEventListener('click', () => {
@@ -1831,13 +2318,13 @@
     openProjectIds.add(newProject.id);
     if(pendingConversionTicketId){
       const t = data.tickets.find(x => x.id === pendingConversionTicketId);
-      if(t){ t.convertedProjectId = newProject.id; t.status = 'Terminé'; }
+      if(t){ t.convertedProjectId = newProject.id; t.status = 'Terminé'; t.completedAt = iso(today); }
       pendingConversionTicketId = null;
     }
     await saveData();
     document.getElementById('project-form').reset();
     document.getElementById('project-panel').classList.remove('open');
-    render();
+    renderManagerApp();
   });
   document.getElementById('project-filters').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-pfilter]'); if(!btn) return;
@@ -1941,43 +2428,51 @@
     const [y,m] = selectedDay.split('-').map(Number);
     calYear = y; calMonth = m-1;
     renderCalendar();
-    assignPanelOpen.modal = false;
-    openDayModal(selectedDay);
   });
 
-  document.getElementById('day-modal-close').addEventListener('click', closeDayModal);
-  document.getElementById('day-modal-overlay').addEventListener('click', (e) => {
-    if(e.target.id === 'day-modal-overlay') closeDayModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape') closeDayModal();
-  });
-
-  /* ---------------- Day-panel interactions (Calendar modal) ---------------- */
+  /* ---------------- Day-panel interactions (shared: Calendar + Aujourd'hui, manager) + profile picker + worker finish ---------------- */
   document.body.addEventListener('click', async (e) => {
+    const pickProfile = e.target.closest('[data-pick-profile]');
+    const workerFinish = e.target.closest('[data-worker-finish]');
     const toggleAssign = e.target.closest('[data-toggle-assign]');
     const cancelAssign = e.target.closest('[data-cancel-assign]');
     const viewProject = e.target.closest('[data-view-project]');
     const finishBtn = e.target.closest('[data-finish-assign]');
     const reassignBtn = e.target.closest('[data-reassign]');
     const delAssignBtn = e.target.closest('[data-del-assign]');
-    const openToday = e.target.closest('[data-open-today]');
 
+    if(pickProfile){
+      data.currentProfileId = Number(pickProfile.dataset.pickProfile);
+      await saveData();
+      renderApp();
+      return;
+    }
+    if(workerFinish){
+      const id = Number(workerFinish.dataset.workerFinish);
+      const a = data.assignments.find(x=>x.id===id);
+      if(a){
+        data.history.push({ id:Date.now(), date:a.date, member:a.member, team:a.team, task:a.task,
+                             linkedProjectId:a.linkedProjectId, linkedTicketId:a.linkedTicketId, completedAt: iso(today) });
+        a.status = 'Terminé';
+        await saveData();
+        renderWorkerApp();
+      }
+      return;
+    }
     if(toggleAssign){
       const suffix = toggleAssign.dataset.toggleAssign;
       assignPanelOpen[suffix] = !assignPanelOpen[suffix];
-      if(suffix === 'today') renderTodayPanel(); else renderDayModal();
+      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
       return;
     }
     if(cancelAssign){
       const suffix = cancelAssign.dataset.cancelAssign;
       assignPanelOpen[suffix] = false;
-      if(suffix === 'today') renderTodayPanel(); else renderDayModal();
+      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
       return;
     }
     if(viewProject){
       const pid = Number(viewProject.dataset.viewProject);
-      closeDayModal();
       document.querySelector('nav.tabs button[data-tab="projects"]').click();
       openProjectIds.add(pid);
       projectFilter = 'Tous';
@@ -1988,9 +2483,11 @@
       const id = Number(finishBtn.dataset.finishAssign);
       const a = data.assignments.find(x=>x.id===id);
       if(a){
-        data.history.push({ member: a.member, team: a.team, task: a.task, date: a.date, completedAt: iso(today) });
+        data.history.push({ id:Date.now(), date:a.date, member:a.member, team:a.team, task:a.task,
+                             linkedProjectId:a.linkedProjectId, linkedTicketId:a.linkedTicketId, completedAt: iso(today) });
         a.status = 'Terminé';
-        await saveData(); renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+        await saveData();
+        renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab(); renderDashboard();
       }
       return;
     }
@@ -2003,21 +2500,13 @@
       const newTask = input.value.trim();
       if(!newTask) return;
       a.task = newTask; a.status = 'À faire'; a.linkedProjectId = null; a.linkedTicketId = null;
-      await saveData(); renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab();
       return;
     }
     if(delAssignBtn){
       const id = Number(delAssignBtn.dataset.delAssign);
       data.assignments = data.assignments.filter(x=>x.id!==id);
-      await saveData(); renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
-      return;
-    }
-    if(openToday){
-      selectedDay = iso(today);
-      calYear = today.getFullYear(); calMonth = today.getMonth();
-      renderCalendar();
-      assignPanelOpen.modal = false;
-      openDayModal(selectedDay);
+      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab();
       return;
     }
   });
@@ -2029,13 +2518,10 @@
     const suffix = form.dataset.assignForm;
     const dateStr = form.dataset.assignDate;
     const val = (id) => document.getElementById(`${id}-${suffix}`).value;
-    const memberName = val('a-member').trim();
-    const matchedEmployee = EMPLOYEES.find(e => e.name.toLowerCase() === memberName.toLowerCase());
     const newAssign = {
       id: Date.now(),
       date: dateStr,
-      employeeId: matchedEmployee ? matchedEmployee.id : null,
-      member: memberName,
+      member: val('a-member').trim(),
       team: val('a-team'),
       site: val('a-site'),
       phone: val('a-phone').trim(),
@@ -2050,30 +2536,10 @@
     data.assignments.push(newAssign);
     assignPanelOpen[suffix] = false;
     await saveData();
-    renderTodayPanel(); renderDayModal(); renderHero(); renderTeamStrip(); renderCalendar(); renderKpis();
+    renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab();
   });
 
-  /* ---------------- Profile interactions ---------------- */
-  document.getElementById('profile-grid').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-select-profile]'); if(!btn) return;
-    selectProfile(btn.dataset.selectProfile);
-  });
-  document.getElementById('profile-pill').addEventListener('click', openProfileGate);
-  document.getElementById('profile-gate-close').addEventListener('click', closeProfileGate);
-
-  /* ---------------- Init ---------------- */
-  async function init(){
-    await loadProfile();
-    if(typeof currentProfile === 'number'){
-      const emp = employeeById(currentProfile);
-      siteFilter = emp ? emp.site : siteFilter;
-    }
-    syncSiteChips();
-    renderProfilePill();
-    if(!currentProfile) openProfileGate();
-    await loadData();
-  }
-  init();
+  loadData();
 })();
 </script>
 </body>
