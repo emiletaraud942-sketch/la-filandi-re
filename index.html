@@ -235,6 +235,9 @@
   .wt-time{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);margin:0 0 6px;}
   .wt-title{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:700;color:var(--ink);margin:0 0 8px;line-height:1.15;}
   .wt-meta{font-size:13px;color:var(--ink-soft);margin:0 0 6px;}
+  .wt-context{background:var(--teal-soft);border-radius:10px;padding:10px 12px;margin:0 0 10px;}
+  .wt-context .wt-meta{margin:0 0 3px;color:var(--ink);}
+  .wt-context-title{font-weight:600;font-size:12.5px;color:var(--navy);margin:0 0 5px;}
   .wt-urgent-tag{display:inline-block;background:var(--rust-soft);color:var(--rust);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 9px;border-radius:999px;margin-bottom:8px;}
   .wt-finish-btn{width:100%;padding:16px;font-size:16px;border-radius:12px;background:var(--green);border-color:var(--green);margin-top:10px;}
   .wt-finish-btn:hover{background:#336a41;}
@@ -1085,7 +1088,7 @@
     { id: 4, date: "2026-08-30", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
       horaireStart: "13:00", horaireEnd: "17:00", phone: "06 14 82 35 09",
       task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
-    { id: 5, date: "2026-09-01", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
+    { id: 5, date: "2026-09-05", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
       task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
     { id: 6, date: "2026-09-10", member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Déville-lès-Rouen",
@@ -1093,7 +1096,25 @@
       task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" },
     { id: 7, date: "2026-08-27", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
-      task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
+      task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 8, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
+      task: "Pose des sanitaires et de la faïence – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
+    { id: 9, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+      horaireStart: "13:00", horaireEnd: "15:00", phone: "06 14 82 35 09",
+      task: "Remplacement des joints de robinetterie – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 10, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 27 91 44 58",
+      task: "Remplacement d'un disjoncteur défectueux – tableau général", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 11, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+      horaireStart: "13:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
+      task: "Diagnostic volet roulant électrique – Salon La Clairière", linkedProjectId: null, linkedTicketId: 3, status: "À faire" },
+    { id: 12, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
+      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 50 22 18 44",
+      task: "Relevés avant dépose – chaudière collective", linkedProjectId: 3, linkedTicketId: null, status: "À faire" },
+    { id: 13, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
+      horaireStart: "13:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
+      task: "Entretien des espaces extérieurs – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
   ];
 
   const defaultLeaves = [
@@ -1893,16 +1914,40 @@
   }
 
   /* ---------------- Worker mode ---------------- */
+  function providerByName(name){ return data.providers.find(p => p.name === name); }
+
   function workerTaskCardHtml(a){
     let urgent = false;
+    let ticketBlock = '';
     if(a.linkedTicketId){
       const t = data.tickets.find(x=>x.id===a.linkedTicketId);
-      if(t && t.priority === 'urgente') urgent = true;
+      if(t){
+        if(t.priority === 'urgente') urgent = true;
+        ticketBlock = `
+          <div class="wt-context">
+            <p class="wt-context-title">Détail de la demande</p>
+            <p class="wt-meta">${escapeHtml(t.location || 'Lieu non précisé')} · demandé par ${escapeHtml(t.requester || '—')}</p>
+            ${t.desc ? `<p class="wt-meta">${escapeHtml(t.desc)}</p>` : ''}
+          </div>`;
+      }
     }
-    let projectNote = '';
+    let projectBlock = '';
     if(a.linkedProjectId){
       const p = data.projects.find(x=>x.id===a.linkedProjectId);
-      if(p) projectNote = `<p class="wt-meta">Rattaché au chantier : ${escapeHtml(p.name)}</p>`;
+      if(p){
+        const needed = p.materials.filter(m => m.status !== 'Reçu');
+        const materialsHtml = needed.map(m => {
+          const prov = providerByName(m.supplier);
+          const provInfo = prov && prov.phone ? ` · <a href="tel:${escapeHtml(prov.phone.replace(/\s/g,''))}">${escapeHtml(prov.phone)}</a>` : '';
+          return `<p class="wt-meta">• ${escapeHtml(m.name)} — ${escapeHtml(m.status)}${m.supplier ? ' (' + escapeHtml(m.supplier) + ')' + provInfo : ''}</p>`;
+        }).join('');
+        projectBlock = `
+          <div class="wt-context">
+            <p class="wt-context-title">Chantier : ${escapeHtml(p.name)}</p>
+            ${p.description ? `<p class="wt-meta">${escapeHtml(p.description)}</p>` : ''}
+            ${materialsHtml ? `<p class="wt-meta" style="font-weight:600;margin-top:6px;">Matériaux à suivre :</p>${materialsHtml}` : ''}
+          </div>`;
+      }
     }
     const body = a.status === 'Terminé'
       ? `<div class="wt-done-note">✓ Terminé — en attente d'une nouvelle tâche</div>`
@@ -1912,7 +1957,8 @@
         ${urgent ? `<span class="wt-urgent-tag">Urgent</span>` : ''}
         <p class="wt-time">${escapeHtml(a.horaireStart)} – ${escapeHtml(a.horaireEnd)} · ${escapeHtml(a.site)}</p>
         <p class="wt-title">${escapeHtml(a.task)}</p>
-        ${projectNote}
+        ${ticketBlock}
+        ${projectBlock}
         ${body}
       </div>`;
   }
