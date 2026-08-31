@@ -106,6 +106,7 @@
   .badge.s-nouveau{background:var(--amber-soft);color:var(--amber);}
   .badge.s-encours{background:var(--teal-soft);color:var(--teal);}
   .badge.s-termine{background:var(--green-soft);color:var(--green);cursor:default;}
+  .badge.s-conge{background:var(--amber-soft);color:var(--amber);}
   .prio-tag{font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
   .icon-x{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;}
   .icon-x:hover{color:var(--rust);}
@@ -238,6 +239,10 @@
   .wt-finish-btn{width:100%;padding:16px;font-size:16px;border-radius:12px;background:var(--green);border-color:var(--green);margin-top:10px;}
   .wt-finish-btn:hover{background:#336a41;}
   .wt-done-note{text-align:center;color:var(--green);font-weight:600;font-size:14px;padding:12px;background:var(--green-soft);border-radius:10px;margin-top:10px;}
+  .worker-leave-banner{text-align:center;background:var(--amber-soft);border-radius:14px;padding:32px 22px;}
+  .worker-leave-banner .wl-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--amber);margin:0 0 6px;}
+  .worker-leave-banner .wl-detail{font-size:13.5px;color:var(--ink-soft);margin:0;}
+  .picker-option .leave-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);padding:2px 7px;border-radius:999px;margin-top:4px;}
   .worker-upcoming{margin-top:26px;}
   .worker-upcoming h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.04em;margin:0 0 10px;}
   .worker-mini-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;gap:10px;}
@@ -461,6 +466,16 @@
 
     <p class="subsection-title">Équipe</p>
     <div class="list" id="team-list"></div>
+
+    <p class="subsection-title">Congés</p>
+    <div class="list" id="team-leaves"></div>
+    <div class="add-row-form">
+      <select class="w-md" id="lv-member"></select>
+      <input class="w-md" type="date" id="lv-start" title="Début">
+      <input class="w-md" type="date" id="lv-end" title="Fin">
+      <input class="w-name" type="text" placeholder="Motif (optionnel)" id="lv-reason">
+      <button type="button" class="mini-btn" id="add-leave">+ Ajouter un congé</button>
+    </div>
 
     <p class="subsection-title">Dernières tâches terminées</p>
     <div class="list" id="team-history"></div>
@@ -1081,6 +1096,10 @@
       task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
   ];
 
+  const defaultLeaves = [
+    { id: 1, memberId: 3, start: "2026-08-31", end: "2026-09-03", reason: "Congés" }
+  ];
+
   const defaultProviders = [
     { id: 1, name: "Sanitaire Pro", specialty: "Plomberie / Sanitaires", contact: "Mme Bataille", phone: "02 35 08 41 27", email: "contact@sanitaire-pro.fr", notes: "Fournisseur habituel pour les rénovations de salles de bain." },
     { id: 2, name: "CarreloNorm", specialty: "Revêtements sol / mur", contact: "M. Duval", phone: "02 35 08 55 63", email: "commandes@carrelonorm.fr", notes: "" },
@@ -1089,23 +1108,24 @@
     { id: 5, name: "Ascenseurs Rouen Services", specialty: "Ascenseurs", contact: "M. Girard", phone: "02 35 60 17 92", email: "sav@ars-ascenseurs.fr", notes: "Contrat de maintenance semestriel." }
   ];
 
-  let data = { tickets: [], controls: [], projects: [], stock: [], stockMovements: [], assignments: [], providers: [], team: [], equipment: [], history: [], currentProfileId: null };
+  let data = { tickets: [], controls: [], projects: [], stock: [], stockMovements: [], assignments: [], providers: [], team: [], equipment: [], history: [], leaves: [], currentProfileId: null };
 
   async function loadData(){
     try{
       const res = await window.storage.get(STORAGE_KEY, false);
       if(res && res.value){
         data = JSON.parse(res.value);
+        if(!data.leaves) data.leaves = [];
       } else {
         data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock,
                   stockMovements: defaultStockMovements, assignments: defaultAssignments, providers: defaultProviders,
-                  team: defaultTeam, equipment: defaultEquipment, history: [], currentProfileId: null };
+                  team: defaultTeam, equipment: defaultEquipment, history: [], leaves: defaultLeaves, currentProfileId: null };
         await saveData();
       }
     }catch(e){
       data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock,
                 stockMovements: defaultStockMovements, assignments: defaultAssignments, providers: defaultProviders,
-                team: defaultTeam, equipment: defaultEquipment, history: [], currentProfileId: null };
+                team: defaultTeam, equipment: defaultEquipment, history: [], leaves: defaultLeaves, currentProfileId: null };
       try{ await saveData(); }catch(e2){ console.error('Storage init failed', e2); }
     }
     renderApp();
@@ -1129,6 +1149,10 @@
     return `À jour`;
   }
 
+  function leaveOnDay(memberId, dateStr){
+    return data.leaves.find(l => l.memberId === memberId && l.start <= dateStr && dateStr <= l.end);
+  }
+
   /* ---------------- Top-level mode router ---------------- */
   function renderApp(){
     document.getElementById('profile-picker-screen').style.display = 'none';
@@ -1150,11 +1174,16 @@
   }
 
   function renderPicker(){
-    document.getElementById('picker-team-list').innerHTML = data.team.filter(m=>m.active).map(m => `
+    const todayStr = iso(today);
+    document.getElementById('picker-team-list').innerHTML = data.team.filter(m=>m.active).map(m => {
+      const leave = leaveOnDay(m.id, todayStr);
+      const leaveTag = leave ? `<br><span class="leave-tag">En congé jusqu'au ${fmtDate(leave.end)}</span>` : '';
+      return `
       <button type="button" class="picker-option" data-pick-profile="${m.id}">
-        <span><span class="pname">${escapeHtml(m.name)}</span><br><span class="ptrade">${escapeHtml(m.trade)} · ${escapeHtml(m.site)}</span></span>
+        <span><span class="pname">${escapeHtml(m.name)}</span><br><span class="ptrade">${escapeHtml(m.trade)} · ${escapeHtml(m.site)}</span>${leaveTag}</span>
         <span class="chevron">›</span>
-      </button>`).join('');
+      </button>`;
+    }).join('');
   }
 
   /* ---------------- Gauge & KPIs (manager) ---------------- */
@@ -1459,10 +1488,12 @@
     const members = data.team.filter(m=>m.active && matchesSite(m.site));
     if(members.length === 0){ box.innerHTML = `<div class="empty">Aucun membre enregistré.</div>`; return; }
     box.innerHTML = members.map(m => {
+      const leave = leaveOnDay(m.id, todayStr);
       const activeTasks = data.assignments.filter(a=>a.member===m.name && a.date===todayStr && a.status!=='Terminé');
       const doneTasks = data.assignments.filter(a=>a.member===m.name && a.date===todayStr && a.status==='Terminé');
       let statusLabel, statusCls, subLine = '';
-      if(activeTasks.length > 0){ statusLabel = activeTasks[0].status; statusCls = statusClass[activeTasks[0].status]; subLine = activeTasks[0].task; }
+      if(leave){ statusLabel = 'En congé'; statusCls = 's-conge'; subLine = `Jusqu'au ${fmtDate(leave.end)}`; }
+      else if(activeTasks.length > 0){ statusLabel = activeTasks[0].status; statusCls = statusClass[activeTasks[0].status]; subLine = activeTasks[0].task; }
       else if(doneTasks.length > 0){ statusLabel = 'Terminé'; statusCls = 's-termine'; subLine = 'Tâches du jour terminées'; }
       else { statusLabel = 'Disponible'; statusCls = 's-nouveau'; subLine = "Non affecté aujourd'hui"; }
       return `
@@ -1506,7 +1537,27 @@
         </div>
       </div>`).join('');
   }
-  function renderTeamTab(){ renderTeamWorkload(); renderTeamList(); renderTeamHistory(); }
+  function renderTeamLeaves(){
+    const memberSelect = document.getElementById('lv-member');
+    memberSelect.innerHTML = data.team.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
+
+    const box = document.getElementById('team-leaves');
+    const todayStr = iso(today);
+    const items = data.leaves.filter(l => l.end >= todayStr).slice().sort((a,b)=> a.start.localeCompare(b.start));
+    if(items.length === 0){ box.innerHTML = `<div class="empty">Aucun congé en cours ou à venir.</div>`; return; }
+    box.innerHTML = items.map(l => {
+      const m = data.team.find(x=>x.id===l.memberId);
+      return `
+      <div class="mini-project-row">
+        <div>
+          <strong>${escapeHtml(m ? m.name : 'Ancien membre')}</strong> <span class="badge s-conge" style="cursor:default;">Congé</span>
+          <div class="assign-meta">${fmtDate(l.start)} → ${fmtDate(l.end)}${l.reason ? ' · ' + escapeHtml(l.reason) : ''}</div>
+        </div>
+        <button class="icon-x" data-del-leave="${l.id}" title="Supprimer">×</button>
+      </div>`;
+    }).join('');
+  }
+  function renderTeamTab(){ renderTeamWorkload(); renderTeamList(); renderTeamLeaves(); renderTeamHistory(); }
 
   /* ---------------- Projects ---------------- */
   const projStatusClass = { 'À venir':'proj-avenir', 'En cours':'proj-encours', 'En pause':'proj-pause', 'Terminé':'proj-termine' };
@@ -1677,12 +1728,24 @@
       ? `<p class="empty">Personne d'affecté ce jour-là pour le moment.</p>`
       : dayAssignments.map(a => assignmentCardHtml(a, suffix)).join('');
 
+    const onLeave = data.team.filter(m => matchesSite(m.site) && leaveOnDay(m.id, dateStr));
+    const leaveBlock = onLeave.length === 0 ? '' : `
+      <p class="subsection-title">Absences ce jour-là</p>
+      ${onLeave.map(m => `
+        <div class="mini-project-row">
+          <div>
+            <strong>${escapeHtml(m.name)}</strong> <span class="badge s-conge" style="cursor:default;">En congé</span>
+            <div class="assign-meta">${escapeHtml(m.trade)} · jusqu'au ${fmtDate(leaveOnDay(m.id, dateStr).end)}</div>
+          </div>
+        </div>`).join('')}`;
+
     return `
       <p class="subsection-title">Agenda du jour</p>
       ${eventsBlock}
 
       <p class="subsection-title">Chantiers en cours ce jour</p>
       ${projectsBlock}
+      ${leaveBlock}
 
       <p class="subsection-title">Équipes sur le terrain</p>
       ${assignBlock}
@@ -1862,15 +1925,9 @@
     document.getElementById('worker-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
 
     const todayStr = iso(today);
-    const todaysTasks = data.assignments.filter(a => a.member === member.name && a.date === todayStr)
-      .sort((a,b)=> a.horaireStart.localeCompare(b.horaireStart));
+    const leave = leaveOnDay(member.id, todayStr);
     const upcoming = data.assignments.filter(a => a.member === member.name && a.date > todayStr)
       .sort((a,b)=> a.date.localeCompare(b.date)).slice(0,5);
-
-    const tasksHtml = todaysTasks.length === 0
-      ? `<div class="empty">Aucune tâche affectée aujourd'hui. N'hésitez pas à signaler un problème si vous en repérez un.</div>`
-      : todaysTasks.map(workerTaskCardHtml).join('');
-
     const upcomingHtml = upcoming.length === 0 ? '' : `
       <div class="worker-upcoming">
         <h3>Vos prochaines tâches</h3>
@@ -1880,6 +1937,21 @@
             <span class="due-date">${escapeHtml(a.horaireStart)}</span>
           </div>`).join('')}
       </div>`;
+
+    if(leave){
+      document.getElementById('worker-tasks').innerHTML = `
+        <div class="worker-leave-banner">
+          <p class="wl-title">🌴 Vous êtes en congé aujourd'hui</p>
+          <p class="wl-detail">Retour prévu le ${fmtDate(leave.end)}</p>
+        </div>` + upcomingHtml;
+      return;
+    }
+
+    const todaysTasks = data.assignments.filter(a => a.member === member.name && a.date === todayStr)
+      .sort((a,b)=> a.horaireStart.localeCompare(b.horaireStart));
+    const tasksHtml = todaysTasks.length === 0
+      ? `<div class="empty">Aucune tâche affectée aujourd'hui. N'hésitez pas à signaler un problème si vous en repérez un.</div>`
+      : todaysTasks.map(workerTaskCardHtml).join('');
 
     document.getElementById('worker-tasks').innerHTML = tasksHtml + upcomingHtml;
   }
@@ -2290,6 +2362,32 @@
       renderTeamTab();
       renderTeamDatalist();
       renderPicker();
+    }
+  });
+
+  /* ---------------- Leave (congés) form ---------------- */
+  document.getElementById('add-leave').addEventListener('click', async () => {
+    const memberId = Number(document.getElementById('lv-member').value);
+    const start = document.getElementById('lv-start').value;
+    const end = document.getElementById('lv-end').value;
+    const reason = document.getElementById('lv-reason').value.trim();
+    if(!memberId || !start || !end || end < start) return;
+    data.leaves.push({ id: Date.now(), memberId, start, end, reason });
+    await saveData();
+    document.getElementById('lv-start').value = '';
+    document.getElementById('lv-end').value = '';
+    document.getElementById('lv-reason').value = '';
+    renderTeamLeaves(); renderTeamWorkload(); renderPicker(); renderTodayPanel(); renderCalendar();
+    if(document.getElementById('worker-app').style.display !== 'none') renderWorkerApp();
+  });
+  document.getElementById('team-leaves').addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-del-leave]');
+    if(del){
+      const id = Number(del.dataset.delLeave);
+      data.leaves = data.leaves.filter(x=>x.id!==id);
+      await saveData();
+      renderTeamLeaves(); renderTeamWorkload(); renderPicker(); renderTodayPanel(); renderCalendar();
+      if(document.getElementById('worker-app').style.display !== 'none') renderWorkerApp();
     }
   });
 
