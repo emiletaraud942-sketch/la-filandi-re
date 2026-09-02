@@ -242,9 +242,10 @@
   .wt-finish-btn{width:100%;padding:16px;font-size:16px;border-radius:12px;background:var(--green);border-color:var(--green);margin-top:10px;}
   .wt-finish-btn:hover{background:#336a41;}
   .wt-done-note{text-align:center;color:var(--green);font-weight:600;font-size:14px;padding:12px;background:var(--green-soft);border-radius:10px;margin-top:10px;}
-  .worker-leave-banner{text-align:center;background:var(--amber-soft);border-radius:14px;padding:32px 22px;}
-  .worker-leave-banner .wl-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--amber);margin:0 0 6px;}
-  .worker-leave-banner .wl-detail{font-size:13.5px;color:var(--ink-soft);margin:0;}
+  .worker-leave-banner{text-align:center;background:var(--amber-soft);border:2px solid var(--amber);border-radius:16px;padding:56px 24px;}
+  .worker-leave-banner .wl-icon{font-size:48px;line-height:1;margin:0 0 14px;}
+  .worker-leave-banner .wl-title{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:700;text-transform:uppercase;letter-spacing:.01em;color:var(--amber);margin:0 0 12px;line-height:1.1;}
+  .worker-leave-banner .wl-detail{font-size:15px;color:var(--ink-soft);margin:0;}
   .picker-option .leave-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);padding:2px 7px;border-radius:999px;margin-top:4px;}
   .worker-upcoming{margin-top:26px;}
   .worker-upcoming h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.04em;margin:0 0 10px;}
@@ -914,6 +915,11 @@
     dt.setMonth(dt.getMonth() + months);
     return iso(dt);
   }
+  function relDate(offsetDays){
+    const dt = new Date(today);
+    dt.setDate(dt.getDate() + offsetDays);
+    return iso(dt);
+  }
   function fmtEUR(n){
     return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
   }
@@ -1076,49 +1082,43 @@
   ];
 
   const defaultAssignments = [
-    { id: 1, date: "2026-08-27", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 14 82 35 09",
-      task: "Dépose des anciens équipements – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
-    { id: 2, date: "2026-08-27", member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
-      task: "Vérification tableau électrique – aile La Clairière", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 3, date: "2026-08-28", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
-      task: "Lit médicalisé bloqué – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: 1, status: "À faire" },
-    { id: 4, date: "2026-08-30", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
-      horaireStart: "13:00", horaireEnd: "17:00", phone: "06 14 82 35 09",
-      task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
-    { id: 5, date: "2026-09-05", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
-      task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 6, date: "2026-09-10", member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Clairefontaine",
-      horaireStart: "09:00", horaireEnd: "12:00", phone: "06 45 60 12 78",
-      task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" },
-    { id: 7, date: "2026-08-27", member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
-      task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 8, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
+    { id: 1, date: relDate(0), member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
       task: "Pose des sanitaires et de la faïence – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
-    { id: 9, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
+    { id: 2, date: relDate(0), member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "13:00", horaireEnd: "15:00", phone: "06 14 82 35 09",
       task: "Remplacement des joints de robinetterie – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 10, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
+    { id: 3, date: relDate(2), member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
+      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
+      task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
+    { id: 4, date: relDate(0), member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 27 91 44 58",
       task: "Remplacement d'un disjoncteur défectueux – tableau général", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 11, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
+    { id: 5, date: relDate(0), member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
       horaireStart: "13:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
       task: "Diagnostic volet roulant électrique – Salon La Clairière", linkedProjectId: null, linkedTicketId: 3, status: "À faire" },
-    { id: 12, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
+    { id: 6, date: relDate(3), member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
+      task: "Vérification tableau électrique – aile La Clairière", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 7, date: relDate(0), member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 50 22 18 44",
       task: "Relevés avant dépose – chaudière collective", linkedProjectId: 3, linkedTicketId: null, status: "À faire" },
-    { id: 13, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
+    { id: 8, date: relDate(0), member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
       horaireStart: "13:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
-      task: "Entretien des espaces extérieurs – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
+      task: "Entretien des espaces extérieurs – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 9, date: relDate(4), member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
+      task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 10, date: relDate(5), member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Clairefontaine",
+      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
+      task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
+    { id: 11, date: relDate(10), member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Clairefontaine",
+      horaireStart: "09:00", horaireEnd: "12:00", phone: "06 45 60 12 78",
+      task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" }
   ];
 
   const defaultLeaves = [
-    { id: 1, memberId: 3, start: "2026-08-31", end: "2026-09-03", reason: "Congés" }
+    { id: 1, memberId: 3, start: relDate(-1), end: relDate(3), reason: "Congés" }
   ];
 
   const defaultProviders = [
@@ -1987,7 +1987,8 @@
     if(leave){
       document.getElementById('worker-tasks').innerHTML = `
         <div class="worker-leave-banner">
-          <p class="wl-title">🌴 Vous êtes en congé aujourd'hui</p>
+          <p class="wl-icon">🌴</p>
+          <p class="wl-title">En congé</p>
           <p class="wl-detail">Retour prévu le ${fmtDate(leave.end)}</p>
         </div>` + upcomingHtml;
       return;
