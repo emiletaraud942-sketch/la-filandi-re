@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CHG La Filandière — Service Technique</title>
+<title>Résidence Les Cerisiers — Service Technique</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -276,7 +276,7 @@
 <header class="topbar">
   <div class="row">
     <div>
-      <p class="brand-eyebrow">CHG La Filandière · Déville-lès-Rouen &amp; Bethel</p>
+      <p class="brand-eyebrow">Résidence Les Cerisiers · Clairefontaine &amp; Beaumont</p>
       <h1 class="brand-title">Service Technique</h1>
       <p class="brand-sub">Chantiers, interventions, équipements, stock, équipe et calendrier partagé</p>
     </div>
@@ -360,8 +360,8 @@
     <span class="site-bar-label">Vue :</span>
     <div class="filters" id="site-filters">
       <button class="chip active" data-site="Tous les sites">Tous les sites</button>
-      <button class="chip" data-site="Déville-lès-Rouen">Déville-lès-Rouen</button>
-      <button class="chip" data-site="Bethel">Bethel</button>
+      <button class="chip" data-site="Clairefontaine">Clairefontaine</button>
+      <button class="chip" data-site="Beaumont">Beaumont</button>
     </div>
     <button type="button" class="mini-btn" id="manager-switch-profile" style="margin-left:auto;">Changer de profil</button>
   </div>
@@ -447,8 +447,8 @@
           <div class="field">
             <label for="tm-site">Site principal</label>
             <select id="tm-site">
-              <option>Déville-lès-Rouen</option>
-              <option>Bethel</option>
+              <option>Clairefontaine</option>
+              <option>Beaumont</option>
               <option>Les deux sites</option>
             </select>
           </div>
@@ -516,8 +516,8 @@
           <div class="field">
             <label for="eq-site">Site</label>
             <select id="eq-site">
-              <option>Déville-lès-Rouen</option>
-              <option>Bethel</option>
+              <option>Clairefontaine</option>
+              <option>Beaumont</option>
             </select>
           </div>
           <div class="field">
@@ -581,8 +581,8 @@
           <div class="field">
             <label for="p-site">Site</label>
             <select id="p-site">
-              <option>Déville-lès-Rouen</option>
-              <option>Bethel</option>
+              <option>Clairefontaine</option>
+              <option>Beaumont</option>
               <option>Les deux sites</option>
             </select>
           </div>
@@ -644,8 +644,8 @@
           <div class="field">
             <label for="t-site">Site</label>
             <select id="t-site">
-              <option>Déville-lès-Rouen</option>
-              <option>Bethel</option>
+              <option>Clairefontaine</option>
+              <option>Beaumont</option>
             </select>
           </div>
           <div class="field">
@@ -702,8 +702,8 @@
             <label for="c-site">Site concerné</label>
             <select id="c-site">
               <option>Les deux sites</option>
-              <option>Déville-lès-Rouen</option>
-              <option>Bethel</option>
+              <option>Clairefontaine</option>
+              <option>Beaumont</option>
             </select>
           </div>
           <div class="field">
@@ -757,8 +757,8 @@
             <label for="s-site">Site</label>
             <select id="s-site">
               <option>Les deux sites</option>
-              <option>Déville-lès-Rouen</option>
-              <option>Bethel</option>
+              <option>Clairefontaine</option>
+              <option>Beaumont</option>
             </select>
           </div>
           <div class="field">
@@ -779,7 +779,7 @@
           </div>
           <div class="field full">
             <label for="s-location">Emplacement (optionnel)</label>
-            <input id="s-location" placeholder="Ex : Atelier technique Déville">
+            <input id="s-location" placeholder="Ex : Atelier technique Clairefontaine">
           </div>
         </div>
         <div class="panel-actions">
@@ -873,7 +873,7 @@
 
 <script>
 (function(){
-  const STORAGE_KEY = 'filandiere:technique:v6';
+  const STORAGE_KEY = 'residence:technique:v6';
   let activeTab = 'today';
   let ticketFilter = 'Tous';
   let controlFilter = 'Tous';
@@ -945,39 +945,39 @@
   }
 
   const defaultTickets = [
-    { id: 1, title: "Lit médicalisé bloqué", site: "Déville-lès-Rouen", location: "Chambre 12 – L'Étang",
+    { id: 1, title: "Lit médicalisé bloqué", site: "Clairefontaine", location: "Chambre 12 – L'Étang",
       requester: "Équipe soignante", priority: "urgente", status: "Nouveau",
       desc: "Le bouton de réglage de hauteur ne répond plus, résidente à mobilité réduite.",
       dateSouhaitee: "2026-08-28", createdAt: "2026-08-25", convertedProjectId: null, completedAt: null },
-    { id: 2, title: "Fuite robinetterie salle de bain", site: "Déville-lès-Rouen", location: "Chambre 45 – Le Moulin",
+    { id: 2, title: "Fuite robinetterie salle de bain", site: "Clairefontaine", location: "Chambre 45 – Le Moulin",
       requester: "ASH", priority: "normale", status: "En cours",
       desc: "Fuite légère sous le lavabo, seau posé en attendant l'intervention.",
       dateSouhaitee: "2026-08-30", createdAt: "2026-08-22", convertedProjectId: null, completedAt: null },
-    { id: 3, title: "Volet roulant bloqué", site: "Déville-lès-Rouen", location: "Salon – La Clairière",
+    { id: 3, title: "Volet roulant bloqué", site: "Clairefontaine", location: "Salon – La Clairière",
       requester: "Équipe animation", priority: "basse", status: "Nouveau",
       desc: "", dateSouhaitee: null, createdAt: "2026-08-26", convertedProjectId: null, completedAt: null },
-    { id: 4, title: "Contrôle chauffage avant hiver", site: "Bethel", location: "Aile Petite Maison",
+    { id: 4, title: "Contrôle chauffage avant hiver", site: "Beaumont", location: "Aile Petite Maison",
       requester: "Direction", priority: "normale", status: "Terminé",
       desc: "Vérification annuelle demandée en amont de la saison froide.",
       dateSouhaitee: null, createdAt: "2026-08-10", convertedProjectId: null, completedAt: "2026-08-12" }
   ];
 
   const defaultControls = [
-    { id: 1, name: "Contrôle légionellose – balnéothérapie", site: "Déville-lès-Rouen", freq: 1, lastDone: "2026-07-15", nextDue: "2026-08-15" },
+    { id: 1, name: "Contrôle légionellose – balnéothérapie", site: "Clairefontaine", freq: 1, lastDone: "2026-07-15", nextDue: "2026-08-15" },
     { id: 2, name: "Contrôle légionellose – réseau eau chaude", site: "Les deux sites", freq: 1, lastDone: "2026-08-05", nextDue: "2026-09-05" },
-    { id: 3, name: "Vérification ascenseurs", site: "Déville-lès-Rouen", freq: 6, lastDone: "2026-03-10", nextDue: "2026-09-10" },
+    { id: 3, name: "Vérification ascenseurs", site: "Clairefontaine", freq: 6, lastDone: "2026-03-10", nextDue: "2026-09-10" },
     { id: 4, name: "Vérification installation électrique", site: "Les deux sites", freq: 12, lastDone: "2025-11-20", nextDue: "2026-11-20" },
-    { id: 5, name: "Vérification désenfumage", site: "Déville-lès-Rouen", freq: 12, lastDone: "2025-08-20", nextDue: "2026-08-20" },
-    { id: 6, name: "Vérification extincteurs", site: "Bethel", freq: 12, lastDone: "2026-01-15", nextDue: "2027-01-15" },
-    { id: 7, name: "Vérification groupe électrogène", site: "Déville-lès-Rouen", freq: 3, lastDone: "2026-06-01", nextDue: "2026-09-01" },
+    { id: 5, name: "Vérification désenfumage", site: "Clairefontaine", freq: 12, lastDone: "2025-08-20", nextDue: "2026-08-20" },
+    { id: 6, name: "Vérification extincteurs", site: "Beaumont", freq: 12, lastDone: "2026-01-15", nextDue: "2027-01-15" },
+    { id: 7, name: "Vérification groupe électrogène", site: "Clairefontaine", freq: 3, lastDone: "2026-06-01", nextDue: "2026-09-01" },
     { id: 8, name: "Vérification portes coupe-feu", site: "Les deux sites", freq: 12, lastDone: "2025-10-10", nextDue: "2026-10-10" },
-    { id: 9, name: "VGP lève-personnes et lits médicalisés", site: "Bethel", freq: 12, lastDone: "2025-07-01", nextDue: "2026-07-01" },
-    { id: 10, name: "Exercice évacuation incendie", site: "Déville-lès-Rouen", freq: 6, lastDone: "2026-02-15", nextDue: "2026-08-15" }
+    { id: 9, name: "VGP lève-personnes et lits médicalisés", site: "Beaumont", freq: 12, lastDone: "2025-07-01", nextDue: "2026-07-01" },
+    { id: 10, name: "Exercice évacuation incendie", site: "Clairefontaine", freq: 6, lastDone: "2026-02-15", nextDue: "2026-08-15" }
   ];
 
   const defaultProjects = [
     {
-      id: 1, name: "Rénovation salles de bain – Le Moulin", site: "Déville-lès-Rouen", status: "En cours",
+      id: 1, name: "Rénovation salles de bain – Le Moulin", site: "Clairefontaine", status: "En cours",
       startDate: "2026-07-01", endDate: "2026-10-15",
       description: "Remise aux normes PMR des salles de bain de l'aile Le Moulin : sanitaires, robinetterie et revêtements.",
       teams: ["Plomberie", "Électricité", "Prestataire externe"],
@@ -996,7 +996,7 @@
       ]
     },
     {
-      id: 2, name: "Mise aux normes désenfumage – La Clairière", site: "Déville-lès-Rouen", status: "À venir",
+      id: 2, name: "Mise aux normes désenfumage – La Clairière", site: "Clairefontaine", status: "À venir",
       startDate: "2026-09-15", endDate: "2026-11-30",
       description: "Installation d'exutoires conformes suite au dernier rapport de la commission de sécurité.",
       teams: ["Prestataire externe", "Direction / achats"],
@@ -1012,7 +1012,7 @@
       ]
     },
     {
-      id: 3, name: "Remplacement chaudière collective", site: "Bethel", status: "En pause",
+      id: 3, name: "Remplacement chaudière collective", site: "Beaumont", status: "En pause",
       startDate: "2026-06-01", endDate: "2027-01-31",
       description: "Remplacement de la chaudière collective en fin de vie par un modèle à condensation.",
       teams: ["Chauffage / CVC", "Prestataire externe", "Direction / achats"],
@@ -1031,14 +1031,14 @@
   ];
 
   const defaultStock = [
-    { id: 1, name: "Ampoules LED E27", category: "Consommable", site: "Les deux sites", qty: 34, threshold: 20, unit: "unité", unitCost: 2.5, location: "Atelier technique Déville" },
-    { id: 2, name: "Piles LR6 (AA)", category: "Consommable", site: "Les deux sites", qty: 12, threshold: 15, unit: "unité", unitCost: 0.8, location: "Atelier technique Déville" },
-    { id: 3, name: "Joints robinetterie (assortiment)", category: "Plomberie", site: "Déville-lès-Rouen", qty: 8, threshold: 10, unit: "lot", unitCost: 4, location: "Atelier technique Déville" },
-    { id: 4, name: "Disjoncteurs 16A", category: "Électrique", site: "Les deux sites", qty: 6, threshold: 4, unit: "unité", unitCost: 12, location: "Atelier technique Déville" },
-    { id: 5, name: "Visserie assortiment", category: "Visserie", site: "Les deux sites", qty: 3, threshold: 5, unit: "boîte", unitCost: 18, location: "Atelier technique Déville" },
-    { id: 6, name: "Filtres VMC", category: "Consommable", site: "Bethel", qty: 18, threshold: 10, unit: "unité", unitCost: 15, location: "Local technique Bethel" },
-    { id: 7, name: "Gants de protection", category: "Consommable", site: "Les deux sites", qty: 25, threshold: 15, unit: "paire", unitCost: 3, location: "Atelier technique Déville" },
-    { id: 8, name: "Tube PVC évacuation Ø100", category: "Plomberie", site: "Déville-lès-Rouen", qty: 4, threshold: 3, unit: "ml", unitCost: 6, location: "Atelier technique Déville" }
+    { id: 1, name: "Ampoules LED E27", category: "Consommable", site: "Les deux sites", qty: 34, threshold: 20, unit: "unité", unitCost: 2.5, location: "Atelier technique Clairefontaine" },
+    { id: 2, name: "Piles LR6 (AA)", category: "Consommable", site: "Les deux sites", qty: 12, threshold: 15, unit: "unité", unitCost: 0.8, location: "Atelier technique Clairefontaine" },
+    { id: 3, name: "Joints robinetterie (assortiment)", category: "Plomberie", site: "Clairefontaine", qty: 8, threshold: 10, unit: "lot", unitCost: 4, location: "Atelier technique Clairefontaine" },
+    { id: 4, name: "Disjoncteurs 16A", category: "Électrique", site: "Les deux sites", qty: 6, threshold: 4, unit: "unité", unitCost: 12, location: "Atelier technique Clairefontaine" },
+    { id: 5, name: "Visserie assortiment", category: "Visserie", site: "Les deux sites", qty: 3, threshold: 5, unit: "boîte", unitCost: 18, location: "Atelier technique Clairefontaine" },
+    { id: 6, name: "Filtres VMC", category: "Consommable", site: "Beaumont", qty: 18, threshold: 10, unit: "unité", unitCost: 15, location: "Local technique Beaumont" },
+    { id: 7, name: "Gants de protection", category: "Consommable", site: "Les deux sites", qty: 25, threshold: 15, unit: "paire", unitCost: 3, location: "Atelier technique Clairefontaine" },
+    { id: 8, name: "Tube PVC évacuation Ø100", category: "Plomberie", site: "Clairefontaine", qty: 4, threshold: 3, unit: "ml", unitCost: 6, location: "Atelier technique Clairefontaine" }
   ];
 
   const defaultStockMovements = [
@@ -1048,71 +1048,71 @@
   ];
 
   const defaultEquipment = [
-    { id: 1, name: "Chaudière collective", category: "Chauffage / CVC", site: "Bethel", location: "Chaufferie principale",
+    { id: 1, name: "Chaudière collective", category: "Chauffage / CVC", site: "Beaumont", location: "Chaufferie principale",
       brand: "De Dietrich", model: "GTU 130", serialNumber: "DD-2014-0472", purchaseDate: "2014-03-10", warrantyEnd: "2016-03-10",
       supplier: "ThermoNormandie", notes: "En fin de vie, remplacement prévu (voir chantier associé)." },
-    { id: 2, name: "Ascenseur bâtiment principal", category: "Ascenseur", site: "Déville-lès-Rouen", location: "Hall principal",
+    { id: 2, name: "Ascenseur bâtiment principal", category: "Ascenseur", site: "Clairefontaine", location: "Hall principal",
       brand: "Otis", model: "GeN2", serialNumber: "OT-2011-8834", purchaseDate: "2011-06-01", warrantyEnd: "2013-06-01",
       supplier: "Ascenseurs Rouen Services", notes: "Contrat de maintenance semestriel en cours." },
-    { id: 3, name: "Groupe électrogène", category: "Électrique", site: "Déville-lès-Rouen", location: "Local technique extérieur",
+    { id: 3, name: "Groupe électrogène", category: "Électrique", site: "Clairefontaine", location: "Local technique extérieur",
       brand: "SDMO", model: "V440K2", serialNumber: "SD-2018-1102", purchaseDate: "2018-09-15", warrantyEnd: "2020-09-15",
       supplier: "GroupElec Services", notes: "" },
-    { id: 4, name: "Système de désenfumage — La Clairière", category: "Sécurité incendie", site: "Déville-lès-Rouen", location: "Bâtiment La Clairière",
+    { id: 4, name: "Système de désenfumage — La Clairière", category: "Sécurité incendie", site: "Clairefontaine", location: "Bâtiment La Clairière",
       brand: "Normandie Sécurité Incendie", model: "Exutoires série E4", serialNumber: "NSI-2015-330", purchaseDate: "2015-01-20", warrantyEnd: "2017-01-20",
       supplier: "Normandie Sécurité Incendie", notes: "Mise aux normes en cours (voir chantier associé)." },
-    { id: 5, name: "Lève-personne mobile", category: "Mobilier médical", site: "Déville-lès-Rouen", location: "Aile Le Moulin",
+    { id: 5, name: "Lève-personne mobile", category: "Mobilier médical", site: "Clairefontaine", location: "Aile Le Moulin",
       brand: "Arjo", model: "Maxi Move", serialNumber: "ARJ-2019-556", purchaseDate: "2019-05-12", warrantyEnd: "2021-05-12",
       supplier: "Sanitaire Pro", notes: "" },
-    { id: 6, name: "Adoucisseur d'eau", category: "Plomberie", site: "Bethel", location: "Local technique",
+    { id: 6, name: "Adoucisseur d'eau", category: "Plomberie", site: "Beaumont", location: "Local technique",
       brand: "Culligan", model: "Aquaset SF", serialNumber: "CUL-2020-771", purchaseDate: "2020-02-28", warrantyEnd: "2022-02-28",
       supplier: "ThermoNormandie", notes: "" }
   ];
 
   const defaultTeam = [
-    { id: 1, name: "Julien Marchand", trade: "Plomberie", site: "Déville-lès-Rouen", phone: "06 14 82 35 09", active: true },
-    { id: 2, name: "Karim Haddad", trade: "Électricité", site: "Déville-lès-Rouen", phone: "06 27 91 44 58", active: true },
+    { id: 1, name: "Julien Marchand", trade: "Plomberie", site: "Clairefontaine", phone: "06 14 82 35 09", active: true },
+    { id: 2, name: "Karim Haddad", trade: "Électricité", site: "Clairefontaine", phone: "06 27 91 44 58", active: true },
     { id: 3, name: "Nicolas Fournier", trade: "Chauffage / CVC", site: "Les deux sites", phone: "06 33 05 78 12", active: true },
-    { id: 4, name: "Marc Delaunay", trade: "Agent polyvalent", site: "Bethel", phone: "06 50 22 18 44", active: true }
+    { id: 4, name: "Marc Delaunay", trade: "Agent polyvalent", site: "Beaumont", phone: "06 50 22 18 44", active: true }
   ];
 
   const defaultAssignments = [
-    { id: 1, date: "2026-08-27", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 1, date: "2026-08-27", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 14 82 35 09",
       task: "Dépose des anciens équipements – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
-    { id: 2, date: "2026-08-27", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+    { id: 2, date: "2026-08-27", member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
       task: "Vérification tableau électrique – aile La Clairière", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 3, date: "2026-08-28", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 3, date: "2026-08-28", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
       task: "Lit médicalisé bloqué – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: 1, status: "À faire" },
-    { id: 4, date: "2026-08-30", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 4, date: "2026-08-30", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "13:00", horaireEnd: "17:00", phone: "06 14 82 35 09",
       task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
-    { id: 5, date: "2026-09-05", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Déville-lès-Rouen",
+    { id: 5, date: "2026-09-05", member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
       task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 6, date: "2026-09-10", member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Déville-lès-Rouen",
+    { id: 6, date: "2026-09-10", member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Clairefontaine",
       horaireStart: "09:00", horaireEnd: "12:00", phone: "06 45 60 12 78",
       task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" },
-    { id: 7, date: "2026-08-27", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
+    { id: 7, date: "2026-08-27", member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
       horaireStart: "08:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
       task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 8, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 8, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
       task: "Pose des sanitaires et de la faïence – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
-    { id: 9, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Déville-lès-Rouen",
+    { id: 9, date: "2026-08-31", member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
       horaireStart: "13:00", horaireEnd: "15:00", phone: "06 14 82 35 09",
       task: "Remplacement des joints de robinetterie – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 10, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+    { id: 10, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 27 91 44 58",
       task: "Remplacement d'un disjoncteur défectueux – tableau général", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 11, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Déville-lès-Rouen",
+    { id: 11, date: "2026-08-31", member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
       horaireStart: "13:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
       task: "Diagnostic volet roulant électrique – Salon La Clairière", linkedProjectId: null, linkedTicketId: 3, status: "À faire" },
-    { id: 12, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
+    { id: 12, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
       horaireStart: "08:00", horaireEnd: "12:00", phone: "06 50 22 18 44",
       task: "Relevés avant dépose – chaudière collective", linkedProjectId: 3, linkedTicketId: null, status: "À faire" },
-    { id: 13, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Bethel",
+    { id: 13, date: "2026-08-31", member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
       horaireStart: "13:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
       task: "Entretien des espaces extérieurs – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" }
   ];
@@ -1785,7 +1785,7 @@
               </select>
             </div>
             <div class="field"><label>Site</label>
-              <select id="a-site-${suffix}"><option>Déville-lès-Rouen</option><option>Bethel</option></select>
+              <select id="a-site-${suffix}"><option>Clairefontaine</option><option>Beaumont</option></select>
             </div>
             <div class="field"><label>Téléphone</label><input id="a-phone-${suffix}" placeholder="06 XX XX XX XX"></div>
             <div class="field"><label>Début</label><input id="a-start-${suffix}" type="time" value="08:00"></div>
@@ -2049,7 +2049,7 @@
       ['Chantiers actifs', projects.filter(p=>p.status==='En cours').length],
       ['Date export', fmtDate(iso(today))]
     ];
-    exportCSV('tableau-de-bord-filandiere.csv', ['Indicateur','Valeur'], rows);
+    exportCSV('tableau-de-bord-residence.csv', ['Indicateur','Valeur'], rows);
   });
 
   /* ---------------- Profile switching ---------------- */
@@ -2084,7 +2084,7 @@
     const newTicket = {
       id: Date.now(),
       title: document.getElementById('wr-title').value.trim(),
-      site: member ? member.site : 'Déville-lès-Rouen',
+      site: member ? member.site : 'Clairefontaine',
       location: document.getElementById('wr-location').value.trim(),
       requester: member ? member.name : 'Équipe technique',
       priority: document.getElementById('wr-priority').value,
@@ -2169,7 +2169,7 @@
       document.querySelector('nav.tabs button[data-tab="projects"]').click();
       document.getElementById('project-panel').classList.add('open');
       document.getElementById('p-name').value = t.title;
-      document.getElementById('p-site').value = (t.site === 'Bethel' ? 'Bethel' : 'Déville-lès-Rouen');
+      document.getElementById('p-site').value = (t.site === 'Beaumont' ? 'Beaumont' : 'Clairefontaine');
       document.getElementById('p-desc').value = t.desc || '';
       document.getElementById('p-status').value = 'À venir';
       return;
@@ -2294,7 +2294,7 @@
   document.getElementById('export-stock-csv').addEventListener('click', () => {
     const headers = ['Nom','Catégorie','Site','Emplacement','Quantité','Unité','Seuil alerte','Coût unitaire €','Valeur totale €'];
     const rows = data.stock.map(s => [s.name, s.category, s.site, s.location||'', s.qty, s.unit, s.threshold, (s.unitCost||0).toFixed(2), (s.qty*(s.unitCost||0)).toFixed(2)]);
-    exportCSV('stock-filandiere.csv', headers, rows);
+    exportCSV('stock-residence.csv', headers, rows);
   });
 
   /* ---------------- Equipment form ---------------- */
@@ -2338,7 +2338,7 @@
     const headers = ['Nom','Catégorie','Site','Emplacement','Marque','Modèle','N° série','Mise en service','Fin garantie','Fournisseur','Notes'];
     const rows = data.equipment.map(e => [e.name, e.category, e.site, e.location||'', e.brand||'', e.model||'', e.serialNumber||'',
       e.purchaseDate ? fmtDate(e.purchaseDate) : '', e.warrantyEnd ? fmtDate(e.warrantyEnd) : '', e.supplier||'', e.notes||'']);
-    exportCSV('equipements-filandiere.csv', headers, rows);
+    exportCSV('equipements-residence.csv', headers, rows);
   });
 
   /* ---------------- Providers form ---------------- */
