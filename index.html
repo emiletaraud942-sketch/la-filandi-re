@@ -6,2722 +6,694 @@
 <title>Résidence Les Cerisiers — Service Technique</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#EFF1EE;
-    --surface:#FFFFFF;
-    --ink:#1B2523;
-    --ink-soft:#5B6864;
-    --ink-faint:#8B948F;
-    --line:#DBDFD8;
-    --navy:#1C2E33;
-    --teal:#2E6E68;
-    --teal-soft:#E4EDEC;
-    --amber:#C97F1F;
-    --amber-soft:#FBEDDA;
-    --rust:#B14B33;
-    --rust-soft:#F6E4DF;
-    --green:#3E7A4E;
-    --green-soft:#E4EFE6;
-    --radius:10px;
-    --shadow:0 1px 2px rgba(28,46,51,0.06), 0 6px 16px rgba(28,46,51,0.05);
+    --bg:#ffffff;
+    --surface:#ffffff;
+    --text:#1b1d26;
+    --text-muted:rgba(27,29,38,.55);
+    --text-faint:rgba(27,29,38,.45);
+    --accent:#6157b0;
+    --accent-ink:#2b2470;
+    --accent-active:#362e80;
+    --accent-soft:#e6e3f5;
+    --accent-wash:#f2f1f9;
+    --divider:rgba(27,29,38,.12);
+    --neutral-soft:#e6e8ee;
+    --neutral-wash:#f4f5f8;
+    --done:#3E7A4E;
+    --doing:#C97F1F;
+    --doing-ink:#241a00;
+    --todo:#B14B33;
+    --radius-md:8px;
+    --radius-lg:14px;
+    --shadow-sm:0 0 0 1px #e6e8ee;
+    --shadow-lg:0 0 0 1px #d3d6e1, 0 16px 40px rgba(27,29,38,.15);
   }
-  *{box-sizing:border-box;}
+  *,*::before,*::after{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans', sans-serif;-webkit-font-smoothing:antialiased;padding:0 0 80px;}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
-  a{color:inherit;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
   button{font-family:inherit;}
-  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  h1,h2,h3{font-family:'Inter',system-ui,sans-serif;font-weight:600;margin:0;letter-spacing:-.01em;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
-  header.topbar{background:var(--navy);color:#F3F5F2;padding:22px 0;border-bottom:3px solid var(--amber);}
-  header.topbar .row{max-width:1080px;margin:0 auto;padding:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-  .brand-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9FC3BC;margin:0 0 6px;}
-  .brand-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1;letter-spacing:.01em;margin:0;text-transform:uppercase;}
-  .brand-sub{font-size:13px;color:#C7D3CF;margin:6px 0 0;}
-  .demo-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;background:rgba(224,153,58,0.16);color:#F0B968;border:1px solid rgba(224,153,58,0.4);padding:5px 10px;border-radius:999px;white-space:nowrap;}
+  #app{display:flex;flex-direction:column;min-height:100vh;}
 
-  .picker-screen{min-height:65vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
-  .picker-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:32px;max-width:420px;width:100%;text-align:center;}
-  .picker-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;text-transform:uppercase;margin:8px 0 4px;color:var(--navy);}
-  .picker-sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
-  .picker-list{display:flex;flex-direction:column;gap:10px;}
-  .picker-option{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#FCFCFB;cursor:pointer;text-align:left;width:100%;font-family:inherit;}
-  .picker-option:hover{border-color:var(--teal);background:var(--teal-soft);}
-  .picker-option .pname{font-weight:600;font-size:14.5px;display:block;}
-  .picker-option .ptrade{font-size:11.5px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
-  .picker-divider{margin:18px 0 14px;border-top:1px solid var(--line);position:relative;}
-  .picker-divider span{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--surface);padding:0 10px;font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;}
+  .app-header{padding:16px 22px 0;flex:none;}
+  .header-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;}
+  .header-row h1{flex:1 1 260px;min-width:0;font-size:27px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .role-toggle{flex:none;display:inline-flex;overflow:hidden;border:1px solid var(--divider);border-radius:var(--radius-md);}
+  .role-btn{padding:9px 16px;font-size:15px;font-weight:500;cursor:pointer;background:transparent;border:0;color:var(--text);white-space:nowrap;}
+  .role-btn+.role-btn{border-left:1px solid var(--divider);}
+  .role-btn.active{background:var(--accent-soft);color:var(--accent-ink);}
+  .user-box{flex:none;display:flex;align-items:center;gap:10px;}
+  .user-id{text-align:right;}
+  .user-name{font-size:14px;white-space:nowrap;}
+  .user-role{font-size:12.5px;color:var(--text-muted);white-space:nowrap;}
+  .avatar{width:34px;height:34px;flex:none;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .avatar.sm{width:27px;height:27px;font-size:11px;}
+  .avatar.muted{background:var(--neutral-soft);color:var(--text-faint);}
 
-  .site-bar{display:flex;align-items:center;gap:10px;padding-top:18px;flex-wrap:wrap;}
-  .site-bar-label{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);}
+  .tabs-row{display:flex;align-items:flex-end;flex-wrap:wrap;gap:4px 22px;margin-top:14px;box-shadow:inset 0 -1px 0 var(--divider);}
+  .tabs{flex:1 1 auto;min-width:0;display:flex;gap:4px;overflow-x:auto;}
+  .tab-btn{flex:none;display:flex;align-items:center;gap:8px;padding:10px 13px;cursor:pointer;font-size:15px;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--text-muted);}
+  .tab-btn.active{color:var(--accent-active);border-bottom-color:var(--accent);}
+  .tab-count{font-size:13px;padding:1px 7px;border-radius:999px;background:var(--neutral-wash);color:var(--text-faint);}
+  .tab-btn.active .tab-count{background:var(--accent-soft);color:var(--accent-ink);}
+  .day-nav{flex:none;display:flex;align-items:center;gap:10px;padding-bottom:7px;}
+  .icon-btn{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:1px solid var(--divider);border-radius:var(--radius-md);color:var(--text);font-size:15px;}
+  .icon-btn:hover{background:rgba(27,29,38,.05);}
+  .day-label{font-size:15px;white-space:nowrap;text-transform:capitalize;color:var(--text-muted);}
 
-  section.overview{padding:16px 0 8px;display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;}
-  .gauge-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 16px 12px;text-align:center;}
-  .gauge-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:2px 0 0;}
-  .gauge-value{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:26px;margin-top:-46px;position:relative;}
-  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px;}
-  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:13px 15px;}
-  .kpi .num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;line-height:1;}
-  .kpi .lbl{font-size:11.5px;color:var(--ink-soft);margin-top:4px;}
-  .kpi.tone-rust .num{color:var(--rust);}
-  .kpi.tone-amber .num{color:var(--amber);}
-  .kpi.tone-teal .num{color:var(--teal);}
+  main{flex:1 1 auto;min-height:0;overflow:auto;padding:16px 22px 24px;}
+  .section{min-width:0;margin-bottom:22px;}
+  .section-head{display:flex;align-items:baseline;gap:11px;padding-bottom:9px;}
+  .section-title{font-size:19px;font-weight:500;white-space:nowrap;}
+  .section-sub{font-size:14px;white-space:nowrap;color:var(--text-muted);}
+  .scroll-x{min-width:0;overflow-x:auto;}
+  .grid-box{display:flex;flex-direction:column;gap:1px;background:var(--divider);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);}
+  .grid-head{display:grid;gap:1px;padding:0 0 7px 14px;font-size:13px;color:var(--text-faint);}
+  .grid-row{display:grid;gap:1px;}
+  .cell{display:flex;align-items:center;min-height:52px;padding:8px 12px;background:var(--surface);border-left:4px solid transparent;}
+  .cell.center{justify-content:center;text-align:center;}
+  .cell-title{flex:1 1 auto;min-width:0;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cell-sub{display:block;font-size:13.5px;margin-top:2px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pill-btn{display:flex;align-items:center;justify-content:center;min-height:52px;padding:8px;cursor:pointer;font-size:14.5px;border:0;white-space:nowrap;}
+  .empty-row{display:flex;align-items:center;min-height:52px;padding:10px 16px;background:var(--surface);font-size:14.5px;color:var(--text-faint);}
+  .add-row{width:100%;display:flex;align-items:center;gap:9px;min-height:48px;padding:8px 16px;cursor:pointer;text-align:left;font-size:14.5px;background:var(--surface);border:0;border-top:1px solid var(--divider);color:var(--text-muted);}
+  .add-row .plus{font-size:17px;color:var(--accent);}
+  .add-row:hover{background:rgba(27,29,38,.03);}
 
-  nav.tabs{display:flex;gap:0;margin:26px 0 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
-  nav.tabs button{background:none;border:none;cursor:pointer;padding:10px 4px;margin-right:15px;font-family:'Barlow Condensed',sans-serif;font-size:15.5px;font-weight:600;letter-spacing:.01em;color:var(--ink-faint);border-bottom:3px solid transparent;text-transform:uppercase;}
-  nav.tabs button.active{color:var(--navy);border-bottom-color:var(--amber);}
-  nav.tabs button:hover{color:var(--navy);}
-  .tab-badge{display:inline-block;background:var(--rust);color:#fff;font-size:10px;font-family:'IBM Plex Mono',monospace;border-radius:999px;padding:1px 6px;margin-left:4px;vertical-align:middle;}
+  .bar-track{flex:1 1 auto;min-width:0;height:8px;border-radius:4px;background:var(--neutral-soft);}
+  .bar-fill{display:block;height:8px;border-radius:4px;}
 
-  section.view{padding:22px 0 10px;animation:fade .2s ease;}
-  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  .status-card{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 16px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);margin-bottom:22px;}
+  .status-dot{width:13px;height:13px;flex:none;border-radius:50%;}
+  .status-label{flex:1 1 200px;min-width:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .status-shift{flex:none;font-size:15px;color:var(--text-muted);white-space:nowrap;}
+  .hint-text{font-size:13.5px;padding-top:9px;color:var(--text-faint);}
 
-  .today-date{font-family:'Barlow Condensed',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;color:var(--navy);margin:0 0 16px;}
+  .week-row{width:100%;display:grid;gap:1px;cursor:pointer;text-align:left;color:var(--text);background:transparent;border:0;}
+  .week-day{display:flex;align-items:center;min-height:54px;padding:8px 14px;border-left:4px solid transparent;font-size:15px;text-transform:capitalize;white-space:nowrap;}
+  .week-state{display:flex;align-items:center;justify-content:center;min-height:54px;padding:8px;font-size:14.5px;white-space:nowrap;}
+  .week-detail{display:flex;align-items:center;min-height:54px;padding:8px 14px;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-muted);}
+  .week-tasks{display:flex;align-items:center;justify-content:center;min-height:54px;padding:8px;font-size:14px;white-space:nowrap;color:var(--text-faint);}
 
-  .view-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
-  .filters{display:flex;gap:6px;flex-wrap:wrap;}
-  .chip{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;}
-  .chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .dialog-backdrop{position:fixed;inset:0;display:grid;place-items:center;padding:16px;background:rgba(244,245,248,.72);z-index:200;}
+  .dialog{width:min(440px,100%);display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-lg);}
+  .dialog-title{font-size:20px;font-weight:500;}
+  .dialog-body{display:flex;flex-direction:column;gap:12px;font-size:14px;}
+  .dialog-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field label{display:block;font-size:12px;margin-bottom:5px;color:var(--text-muted);}
+  .field .input{width:100%;min-height:36px;padding:6px 10px;font:inherit;font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--divider);border-radius:var(--radius-md);}
+  .field .input:hover{border-color:rgba(27,29,38,.35);}
+  .field .input:focus-visible{border-color:var(--accent);outline-offset:0;}
+  .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:2px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-weight:500;font-size:14px;padding:8px 14px;border-radius:var(--radius-md);border:1px solid transparent;}
+  .btn-secondary{border-color:var(--divider);color:var(--text);}
+  .btn-secondary:hover{background:rgba(27,29,38,.05);}
+  .btn-primary{border-color:var(--accent);color:var(--accent);}
+  .btn-primary:hover{background:rgba(97,87,176,.1);}
 
-  .btn{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:13.5px;border:1px solid var(--navy);background:var(--navy);color:#fff;padding:9px 15px;border-radius:8px;cursor:pointer;}
-  .btn:hover{background:#132125;}
-  .btn.ghost{background:transparent;color:var(--navy);}
-  .btn.ghost:hover{background:var(--teal-soft);}
-
-  .list{display:flex;flex-direction:column;gap:10px;}
-  .empty{text-align:center;color:var(--ink-faint);font-size:13.5px;padding:22px 10px;border:1px dashed var(--line);border-radius:var(--radius);}
-
-  .card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;}
-  .card.p-urgente{border-left-color:var(--rust);}
-  .card.p-normale{border-left-color:var(--amber);}
-  .card.p-basse{border-left-color:var(--ink-faint);}
-  .card .main{flex:1;min-width:220px;}
-  .card .title{font-weight:600;font-size:15px;margin:0 0 3px;}
-  .card .meta{font-size:12.5px;color:var(--ink-soft);margin:0 0 6px;}
-  .card .desc{font-size:13px;color:var(--ink-soft);margin:0;}
-  .card .side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
-  .badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;padding:4px 9px;border-radius:999px;white-space:nowrap;cursor:pointer;border:none;}
-  .badge.s-nouveau{background:var(--amber-soft);color:var(--amber);}
-  .badge.s-encours{background:var(--teal-soft);color:var(--teal);}
-  .badge.s-termine{background:var(--green-soft);color:var(--green);cursor:default;}
-  .badge.s-conge{background:var(--amber-soft);color:var(--amber);}
-  .prio-tag{font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
-  .icon-x{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;}
-  .icon-x:hover{color:var(--rust);}
-
-  .ctrl-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:13px 16px;display:grid;grid-template-columns:1fr auto auto auto auto;gap:14px;align-items:center;}
-  .ctrl-row.stock-row{grid-template-columns:1fr auto auto auto;}
-  .ctrl-row .name{font-weight:600;font-size:14.5px;}
-  .ctrl-row .tags{font-size:12px;color:var(--ink-soft);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
-  .status-pill{font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:5px 10px;border-radius:999px;text-align:center;white-space:nowrap;}
-  .status-pill.c-overdue{background:var(--rust-soft);color:var(--rust);}
-  .status-pill.c-soon{background:var(--amber-soft);color:var(--amber);}
-  .status-pill.c-ok{background:var(--green-soft);color:var(--green);}
-  .due-date{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
-  .mini-btn{font-size:12px;font-weight:600;background:none;border:1px solid var(--line);color:var(--navy);padding:6px 10px;border-radius:7px;cursor:pointer;white-space:nowrap;}
-  .mini-btn:hover{background:var(--teal-soft);border-color:var(--teal);}
-  .qty-adjust{display:flex;align-items:center;gap:8px;}
-  .qty-val{font-family:'IBM Plex Mono',monospace;font-size:13px;min-width:66px;text-align:center;}
-
-  .project-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;}
-  .project-head{padding:15px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
-  .project-head:hover{background:#FAFAF8;}
-  .project-title-block{flex:1;min-width:220px;}
-  .project-name{font-weight:600;font-size:16px;margin:0 0 4px;}
-  .project-meta{font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
-  .project-right{display:flex;align-items:center;gap:10px;}
-  .status-pill.proj-avenir{background:#EEEFEC;color:var(--ink-soft);}
-  .status-pill.proj-encours{background:var(--teal-soft);color:var(--teal);}
-  .status-pill.proj-pause{background:var(--amber-soft);color:var(--amber);}
-  .status-pill.proj-termine{background:var(--green-soft);color:var(--green);}
-  .progress-track{width:110px;height:6px;background:#E7E9E3;border-radius:999px;overflow:hidden;}
-  .progress-fill{height:100%;background:var(--teal);}
-  .chevron{transition:transform .2s;color:var(--ink-faint);display:inline-block;}
-  .project-card.open .chevron{transform:rotate(90deg);}
-  .project-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
-  .project-card.open .project-body{max-height:2400px;}
-  .project-inner{padding:0 18px 18px;border-top:1px solid var(--line);}
-  .project-desc{font-size:13px;color:var(--ink-soft);margin:12px 0;}
-  .team-pill{display:inline-block;font-size:11px;font-family:'IBM Plex Mono',monospace;background:var(--teal-soft);color:var(--teal);padding:3px 9px;border-radius:999px;margin:0 6px 6px 0;}
-  .subsection-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--navy);margin:16px 0 8px;}
-  .step-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
-  .step-row:last-child{border-bottom:none;}
-  .step-row.done .step-label{text-decoration:line-through;color:var(--ink-faint);}
-  .step-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;color:#fff;font-size:12px;padding:0;}
-  .step-check.checked{background:var(--green);border-color:var(--green);}
-  .step-label{flex:1;}
-  .step-date{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);white-space:nowrap;}
-
-  table.materials{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;}
-  table.materials th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);}
-  table.materials td{padding:8px;border-bottom:1px solid #EFF1EC;vertical-align:middle;}
-  table.materials tr:last-child td{border-bottom:none;}
-  .mat-status{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap;border:none;}
-  .mat-status.mat-acommander{background:var(--rust-soft);color:var(--rust);}
-  .mat-status.mat-commande{background:var(--amber-soft);color:var(--amber);}
-  .mat-status.mat-recu{background:var(--green-soft);color:var(--green);}
-  .mat-total-row td{font-weight:600;border-top:1.5px solid var(--line);}
-  .add-row-form{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);align-items:center;}
-  .add-row-form input,.add-row-form select{font-family:inherit;font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#FCFCFB;}
-  .add-row-form .w-name{flex:2;min-width:140px;}
-  .add-row-form .w-sm{width:78px;}
-  .add-row-form .w-md{width:130px;}
-  .team-check-group{display:flex;gap:10px;flex-wrap:wrap;}
-  .team-check{display:flex;align-items:center;gap:5px;font-size:12.5px;background:#FCFCFB;border:1px solid var(--line);padding:6px 10px;border-radius:7px;cursor:pointer;}
-  .team-check input{margin:0;}
-
-  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px;display:none;}
-  .panel.open{display:block;animation:fade .2s ease;}
-  .panel h3{margin:0 0 12px;font-family:'Barlow Condensed',sans-serif;font-size:19px;text-transform:uppercase;letter-spacing:.02em;}
-  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
-  .field.full{grid-column:1 / -1;}
-  .field label{font-size:12px;color:var(--ink-soft);font-weight:500;}
-  .field input,.field select,.field textarea{font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:#FCFCFB;color:var(--ink);}
-  .field textarea{resize:vertical;min-height:56px;}
-  .panel-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
-
-  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;}
-  .cal-nav-btn{background:var(--surface);border:1px solid var(--line);border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--navy);}
-  .cal-nav-btn:hover{background:var(--teal-soft);}
-  .cal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;text-align:center;flex:1;}
-  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 16px;font-size:12px;color:var(--ink-soft);}
-  .legend span.sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
-  .cal-weekday{text-align:center;font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;padding-bottom:4px;}
-  .cal-cell{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:64px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:5px;}
-  .cal-cell:hover{border-color:var(--teal);}
-  .cal-cell.out{opacity:.4;}
-  .cal-cell.today{border-color:var(--navy);border-width:2px;}
-  .cal-cell.selected{background:var(--teal-soft);border-color:var(--teal);}
-  .cal-daynum{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);}
-  .cal-dots{display:flex;gap:3px;flex-wrap:wrap;align-items:center;}
-  .cal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .cal-more{font-size:10px;color:var(--ink-faint);}
-  .agenda{margin-top:20px;}
-  .agenda h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;margin:0 0 10px;letter-spacing:.02em;}
-  .agenda-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #EFF1EC;font-size:13.5px;}
-  .agenda-item:last-child{border-bottom:none;}
-  .agenda-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
-  .agenda-sub{font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
-
-  .mini-project-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap;}
-
-  .assign-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px;}
-  .assign-main{flex:1;min-width:200px;}
-  .assign-member{font-weight:600;font-size:14px;margin:0 0 4px;}
-  .assign-meta{font-size:12px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;margin:0 0 4px;}
-  .assign-task{font-size:13px;color:var(--ink);margin:0 0 6px;}
-  .assign-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
-  .reassign-form{display:flex;gap:6px;align-items:center;}
-  .reassign-form input{font-size:12px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;width:150px;}
-
-  .workload-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:8px;}
-
-  .provider-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;}
-  .provider-name{font-weight:600;font-size:15px;margin:0 0 4px;}
-  .provider-specialty{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);background:var(--teal-soft);padding:3px 9px;border-radius:999px;display:inline-block;margin-bottom:6px;}
-  .provider-contact{font-size:13px;color:var(--ink-soft);margin:0 0 4px;}
-  .provider-contact a{color:var(--teal);text-decoration:none;}
-  .provider-contact a:hover{text-decoration:underline;}
-  .provider-notes{font-size:12.5px;color:var(--ink-faint);margin:6px 0 0;font-style:italic;}
-
-  .worker-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding-top:24px;flex-wrap:wrap;}
-  .worker-greeting{font-family:'Barlow Condensed',sans-serif;font-size:30px;text-transform:uppercase;margin:4px 0 0;color:var(--navy);}
-  .worker-task-card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--teal);border-radius:14px;box-shadow:var(--shadow);padding:20px;margin-bottom:14px;}
-  .worker-task-card.urgent{border-left-color:var(--rust);}
-  .wt-time{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);margin:0 0 6px;}
-  .wt-title{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:700;color:var(--ink);margin:0 0 8px;line-height:1.15;}
-  .wt-meta{font-size:13px;color:var(--ink-soft);margin:0 0 6px;}
-  .wt-context{background:var(--teal-soft);border-radius:10px;padding:10px 12px;margin:0 0 10px;}
-  .wt-context .wt-meta{margin:0 0 3px;color:var(--ink);}
-  .wt-context-title{font-weight:600;font-size:12.5px;color:var(--navy);margin:0 0 5px;}
-  .worker-steps-list{background:var(--surface);border-radius:8px;padding:4px 10px;}
-  .wt-urgent-tag{display:inline-block;background:var(--rust-soft);color:var(--rust);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 9px;border-radius:999px;margin-bottom:8px;}
-  .wt-finish-btn{width:100%;padding:16px;font-size:16px;border-radius:12px;background:var(--green);border-color:var(--green);margin-top:10px;}
-  .wt-finish-btn:hover{background:#336a41;}
-  .wt-done-note{text-align:center;color:var(--green);font-weight:600;font-size:14px;padding:12px;background:var(--green-soft);border-radius:10px;margin-top:10px;}
-  .worker-leave-banner{text-align:center;background:var(--amber-soft);border:2px solid var(--amber);border-radius:16px;padding:56px 24px;}
-  .worker-leave-banner .wl-icon{font-size:48px;line-height:1;margin:0 0 14px;}
-  .worker-leave-banner .wl-title{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:700;text-transform:uppercase;letter-spacing:.01em;color:var(--amber);margin:0 0 12px;line-height:1.1;}
-  .worker-leave-banner .wl-detail{font-size:15px;color:var(--ink-soft);margin:0;}
-  .picker-option .leave-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);background:var(--amber-soft);padding:2px 7px;border-radius:999px;margin-top:4px;}
-  .worker-upcoming{margin-top:26px;}
-  .worker-upcoming h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.04em;margin:0 0 10px;}
-  .worker-mini-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;gap:10px;}
-  .worker-report-block{margin-top:30px;text-align:center;padding-top:20px;border-top:1px solid var(--line);}
-  .worker-report-confirm{color:var(--green);font-size:13px;font-weight:600;margin-top:10px;}
-
-  footer{max-width:1080px;margin:36px auto 0;padding:16px 24px 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
-
-  @media (max-width:680px){
-    section.overview{grid-template-columns:1fr;}
-    .ctrl-row{grid-template-columns:1fr;align-items:flex-start;}
-    .ctrl-row .status-pill,.ctrl-row .due-date,.ctrl-row .mini-btn,.ctrl-row .qty-adjust{justify-self:start;}
-    .field-grid{grid-template-columns:1fr;}
-    table.materials{display:block;overflow-x:auto;white-space:nowrap;}
-  }
-  @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
-
-  @media print{
-    header.topbar, .site-bar, nav.tabs, .worker-report-block, .btn, .mini-btn, .panel, footer, #profile-picker-screen, #worker-app{ display:none !important; }
-    body{ background:#fff; padding:0; }
-    .kpi, .provider-card, .workload-row, .mini-project-row, .gauge-card{ box-shadow:none; border:1px solid #ccc; }
-    section.view{ display:block !important; }
+  @media (max-width:640px){
+    .header-row h1{font-size:22px;}
+    .app-header{padding:14px 14px 0;}
+    main{padding:14px 14px 20px;}
   }
 </style>
 </head>
 <body>
-
-<header class="topbar">
-  <div class="row">
-    <div>
-      <p class="brand-eyebrow">Résidence Les Cerisiers · Clairefontaine &amp; Beaumont</p>
-      <h1 class="brand-title">Service Technique</h1>
-      <p class="brand-sub">Chantiers, interventions, équipements, stock, équipe et calendrier partagé</p>
-    </div>
-    <span class="demo-tag">Prototype de démonstration</span>
-  </div>
-</header>
-
-<!-- ================= PROFILE PICKER ================= -->
-<div id="profile-picker-screen" style="display:none">
-  <div class="wrap">
-    <div class="picker-screen">
-      <div class="picker-card">
-        <p class="brand-eyebrow" style="color:var(--ink-faint);">Sélection du profil</p>
-        <h2 class="picker-title">Qui êtes-vous ?</h2>
-        <p class="picker-sub">Choisissez votre profil pour accéder à votre espace.</p>
-        <div class="picker-list" id="picker-team-list"></div>
-        <div class="picker-divider"><span>ou</span></div>
-        <button type="button" class="btn" id="picker-manager-btn" style="width:100%;">Je suis responsable / direction</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= WORKER APP ================= -->
-<div id="worker-app" style="display:none">
-  <div class="wrap">
-    <div class="worker-header">
-      <div>
-        <p class="brand-eyebrow" style="color:var(--ink-faint);">Mon espace</p>
-        <h1 class="worker-greeting" id="worker-greeting"></h1>
-        <p class="today-date" id="worker-date-label" style="margin:2px 0 0;"></p>
-      </div>
-      <button type="button" class="mini-btn" id="worker-switch-profile">Changer de profil</button>
-    </div>
-
-    <div id="worker-tasks"></div>
-
-    <div class="worker-report-block">
-      <button type="button" class="btn" id="worker-toggle-report">🛠️ Signaler un problème</button>
-      <div class="panel" id="worker-report-panel" style="text-align:left;margin-top:14px;">
-        <h3>Signaler un problème</h3>
-        <form id="worker-report-form">
-          <div class="field-grid">
-            <div class="field full">
-              <label for="wr-title">Que se passe-t-il ?</label>
-              <input id="wr-title" required placeholder="Ex : Ampoule grillée couloir Le Moulin">
-            </div>
-            <div class="field">
-              <label for="wr-location">Localisation</label>
-              <input id="wr-location" placeholder="Ex : Chambre 12, couloir...">
-            </div>
-            <div class="field">
-              <label for="wr-priority">Priorité</label>
-              <select id="wr-priority">
-                <option value="normale">Normale</option>
-                <option value="urgente">Urgente</option>
-                <option value="basse">Basse</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label for="wr-desc">Précisions (optionnel)</label>
-              <textarea id="wr-desc"></textarea>
-            </div>
-          </div>
-          <div class="panel-actions">
-            <button type="button" class="btn ghost" id="worker-cancel-report">Annuler</button>
-            <button type="submit" class="btn">Envoyer</button>
-          </div>
-        </form>
-        <p class="worker-report-confirm" id="worker-report-confirm" style="display:none;">✓ Signalement envoyé au service technique.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= MANAGER APP ================= -->
-<div id="manager-app" style="display:none">
-<div class="wrap">
-
-  <div class="site-bar">
-    <span class="site-bar-label">Vue :</span>
-    <div class="filters" id="site-filters">
-      <button class="chip active" data-site="Tous les sites">Tous les sites</button>
-      <button class="chip" data-site="Clairefontaine">Clairefontaine</button>
-      <button class="chip" data-site="Beaumont">Beaumont</button>
-    </div>
-    <button type="button" class="mini-btn" id="manager-switch-profile" style="margin-left:auto;">Changer de profil</button>
-  </div>
-
-  <section class="overview">
-    <div class="gauge-card">
-      <div id="gauge-svg"></div>
-      <div class="gauge-value" id="gauge-value">—</div>
-      <p class="gauge-label">Contrôles sous contrôle</p>
-    </div>
-    <div class="kpi-row" id="kpi-row"></div>
-  </section>
-
-  <nav class="tabs">
-    <button data-tab="today" class="active">Aujourd'hui</button>
-    <button data-tab="dashboard">Tableau de bord</button>
-    <button data-tab="team">Équipe</button>
-    <button data-tab="equipment">Équipements</button>
-    <button data-tab="projects">Chantiers</button>
-    <button data-tab="tickets">Interventions</button>
-    <button data-tab="controls">Contrôles réglementaires</button>
-    <button data-tab="stock">Stock</button>
-    <button data-tab="providers">Prestataires</button>
-    <button data-tab="calendar">Calendrier</button>
-  </nav>
-
-  <!-- ================= TODAY VIEW ================= -->
-  <section class="view" id="view-today">
-    <p class="today-date" id="today-date-label"></p>
-    <div id="today-panel"></div>
-  </section>
-
-  <!-- ================= DASHBOARD VIEW ================= -->
-  <section class="view" id="view-dashboard" style="display:none">
-    <div class="view-head">
-      <div></div>
-      <div style="display:flex;gap:8px;">
-        <button type="button" class="btn ghost" id="print-dashboard">🖨️ Imprimer ce rapport</button>
-        <button type="button" class="btn ghost" id="export-dashboard-csv">⬇ Exporter en CSV</button>
-      </div>
-    </div>
-
-    <p class="subsection-title">Conformité réglementaire</p>
-    <div class="list" id="dash-compliance"></div>
-
-    <p class="subsection-title">Finances</p>
-    <div class="list" id="dash-finance"></div>
-
-    <p class="subsection-title">Interventions</p>
-    <div class="list" id="dash-tickets"></div>
-
-    <p class="subsection-title">Chantiers</p>
-    <div class="list" id="dash-projects"></div>
-
-    <p class="subsection-title">Équipe — 7 derniers jours</p>
-    <div class="list" id="dash-team"></div>
-  </section>
-
-  <!-- ================= TEAM VIEW ================= -->
-  <section class="view" id="view-team" style="display:none">
-    <div class="view-head" style="justify-content:flex-end;">
-      <button class="btn" id="toggle-team-form">+ Ajouter un membre</button>
-    </div>
-
-    <div class="panel" id="team-panel">
-      <h3>Nouveau membre de l'équipe</h3>
-      <form id="team-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="tm-name">Nom</label>
-            <input id="tm-name" required placeholder="Ex : Julien Marchand">
-          </div>
-          <div class="field">
-            <label for="tm-trade">Corps de métier</label>
-            <select id="tm-trade">
-              <option>Plomberie</option>
-              <option>Électricité</option>
-              <option>Chauffage / CVC</option>
-              <option>Agent polyvalent</option>
-              <option>Direction / achats</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="tm-site">Site principal</label>
-            <select id="tm-site">
-              <option>Clairefontaine</option>
-              <option>Beaumont</option>
-              <option>Les deux sites</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="tm-phone">Téléphone</label>
-            <input id="tm-phone" placeholder="06 XX XX XX XX">
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-team">Annuler</button>
-          <button type="submit" class="btn">Ajouter</button>
-        </div>
-      </form>
-    </div>
-
-    <p class="subsection-title">Charge de travail aujourd'hui</p>
-    <div class="list" id="team-workload"></div>
-
-    <p class="subsection-title">Équipe</p>
-    <div class="list" id="team-list"></div>
-
-    <p class="subsection-title">Congés</p>
-    <div class="list" id="team-leaves"></div>
-    <div class="add-row-form">
-      <select class="w-md" id="lv-member"></select>
-      <input class="w-md" type="date" id="lv-start" title="Début">
-      <input class="w-md" type="date" id="lv-end" title="Fin">
-      <input class="w-name" type="text" placeholder="Motif (optionnel)" id="lv-reason">
-      <button type="button" class="mini-btn" id="add-leave">+ Ajouter un congé</button>
-    </div>
-
-    <p class="subsection-title">Dernières tâches terminées</p>
-    <div class="list" id="team-history"></div>
-  </section>
-
-  <!-- ================= EQUIPMENT VIEW ================= -->
-  <section class="view" id="view-equipment" style="display:none">
-    <div class="view-head" style="justify-content:flex-end;">
-      <div style="display:flex;gap:8px;">
-        <button type="button" class="btn ghost" id="export-equipment-csv">⬇ Exporter CSV</button>
-        <button class="btn" id="toggle-equipment-form">+ Ajouter un équipement</button>
-      </div>
-    </div>
-
-    <div class="panel" id="equipment-panel">
-      <h3>Nouvel équipement</h3>
-      <form id="equipment-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="eq-name">Nom</label>
-            <input id="eq-name" required placeholder="Ex : Chaudière collective">
-          </div>
-          <div class="field">
-            <label for="eq-category">Catégorie</label>
-            <select id="eq-category">
-              <option>Chauffage / CVC</option>
-              <option>Ascenseur</option>
-              <option>Électrique</option>
-              <option>Plomberie</option>
-              <option>Sécurité incendie</option>
-              <option>Mobilier médical</option>
-              <option>Autre</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="eq-site">Site</label>
-            <select id="eq-site">
-              <option>Clairefontaine</option>
-              <option>Beaumont</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="eq-location">Emplacement</label>
-            <input id="eq-location" placeholder="Ex : Chaufferie principale">
-          </div>
-          <div class="field">
-            <label for="eq-brand">Marque</label>
-            <input id="eq-brand" placeholder="Ex : De Dietrich">
-          </div>
-          <div class="field">
-            <label for="eq-model">Modèle</label>
-            <input id="eq-model" placeholder="Ex : GTU 130">
-          </div>
-          <div class="field">
-            <label for="eq-serial">N° de série</label>
-            <input id="eq-serial" placeholder="Ex : DD-2014-0472">
-          </div>
-          <div class="field">
-            <label for="eq-purchase">Mise en service</label>
-            <input id="eq-purchase" type="date">
-          </div>
-          <div class="field">
-            <label for="eq-warranty">Fin de garantie</label>
-            <input id="eq-warranty" type="date">
-          </div>
-          <div class="field">
-            <label for="eq-supplier">Fournisseur</label>
-            <input id="eq-supplier" placeholder="Ex : ThermoNormandie">
-          </div>
-          <div class="field full">
-            <label for="eq-notes">Notes (optionnel)</label>
-            <textarea id="eq-notes"></textarea>
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-equipment">Annuler</button>
-          <button type="submit" class="btn">Ajouter</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="list" id="equipment-list"></div>
-  </section>
-
-  <!-- ================= PROJECTS VIEW ================= -->
-  <section class="view" id="view-projects" style="display:none">
-    <div class="view-head">
-      <div class="filters" id="project-filters"></div>
-      <button class="btn" id="toggle-project-form">+ Nouveau chantier</button>
-    </div>
-
-    <div class="panel" id="project-panel">
-      <h3>Nouveau chantier</h3>
-      <form id="project-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="p-name">Nom du chantier</label>
-            <input id="p-name" required placeholder="Ex : Rénovation salles de bain – Le Moulin">
-          </div>
-          <div class="field">
-            <label for="p-site">Site</label>
-            <select id="p-site">
-              <option>Clairefontaine</option>
-              <option>Beaumont</option>
-              <option>Les deux sites</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="p-status">Statut initial</label>
-            <select id="p-status">
-              <option>À venir</option>
-              <option>En cours</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="p-start">Début</label>
-            <input id="p-start" type="date" required>
-          </div>
-          <div class="field">
-            <label for="p-end">Fin prévue</label>
-            <input id="p-end" type="date" required>
-          </div>
-          <div class="field full">
-            <label for="p-desc">Description</label>
-            <textarea id="p-desc" placeholder="Contexte, objectif du chantier"></textarea>
-          </div>
-          <div class="field full">
-            <label>Équipes impliquées</label>
-            <div class="team-check-group" id="p-teams">
-              <label class="team-check"><input type="checkbox" value="Plomberie"> Plomberie</label>
-              <label class="team-check"><input type="checkbox" value="Électricité"> Électricité</label>
-              <label class="team-check"><input type="checkbox" value="Chauffage / CVC"> Chauffage / CVC</label>
-              <label class="team-check"><input type="checkbox" value="Prestataire externe"> Prestataire externe</label>
-              <label class="team-check"><input type="checkbox" value="Direction / achats"> Direction / achats</label>
-            </div>
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-project">Annuler</button>
-          <button type="submit" class="btn">Créer le chantier</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="list" id="project-list"></div>
-  </section>
-
-  <!-- ================= TICKETS VIEW ================= -->
-  <section class="view" id="view-tickets" style="display:none">
-    <div class="view-head">
-      <div class="filters" id="ticket-filters"></div>
-      <button class="btn" id="toggle-ticket-form">+ Nouvelle demande</button>
-    </div>
-
-    <div class="panel" id="ticket-panel">
-      <h3>Nouvelle demande d'intervention</h3>
-      <form id="ticket-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="t-title">Titre de la demande</label>
-            <input id="t-title" required placeholder="Ex : Lit médicalisé bloqué">
-          </div>
-          <div class="field">
-            <label for="t-site">Site</label>
-            <select id="t-site">
-              <option>Clairefontaine</option>
-              <option>Beaumont</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="t-location">Localisation</label>
-            <input id="t-location" placeholder="Ex : Chambre 12 – L'Étang">
-          </div>
-          <div class="field">
-            <label for="t-requester">Demandeur</label>
-            <input id="t-requester" placeholder="Ex : Équipe soignante">
-          </div>
-          <div class="field">
-            <label for="t-priority">Priorité</label>
-            <select id="t-priority">
-              <option value="normale">Normale</option>
-              <option value="urgente">Urgente</option>
-              <option value="basse">Basse</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="t-date">Date souhaitée (optionnel)</label>
-            <input id="t-date" type="date">
-          </div>
-          <div class="field full">
-            <label for="t-desc">Description (facultatif)</label>
-            <textarea id="t-desc" placeholder="Précisions utiles pour l'intervention"></textarea>
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-ticket">Annuler</button>
-          <button type="submit" class="btn">Créer la demande</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="list" id="ticket-list"></div>
-  </section>
-
-  <!-- ================= CONTROLS VIEW ================= -->
-  <section class="view" id="view-controls" style="display:none">
-    <div class="view-head">
-      <div class="filters" id="control-filters"></div>
-      <button class="btn" id="toggle-control-form">+ Ajouter un contrôle</button>
-    </div>
-
-    <div class="panel" id="control-panel">
-      <h3>Nouveau contrôle réglementaire</h3>
-      <form id="control-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="c-name">Nom du contrôle</label>
-            <input id="c-name" required placeholder="Ex : Vérification portes coupe-feu">
-          </div>
-          <div class="field">
-            <label for="c-site">Site concerné</label>
-            <select id="c-site">
-              <option>Les deux sites</option>
-              <option>Clairefontaine</option>
-              <option>Beaumont</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="c-freq">Fréquence (mois)</label>
-            <input id="c-freq" type="number" min="1" max="60" value="12" required>
-          </div>
-          <div class="field full">
-            <label for="c-due">Prochaine échéance</label>
-            <input id="c-due" type="date" required>
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-control">Annuler</button>
-          <button type="submit" class="btn">Ajouter le contrôle</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="list" id="control-list"></div>
-  </section>
-
-  <!-- ================= STOCK VIEW ================= -->
-  <section class="view" id="view-stock" style="display:none">
-    <div class="view-head">
-      <div class="filters" id="stock-filters"></div>
-      <div style="display:flex;gap:8px;">
-        <button type="button" class="btn ghost" id="export-stock-csv">⬇ Exporter CSV</button>
-        <button class="btn" id="toggle-stock-form">+ Ajouter une pièce</button>
-      </div>
-    </div>
-
-    <div class="panel" id="stock-panel">
-      <h3>Nouvelle pièce en stock</h3>
-      <form id="stock-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="s-name">Nom</label>
-            <input id="s-name" required placeholder="Ex : Ampoules LED E27">
-          </div>
-          <div class="field">
-            <label for="s-category">Catégorie</label>
-            <select id="s-category">
-              <option>Visserie</option>
-              <option>Électrique</option>
-              <option>Plomberie</option>
-              <option>Consommable</option>
-              <option>Autre</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="s-site">Site</label>
-            <select id="s-site">
-              <option>Les deux sites</option>
-              <option>Clairefontaine</option>
-              <option>Beaumont</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="s-qty">Quantité actuelle</label>
-            <input id="s-qty" type="number" min="0" value="0" required>
-          </div>
-          <div class="field">
-            <label for="s-threshold">Seuil d'alerte</label>
-            <input id="s-threshold" type="number" min="0" value="5" required>
-          </div>
-          <div class="field">
-            <label for="s-unit">Unité</label>
-            <input id="s-unit" value="unité" placeholder="unité, boîte, lot, ml...">
-          </div>
-          <div class="field">
-            <label for="s-cost">Coût unitaire € (optionnel)</label>
-            <input id="s-cost" type="number" min="0" step="0.01" placeholder="0.00">
-          </div>
-          <div class="field full">
-            <label for="s-location">Emplacement (optionnel)</label>
-            <input id="s-location" placeholder="Ex : Atelier technique Clairefontaine">
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-stock">Annuler</button>
-          <button type="submit" class="btn">Ajouter la pièce</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="list" id="stock-list"></div>
-
-    <p class="subsection-title">Historique des mouvements</p>
-    <div class="list" id="stock-movements"></div>
-  </section>
-
-  <!-- ================= PROVIDERS VIEW ================= -->
-  <section class="view" id="view-providers" style="display:none">
-    <div class="view-head" style="justify-content:flex-end;">
-      <button class="btn" id="toggle-provider-form">+ Ajouter un prestataire</button>
-    </div>
-
-    <div class="panel" id="provider-panel">
-      <h3>Nouveau prestataire</h3>
-      <form id="provider-form">
-        <div class="field-grid">
-          <div class="field full">
-            <label for="pr-name">Nom de l'entreprise</label>
-            <input id="pr-name" required placeholder="Ex : Sanitaire Pro">
-          </div>
-          <div class="field">
-            <label for="pr-specialty">Spécialité</label>
-            <input id="pr-specialty" required placeholder="Ex : Plomberie / Sanitaires">
-          </div>
-          <div class="field">
-            <label for="pr-contact">Contact</label>
-            <input id="pr-contact" placeholder="Ex : Mme Bataille">
-          </div>
-          <div class="field">
-            <label for="pr-phone">Téléphone</label>
-            <input id="pr-phone" placeholder="02 35 XX XX XX">
-          </div>
-          <div class="field">
-            <label for="pr-email">Email</label>
-            <input id="pr-email" type="email" placeholder="contact@entreprise.fr">
-          </div>
-          <div class="field full">
-            <label for="pr-notes">Notes (optionnel)</label>
-            <textarea id="pr-notes" placeholder="Contrat, remarques, historique..."></textarea>
-          </div>
-        </div>
-        <div class="panel-actions">
-          <button type="button" class="btn ghost" id="cancel-provider">Annuler</button>
-          <button type="submit" class="btn">Ajouter</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="list" id="provider-list"></div>
-  </section>
-
-  <!-- ================= CALENDAR VIEW ================= -->
-  <section class="view" id="view-calendar" style="display:none">
-    <div class="cal-head">
-      <button class="cal-nav-btn" id="cal-prev">‹</button>
-      <span class="cal-title" id="cal-title"></span>
-      <button class="cal-nav-btn" id="cal-next">›</button>
-    </div>
-    <div class="legend">
-      <span><span class="sw" style="background:var(--teal)"></span>Intervention</span>
-      <span><span class="sw" style="background:var(--rust)"></span>Urgent / en retard</span>
-      <span><span class="sw" style="background:var(--amber)"></span>Échéance proche</span>
-      <span><span class="sw" style="background:var(--green)"></span>À jour / terminé</span>
-      <span><span class="sw" style="background:var(--navy)"></span>Étape de chantier</span>
-    </div>
-    <div class="cal-grid">
-      <div class="cal-weekday">Lun</div><div class="cal-weekday">Mar</div><div class="cal-weekday">Mer</div>
-      <div class="cal-weekday">Jeu</div><div class="cal-weekday">Ven</div><div class="cal-weekday">Sam</div><div class="cal-weekday">Dim</div>
-    </div>
-    <div class="cal-grid" id="cal-grid" style="margin-top:6px;"></div>
-    <div class="agenda" id="agenda"></div>
-  </section>
-
-  <datalist id="team-datalist"></datalist>
-
-</div>
-</div>
-
-<footer class="wrap">
-  Prototype non connecté à un système de production · données de démonstration propres à cette session
-</footer>
+<div id="app"></div>
 
 <script>
 (function(){
-  const STORAGE_KEY = 'residence:technique:v6';
-  let activeTab = 'today';
-  let ticketFilter = 'Tous';
-  let controlFilter = 'Tous';
-  let projectFilter = 'Tous';
-  let stockFilter = 'Tous';
-  let siteFilter = 'Tous les sites';
-  let openProjectIds = new Set([1]);
-  let pendingConversionTicketId = null;
-  let assignPanelOpen = { cal:false, today:false };
-
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  function iso(d){
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    return `${y}-${m}-${day}`;
-  }
-  function fmtDate(dateStr){
-    const [y,m,d] = dateStr.split('-').map(Number);
-    return new Date(y, m-1, d).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' });
-  }
-  function daysBetween(dateStr){
-    const [y,m,d] = dateStr.split('-').map(Number);
-    const target = new Date(y, m-1, d); target.setHours(0,0,0,0);
-    return Math.round((target - today) / 86400000);
-  }
-  function daysDiff(dateStr1, dateStr2){
-    const [y1,m1,d1] = dateStr1.split('-').map(Number);
-    const [y2,m2,d2] = dateStr2.split('-').map(Number);
-    const t1 = new Date(y1,m1-1,d1).getTime();
-    const t2 = new Date(y2,m2-1,d2).getTime();
-    return Math.round((t2-t1) / 86400000);
-  }
-  function addMonths(dateStr, months){
-    const [y,m,d] = dateStr.split('-').map(Number);
-    const dt = new Date(y, m-1, d);
-    dt.setMonth(dt.getMonth() + months);
-    return iso(dt);
-  }
-  function relDate(offsetDays){
-    const dt = new Date(today);
-    dt.setDate(dt.getDate() + offsetDays);
-    return iso(dt);
-  }
-  function fmtEUR(n){
-    return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
-  }
-  function escapeHtml(str){
-    const d = document.createElement('div');
-    d.textContent = str == null ? '' : str;
-    return d.innerHTML;
-  }
-  function matchesSite(site){
-    if(siteFilter === 'Tous les sites') return true;
-    return site === siteFilter || site === 'Les deux sites';
-  }
-  function statRow(label, value){
-    return `<div class="workload-row"><div class="project-name" style="font-size:14px;">${escapeHtml(label)}</div><div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600;">${escapeHtml(String(value))}</div></div>`;
-  }
-  function exportCSV(filename, headers, rows){
-    const esc = (v) => {
-      const s = String(v == null ? '' : v);
-      return /[",\n;]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
-    };
-    const lines = [headers.map(esc).join(';')].concat(rows.map(r => r.map(esc).join(';')));
-    const csv = '\uFEFF' + lines.join('\r\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  const defaultTickets = [
-    { id: 1, title: "Lit médicalisé bloqué", site: "Clairefontaine", location: "Chambre 12 – L'Étang",
-      requester: "Équipe soignante", priority: "urgente", status: "Nouveau",
-      desc: "Le bouton de réglage de hauteur ne répond plus, résidente à mobilité réduite.",
-      dateSouhaitee: "2026-08-28", createdAt: "2026-08-25", convertedProjectId: null, completedAt: null },
-    { id: 2, title: "Fuite robinetterie salle de bain", site: "Clairefontaine", location: "Chambre 45 – Le Moulin",
-      requester: "ASH", priority: "normale", status: "En cours",
-      desc: "Fuite légère sous le lavabo, seau posé en attendant l'intervention.",
-      dateSouhaitee: "2026-08-30", createdAt: "2026-08-22", convertedProjectId: null, completedAt: null },
-    { id: 3, title: "Volet roulant bloqué", site: "Clairefontaine", location: "Salon – La Clairière",
-      requester: "Équipe animation", priority: "basse", status: "Nouveau",
-      desc: "", dateSouhaitee: null, createdAt: "2026-08-26", convertedProjectId: null, completedAt: null },
-    { id: 4, title: "Contrôle chauffage avant hiver", site: "Beaumont", location: "Aile Petite Maison",
-      requester: "Direction", priority: "normale", status: "Terminé",
-      desc: "Vérification annuelle demandée en amont de la saison froide.",
-      dateSouhaitee: null, createdAt: "2026-08-10", convertedProjectId: null, completedAt: "2026-08-12" }
+  const SITES = [
+    { id: 'CLF', name: 'Clairefontaine', color: '#4F44B0' },
+    { id: 'BMT', name: 'Beaumont', color: '#3F7F94' }
   ];
 
-  const defaultControls = [
-    { id: 1, name: "Contrôle légionellose – balnéothérapie", site: "Clairefontaine", freq: 1, lastDone: "2026-07-15", nextDue: "2026-08-15" },
-    { id: 2, name: "Contrôle légionellose – réseau eau chaude", site: "Les deux sites", freq: 1, lastDone: "2026-08-05", nextDue: "2026-09-05" },
-    { id: 3, name: "Vérification ascenseurs", site: "Clairefontaine", freq: 6, lastDone: "2026-03-10", nextDue: "2026-09-10" },
-    { id: 4, name: "Vérification installation électrique", site: "Les deux sites", freq: 12, lastDone: "2025-11-20", nextDue: "2026-11-20" },
-    { id: 5, name: "Vérification désenfumage", site: "Clairefontaine", freq: 12, lastDone: "2025-08-20", nextDue: "2026-08-20" },
-    { id: 6, name: "Vérification extincteurs", site: "Beaumont", freq: 12, lastDone: "2026-01-15", nextDue: "2027-01-15" },
-    { id: 7, name: "Vérification groupe électrogène", site: "Clairefontaine", freq: 3, lastDone: "2026-06-01", nextDue: "2026-09-01" },
-    { id: 8, name: "Vérification portes coupe-feu", site: "Les deux sites", freq: 12, lastDone: "2025-10-10", nextDue: "2026-10-10" },
-    { id: 9, name: "VGP lève-personnes et lits médicalisés", site: "Beaumont", freq: 12, lastDone: "2025-07-01", nextDue: "2026-07-01" },
-    { id: 10, name: "Exercice évacuation incendie", site: "Clairefontaine", freq: 6, lastDone: "2026-02-15", nextDue: "2026-08-15" }
+  const STAFF = [
+    { id: 1, n: 'Julien Marchand', r: 'Chef d’équipe', s: 'CLF' },
+    { id: 2, n: 'Camille Roussel', r: 'Chef d’équipe', s: 'BMT' },
+    { id: 3, n: 'Karim Haddad', r: 'Agent technique', s: 'CLF' },
+    { id: 4, n: 'Nicolas Fournier', r: 'Agent technique', s: 'CLF' },
+    { id: 5, n: 'Sophie Berthier', r: 'Agent technique', s: 'CLF' },
+    { id: 6, n: 'Antoine Lefort', r: 'Agent technique', s: 'CLF' },
+    { id: 7, n: 'Claire Dumont', r: 'Agent technique', s: 'CLF' },
+    { id: 8, n: 'Mathieu Girard', r: 'Agent technique', s: 'CLF' },
+    { id: 9, n: 'Marc Delaunay', r: 'Agent technique', s: 'BMT' },
+    { id: 10, n: 'Émilie Charpentier', r: 'Agent technique', s: 'BMT' },
+    { id: 11, n: 'Rachid Benali', r: 'Agent technique', s: 'BMT' },
+    { id: 12, n: 'Isabelle Faure', r: 'Agent technique', s: 'BMT' },
+    { id: 13, n: 'Vincent Picard', r: 'Agent technique', s: 'BMT' },
+    { id: 14, n: 'Laura Simon', r: 'Agent technique', s: 'BMT' },
+    { id: 15, n: 'Thomas Bertin', r: 'Agent technique', s: 'BMT' }
   ];
 
-  const defaultProjects = [
-    {
-      id: 1, name: "Rénovation salles de bain – Le Moulin", site: "Clairefontaine", status: "En cours",
-      startDate: "2026-07-01", endDate: "2026-10-15",
-      description: "Remise aux normes PMR des salles de bain de l'aile Le Moulin : sanitaires, robinetterie et revêtements.",
-      teams: ["Plomberie", "Électricité", "Prestataire externe"],
-      steps: [
-        { id: 1, label: "Diagnostic technique", date: "2026-07-05", done: true },
-        { id: 2, label: "Commande des matériaux", date: "2026-07-20", done: true },
-        { id: 3, label: "Dépose des anciens équipements", date: "2026-09-02", done: false },
-        { id: 4, label: "Pose des sanitaires et faïence", date: "2026-09-20", done: false },
-        { id: 5, label: "Réception des travaux", date: "2026-10-15", done: false }
-      ],
-      materials: [
-        { id: 1, name: "Sanitaires PMR", qty: 6, unit: "unité", status: "Commandé", supplier: "Sanitaire Pro", unitCost: 420 },
-        { id: 2, name: "Robinetterie thermostatique", qty: 6, unit: "unité", status: "À commander", supplier: "Sanitaire Pro", unitCost: 180 },
-        { id: 3, name: "Carrelage sol antidérapant", qty: 45, unit: "m²", status: "Reçu", supplier: "CarreloNorm", unitCost: 32 },
-        { id: 4, name: "Faïence murale", qty: 60, unit: "m²", status: "À commander", supplier: "CarreloNorm", unitCost: 28 }
-      ]
-    },
-    {
-      id: 2, name: "Mise aux normes désenfumage – La Clairière", site: "Clairefontaine", status: "À venir",
-      startDate: "2026-09-15", endDate: "2026-11-30",
-      description: "Installation d'exutoires conformes suite au dernier rapport de la commission de sécurité.",
-      teams: ["Prestataire externe", "Direction / achats"],
-      steps: [
-        { id: 1, label: "Devis prestataire", date: "2026-08-10", done: true },
-        { id: 2, label: "Validation budget direction", date: "2026-09-05", done: false },
-        { id: 3, label: "Intervention prestataire", date: "2026-10-10", done: false },
-        { id: 4, label: "Contrôle de conformité", date: "2026-11-30", done: false }
-      ],
-      materials: [
-        { id: 1, name: "Exutoires de désenfumage", qty: 4, unit: "unité", status: "À commander", supplier: "Normandie Sécurité Incendie", unitCost: 1150 },
-        { id: 2, name: "Coffret de commande manuelle", qty: 1, unit: "unité", status: "À commander", supplier: "Normandie Sécurité Incendie", unitCost: 850 }
-      ]
-    },
-    {
-      id: 3, name: "Remplacement chaudière collective", site: "Beaumont", status: "En pause",
-      startDate: "2026-06-01", endDate: "2027-01-31",
-      description: "Remplacement de la chaudière collective en fin de vie par un modèle à condensation.",
-      teams: ["Chauffage / CVC", "Prestataire externe", "Direction / achats"],
-      steps: [
-        { id: 1, label: "Étude de dimensionnement", date: "2026-06-15", done: true },
-        { id: 2, label: "Choix du prestataire", date: "2026-07-10", done: true },
-        { id: 3, label: "Validation budget (en attente d'arbitrage)", date: "2026-09-30", done: false },
-        { id: 4, label: "Dépose de l'ancienne chaudière", date: "2026-11-15", done: false },
-        { id: 5, label: "Installation de la nouvelle chaudière", date: "2026-12-10", done: false }
-      ],
-      materials: [
-        { id: 1, name: "Chaudière collective gaz condensation 150kW", qty: 1, unit: "unité", status: "À commander", supplier: "ThermoNormandie", unitCost: 18500 },
-        { id: 2, name: "Kit de raccordement hydraulique", qty: 1, unit: "unité", status: "À commander", supplier: "ThermoNormandie", unitCost: 620 }
-      ]
+  const SHIFTS = {
+    matin: { s: 6, short: '06:00 – 14:00', name: 'Matin' },
+    aprem: { s: 13.5, short: '13:30 – 21:30', name: 'Après-midi' }
+  };
+
+  const STATES = {
+    done: { label: 'Terminé', bg: 'var(--done)', fg: '#ffffff' },
+    doing: { label: 'En cours', bg: 'var(--doing)', fg: 'var(--doing-ink)' },
+    todo: { label: 'À faire', bg: 'var(--todo)', fg: '#ffffff' }
+  };
+  const CYCLE = { todo: 'doing', doing: 'done', done: 'todo' };
+
+  const PRES = {
+    present: { label: 'Présent', bg: 'var(--done)', fg: '#ffffff' },
+    moved: { label: 'Autre site', bg: 'var(--doing)', fg: 'var(--doing-ink)' },
+    absent: { label: 'Absent', bg: 'var(--todo)', fg: '#ffffff' },
+    off: { label: 'Repos', bg: 'var(--neutral-wash)', fg: 'var(--text-faint)' }
+  };
+
+  const CLEAN = {
+    ok: { label: 'Propre', bg: 'var(--done)', fg: '#ffffff' },
+    soon: { label: 'À nettoyer', bg: 'var(--doing)', fg: 'var(--doing-ink)' },
+    urgent: { label: 'Urgent', bg: 'var(--todo)', fg: '#ffffff' }
+  };
+  const CLEAN_CYCLE = { ok: 'soon', soon: 'urgent', urgent: 'ok' };
+
+  const ZONES = [
+    { id: 'z1', site: 'CLF', name: 'Hall et couloirs', base: 'ok' },
+    { id: 'z2', site: 'CLF', name: 'Salle à manger', base: 'soon' },
+    { id: 'z3', site: 'CLF', name: 'Sanitaires 2e étage', base: 'urgent' },
+    { id: 'z4', site: 'BMT', name: 'Hall et couloirs', base: 'ok' },
+    { id: 'z5', site: 'BMT', name: 'Cuisine', base: 'soon' },
+    { id: 'z6', site: 'BMT', name: 'Local déchets', base: 'urgent' }
+  ];
+
+  const TASK_POOL = [
+    { t: 'Ronde de contrôle chaudière', u: '' },
+    { t: 'Remplacer les néons du couloir B', u: '' },
+    { t: 'Réparer la barre d’appui ch. 214', u: 'Urgent' },
+    { t: 'Relevé des compteurs d’eau', u: '' },
+    { t: 'Déboucher l’évier de l’office 2', u: 'Urgent' },
+    { t: 'Entretien des espaces verts', u: '' },
+    { t: 'Contrôle des issues de secours', u: '' },
+    { t: 'Monter le lit médicalisé ch. 108', u: 'Urgent' },
+    { t: 'Purger les radiateurs aile Est', u: '' },
+    { t: 'Vérifier les détecteurs de fumée', u: '' },
+    { t: 'Régler le groupe froid cuisine', u: 'Urgent' },
+    { t: 'Peinture de la salle de kiné', u: '' },
+    { t: 'Changer les filtres VMC', u: '' },
+    { t: 'Réparer le store ch. 301', u: '' }
+  ];
+
+  const WORKS = [
+    { title: 'Réfection des salles de bain — aile Est', pct: 62, site: 'CLF', who: 'Sophie Berthier', due: 'J-17', late: false },
+    { title: 'Mise aux normes électriques du sous-sol', pct: 38, site: 'BMT', who: 'Émilie Charpentier', due: 'En retard', late: true },
+    { title: 'Remplacement de la VMC cuisine', pct: 80, site: 'CLF', who: 'Antoine Lefort', due: 'J-4', late: false },
+    { title: 'Réaménagement du local technique', pct: 15, site: 'BMT', who: 'Isabelle Faure', due: 'J-31', late: false }
+  ];
+
+  const DAY = 86400000;
+  function initials(n) { return n.split(' ').map(function (p) { return p[0]; }).join('').slice(0, 2).toUpperCase(); }
+  function key(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function dayIndex(d) { return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY); }
+  function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function hourLabel(h) { return (h % 1 ? Math.floor(h) + 'h30' : h + 'h00'); }
+  function siteName(id) { return id === 'CLF' ? 'Clairefontaine' : 'Beaumont'; }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c]; }); }
+
+  const fmtDayFull = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const fmtShort = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
+  const fmtWeekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric' });
+
+  const today = startOfDay(new Date());
+  const ABSENCES = [
+    { pid: 4, kind: 'Congés payés', from: addDays(today, 2), to: addDays(today, 9) },
+    { pid: 11, kind: 'Arrêt maladie', from: addDays(today, -1), to: addDays(today, 4) },
+    { pid: 8, kind: 'Congés payés', from: addDays(today, 15), to: addDays(today, 22) },
+    { pid: 13, kind: 'Formation', from: addDays(today, 6), to: addDays(today, 7) },
+    { pid: 6, kind: 'Récupération', from: addDays(today, 3), to: addDays(today, 3) }
+  ];
+
+  const state = {
+    role: 'chef', tab: 'planning', selected: today,
+    status: {}, clean: {}, extra: {},
+    dialog: false
+  };
+
+  function absenceFor(pid, d) {
+    const t = d.getTime();
+    for (let i = 0; i < ABSENCES.length; i++) {
+      const a = ABSENCES[i];
+      if (a.pid === pid && t >= a.from.getTime() && t <= a.to.getTime()) return a;
     }
-  ];
+    return null;
+  }
 
-  const defaultStock = [
-    { id: 1, name: "Ampoules LED E27", category: "Consommable", site: "Les deux sites", qty: 34, threshold: 20, unit: "unité", unitCost: 2.5, location: "Atelier technique Clairefontaine" },
-    { id: 2, name: "Piles LR6 (AA)", category: "Consommable", site: "Les deux sites", qty: 12, threshold: 15, unit: "unité", unitCost: 0.8, location: "Atelier technique Clairefontaine" },
-    { id: 3, name: "Joints robinetterie (assortiment)", category: "Plomberie", site: "Clairefontaine", qty: 8, threshold: 10, unit: "lot", unitCost: 4, location: "Atelier technique Clairefontaine" },
-    { id: 4, name: "Disjoncteurs 16A", category: "Électrique", site: "Les deux sites", qty: 6, threshold: 4, unit: "unité", unitCost: 12, location: "Atelier technique Clairefontaine" },
-    { id: 5, name: "Visserie assortiment", category: "Visserie", site: "Les deux sites", qty: 3, threshold: 5, unit: "boîte", unitCost: 18, location: "Atelier technique Clairefontaine" },
-    { id: 6, name: "Filtres VMC", category: "Consommable", site: "Beaumont", qty: 18, threshold: 10, unit: "unité", unitCost: 15, location: "Local technique Beaumont" },
-    { id: 7, name: "Gants de protection", category: "Consommable", site: "Les deux sites", qty: 25, threshold: 15, unit: "paire", unitCost: 3, location: "Atelier technique Clairefontaine" },
-    { id: 8, name: "Tube PVC évacuation Ø100", category: "Plomberie", site: "Clairefontaine", qty: 4, threshold: 3, unit: "ml", unitCost: 6, location: "Atelier technique Clairefontaine" }
-  ];
-
-  const defaultStockMovements = [
-    { id: 1, stockItemId: 1, itemName: "Ampoules LED E27", type: "Entrée", qty: 20, date: "2026-08-05", note: "Réapprovisionnement" },
-    { id: 2, stockItemId: 2, itemName: "Piles LR6 (AA)", type: "Sortie", qty: 8, date: "2026-08-20", note: "Remplacement piles télécommandes" },
-    { id: 3, stockItemId: 3, itemName: "Joints robinetterie (assortiment)", type: "Sortie", qty: 2, date: "2026-08-22", note: "Fuite chambre 45" }
-  ];
-
-  const defaultEquipment = [
-    { id: 1, name: "Chaudière collective", category: "Chauffage / CVC", site: "Beaumont", location: "Chaufferie principale",
-      brand: "De Dietrich", model: "GTU 130", serialNumber: "DD-2014-0472", purchaseDate: "2014-03-10", warrantyEnd: "2016-03-10",
-      supplier: "ThermoNormandie", notes: "En fin de vie, remplacement prévu (voir chantier associé)." },
-    { id: 2, name: "Ascenseur bâtiment principal", category: "Ascenseur", site: "Clairefontaine", location: "Hall principal",
-      brand: "Otis", model: "GeN2", serialNumber: "OT-2011-8834", purchaseDate: "2011-06-01", warrantyEnd: "2013-06-01",
-      supplier: "Ascenseurs Rouen Services", notes: "Contrat de maintenance semestriel en cours." },
-    { id: 3, name: "Groupe électrogène", category: "Électrique", site: "Clairefontaine", location: "Local technique extérieur",
-      brand: "SDMO", model: "V440K2", serialNumber: "SD-2018-1102", purchaseDate: "2018-09-15", warrantyEnd: "2020-09-15",
-      supplier: "GroupElec Services", notes: "" },
-    { id: 4, name: "Système de désenfumage — La Clairière", category: "Sécurité incendie", site: "Clairefontaine", location: "Bâtiment La Clairière",
-      brand: "Normandie Sécurité Incendie", model: "Exutoires série E4", serialNumber: "NSI-2015-330", purchaseDate: "2015-01-20", warrantyEnd: "2017-01-20",
-      supplier: "Normandie Sécurité Incendie", notes: "Mise aux normes en cours (voir chantier associé)." },
-    { id: 5, name: "Lève-personne mobile", category: "Mobilier médical", site: "Clairefontaine", location: "Aile Le Moulin",
-      brand: "Arjo", model: "Maxi Move", serialNumber: "ARJ-2019-556", purchaseDate: "2019-05-12", warrantyEnd: "2021-05-12",
-      supplier: "Sanitaire Pro", notes: "" },
-    { id: 6, name: "Adoucisseur d'eau", category: "Plomberie", site: "Beaumont", location: "Local technique",
-      brand: "Culligan", model: "Aquaset SF", serialNumber: "CUL-2020-771", purchaseDate: "2020-02-28", warrantyEnd: "2022-02-28",
-      supplier: "ThermoNormandie", notes: "" }
-  ];
-
-  const defaultTeam = [
-    { id: 1, name: "Julien Marchand", trade: "Plomberie", site: "Clairefontaine", phone: "06 14 82 35 09", active: true },
-    { id: 2, name: "Karim Haddad", trade: "Électricité", site: "Clairefontaine", phone: "06 27 91 44 58", active: true },
-    { id: 3, name: "Nicolas Fournier", trade: "Chauffage / CVC", site: "Les deux sites", phone: "06 33 05 78 12", active: true },
-    { id: 4, name: "Marc Delaunay", trade: "Agent polyvalent", site: "Beaumont", phone: "06 50 22 18 44", active: true }
-  ];
-
-  const defaultAssignments = [
-    { id: 1, date: relDate(0), member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
-      task: "Pose des sanitaires et de la faïence – salles de bain Le Moulin", linkedProjectId: 1, linkedTicketId: null, status: "En cours" },
-    { id: 2, date: relDate(0), member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
-      horaireStart: "13:00", horaireEnd: "15:00", phone: "06 14 82 35 09",
-      task: "Remplacement des joints de robinetterie – Chambre 12 (L'Étang)", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 3, date: relDate(2), member: "Julien Marchand", team: "Plomberie", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 14 82 35 09",
-      task: "Fuite robinetterie – Chambre 45 (Le Moulin)", linkedProjectId: null, linkedTicketId: 2, status: "À faire" },
-    { id: 4, date: relDate(0), member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 27 91 44 58",
-      task: "Remplacement d'un disjoncteur défectueux – tableau général", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 5, date: relDate(0), member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
-      horaireStart: "13:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
-      task: "Diagnostic volet roulant électrique – Salon La Clairière", linkedProjectId: null, linkedTicketId: 3, status: "À faire" },
-    { id: 6, date: relDate(3), member: "Karim Haddad", team: "Électricité", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 27 91 44 58",
-      task: "Vérification tableau électrique – aile La Clairière", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 7, date: relDate(0), member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
-      horaireStart: "08:00", horaireEnd: "12:00", phone: "06 50 22 18 44",
-      task: "Relevés avant dépose – chaudière collective", linkedProjectId: 3, linkedTicketId: null, status: "À faire" },
-    { id: 8, date: relDate(0), member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
-      horaireStart: "13:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
-      task: "Entretien des espaces extérieurs – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 9, date: relDate(4), member: "Marc Delaunay", team: "Agent polyvalent", site: "Beaumont",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 50 22 18 44",
-      task: "Vérification chauffage – aile Petite Maison", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 10, date: relDate(5), member: "Nicolas Fournier", team: "Chauffage / CVC", site: "Clairefontaine",
-      horaireStart: "08:00", horaireEnd: "16:00", phone: "06 33 05 78 12",
-      task: "Vérification du groupe électrogène", linkedProjectId: null, linkedTicketId: null, status: "À faire" },
-    { id: 11, date: relDate(10), member: "M. Petit (Normandie Sécurité Incendie)", team: "Prestataire externe", site: "Clairefontaine",
-      horaireStart: "09:00", horaireEnd: "12:00", phone: "06 45 60 12 78",
-      task: "Intervention désenfumage – La Clairière", linkedProjectId: 2, linkedTicketId: null, status: "À faire" }
-  ];
-
-  const defaultLeaves = [
-    { id: 1, memberId: 3, start: relDate(-1), end: relDate(3), reason: "Congés" }
-  ];
-
-  const defaultProviders = [
-    { id: 1, name: "Sanitaire Pro", specialty: "Plomberie / Sanitaires", contact: "Mme Bataille", phone: "02 35 08 41 27", email: "contact@sanitaire-pro.fr", notes: "Fournisseur habituel pour les rénovations de salles de bain." },
-    { id: 2, name: "CarreloNorm", specialty: "Revêtements sol / mur", contact: "M. Duval", phone: "02 35 08 55 63", email: "commandes@carrelonorm.fr", notes: "" },
-    { id: 3, name: "Normandie Sécurité Incendie", specialty: "Désenfumage / Sécurité incendie", contact: "M. Petit", phone: "02 35 12 09 84", email: "contact@nsi-securite.fr", notes: "Intervient aussi pour les exercices d'évacuation." },
-    { id: 4, name: "ThermoNormandie", specialty: "Chauffage / CVC", contact: "Mme Lefebvre", phone: "02 35 44 21 06", email: "contact@thermonormandie.fr", notes: "" },
-    { id: 5, name: "Ascenseurs Rouen Services", specialty: "Ascenseurs", contact: "M. Girard", phone: "02 35 60 17 92", email: "sav@ars-ascenseurs.fr", notes: "Contrat de maintenance semestriel." }
-  ];
-
-  let data = { tickets: [], controls: [], projects: [], stock: [], stockMovements: [], assignments: [], providers: [], team: [], equipment: [], history: [], leaves: [], currentProfileId: null };
-
-  async function loadData(){
-    try{
-      const res = await window.storage.get(STORAGE_KEY, false);
-      if(res && res.value){
-        data = JSON.parse(res.value);
-        if(!data.leaves) data.leaves = [];
-      } else {
-        data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock,
-                  stockMovements: defaultStockMovements, assignments: defaultAssignments, providers: defaultProviders,
-                  team: defaultTeam, equipment: defaultEquipment, history: [], leaves: defaultLeaves, currentProfileId: null };
-        await saveData();
+  function roster(d) {
+    const di = dayIndex(d);
+    const dow = d.getDay();
+    const weekend = dow === 0 || dow === 6;
+    return STAFF.map(function (p, i) {
+      const abs = absenceFor(p.id, d);
+      let shift = null;
+      const r = (i * 2 + di) % 5;
+      if (!abs) {
+        if (weekend) shift = r === 0 ? 'matin' : (r === 1 ? 'aprem' : null);
+        else shift = r < 2 ? 'matin' : (r < 4 ? 'aprem' : null);
       }
-    }catch(e){
-      data = { tickets: defaultTickets, controls: defaultControls, projects: defaultProjects, stock: defaultStock,
-                stockMovements: defaultStockMovements, assignments: defaultAssignments, providers: defaultProviders,
-                team: defaultTeam, equipment: defaultEquipment, history: [], leaves: defaultLeaves, currentProfileId: null };
-      try{ await saveData(); }catch(e2){ console.error('Storage init failed', e2); }
-    }
-    renderApp();
-  }
-  async function saveData(){
-    try{ await window.storage.set(STORAGE_KEY, JSON.stringify(data), false); }
-    catch(e){ console.error('Storage save failed', e); }
-  }
-
-  function controlStatus(nextDue){
-    const d = daysBetween(nextDue);
-    if(d < 0) return 'overdue';
-    if(d <= 30) return 'soon';
-    return 'ok';
-  }
-  function controlStatusLabel(nextDue){
-    const d = daysBetween(nextDue);
-    if(d < 0) return `En retard de ${Math.abs(d)} j`;
-    if(d === 0) return `Échéance aujourd'hui`;
-    if(d <= 30) return `Dans ${d} j`;
-    return `À jour`;
-  }
-
-  function leaveOnDay(memberId, dateStr){
-    return data.leaves.find(l => l.memberId === memberId && l.start <= dateStr && dateStr <= l.end);
-  }
-
-  /* ---------------- Top-level mode router ---------------- */
-  function renderApp(){
-    document.getElementById('profile-picker-screen').style.display = 'none';
-    document.getElementById('manager-app').style.display = 'none';
-    document.getElementById('worker-app').style.display = 'none';
-
-    if(!data.currentProfileId){
-      document.getElementById('profile-picker-screen').style.display = '';
-      renderPicker();
-    } else if(data.currentProfileId === 'manager'){
-      document.getElementById('manager-app').style.display = '';
-      renderManagerApp();
-    } else {
-      const member = data.team.find(m => m.id === data.currentProfileId);
-      if(!member){ data.currentProfileId = null; renderApp(); return; }
-      document.getElementById('worker-app').style.display = '';
-      renderWorkerApp();
-    }
-  }
-
-  function renderPicker(){
-    const todayStr = iso(today);
-    document.getElementById('picker-team-list').innerHTML = data.team.filter(m=>m.active).map(m => {
-      const leave = leaveOnDay(m.id, todayStr);
-      const leaveTag = leave ? `<br><span class="leave-tag">En congé jusqu'au ${fmtDate(leave.end)}</span>` : '';
-      return `
-      <button type="button" class="picker-option" data-pick-profile="${m.id}">
-        <span><span class="pname">${escapeHtml(m.name)}</span><br><span class="ptrade">${escapeHtml(m.trade)} · ${escapeHtml(m.site)}</span>${leaveTag}</span>
-        <span class="chevron">›</span>
-      </button>`;
-    }).join('');
-  }
-
-  /* ---------------- Gauge & KPIs (manager) ---------------- */
-  function renderGauge(){
-    const controls = data.controls.filter(c => matchesSite(c.site));
-    const total = controls.length || 1;
-    const overdue = controls.filter(c => controlStatus(c.nextDue) === 'overdue').length;
-    const pct = Math.round(((total - overdue) / total) * 100);
-    let color = 'var(--green)';
-    if(pct < 60) color = 'var(--rust)';
-    else if(pct < 85) color = 'var(--amber)';
-
-    const r = 78, cx = 100, cy = 96;
-    const circumference = Math.PI * r;
-    const filled = circumference * (pct/100);
-
-    document.getElementById('gauge-svg').innerHTML = `
-      <svg viewBox="0 0 200 110" width="180" height="99">
-        <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="#E4E7E1" stroke-width="14" stroke-linecap="round"/>
-        <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"
-              stroke-dasharray="${filled} ${circumference}"/>
-      </svg>`;
-    document.getElementById('gauge-value').textContent = pct + '%';
-    document.getElementById('gauge-value').style.color = color;
-  }
-
-  function renderKpis(){
-    const projects = data.projects.filter(p => matchesSite(p.site));
-    const tickets = data.tickets.filter(t => matchesSite(t.site));
-    const controls = data.controls.filter(c => matchesSite(c.site));
-    const stock = data.stock.filter(s => matchesSite(s.site));
-    const todayStr = iso(today);
-    const onFieldToday = data.assignments.filter(a => a.date === todayStr && matchesSite(a.site) && a.status !== 'Terminé').length;
-
-    const activeProjects = projects.filter(p => p.status === 'En cours').length;
-    const openTickets = tickets.filter(t => t.status !== 'Terminé').length;
-    const overdueControls = controls.filter(c => controlStatus(c.nextDue) === 'overdue').length;
-    const lowStock = stock.filter(s => s.qty <= s.threshold).length;
-    const totalBudget = projects.reduce((sum,p) => sum + p.materials.reduce((s,m)=>s+m.qty*m.unitCost,0), 0);
-
-    document.getElementById('kpi-row').innerHTML = `
-      <div class="kpi tone-teal"><div class="num">${onFieldToday}</div><div class="lbl">Équipes sur le terrain aujourd'hui</div></div>
-      <div class="kpi tone-teal"><div class="num">${activeProjects}</div><div class="lbl">Chantiers en cours</div></div>
-      <div class="kpi tone-teal"><div class="num">${openTickets}</div><div class="lbl">Interventions ouvertes</div></div>
-      <div class="kpi tone-rust"><div class="num">${overdueControls}</div><div class="lbl">Contrôles en retard</div></div>
-      <div class="kpi tone-rust"><div class="num">${lowStock}</div><div class="lbl">Pièces en stock bas</div></div>
-      <div class="kpi tone-amber"><div class="num">${fmtEUR(totalBudget)}</div><div class="lbl">Budget matériaux engagé</div></div>
-    `;
-  }
-
-  function renderTodayTabBadge(){
-    const todayStr = iso(today);
-    const count = data.assignments.filter(a => a.date === todayStr && matchesSite(a.site) && a.status !== 'Terminé').length;
-    const btn = document.querySelector('nav.tabs button[data-tab="today"]');
-    if(!btn) return;
-    btn.innerHTML = count > 0 ? `Aujourd'hui <span class="tab-badge">${count}</span>` : `Aujourd'hui`;
-  }
-
-  /* ---------------- Dashboard ---------------- */
-  function renderDashboardConformity(){
-    const controls = data.controls.filter(c=>matchesSite(c.site));
-    const total = controls.length || 1;
-    const overdue = controls.filter(c=>controlStatus(c.nextDue)==='overdue').length;
-    const soon = controls.filter(c=>controlStatus(c.nextDue)==='soon').length;
-    const ok = controls.length - overdue - soon;
-    const pct = Math.round(((total-overdue)/total)*100);
-    document.getElementById('dash-compliance').innerHTML =
-      statRow('Taux de conformité (non en retard)', pct+'%') +
-      statRow('Contrôles à jour', ok) +
-      statRow('Contrôles bientôt dus (moins de 30 j)', soon) +
-      statRow('Contrôles en retard', overdue);
-  }
-  function renderDashboardFinance(){
-    const projects = data.projects.filter(p=>matchesSite(p.site));
-    const stock = data.stock.filter(s=>matchesSite(s.site));
-    const budgetMateriaux = projects.reduce((sum,p)=>sum+p.materials.reduce((s,m)=>s+m.qty*m.unitCost,0),0);
-    const valeurStock = stock.reduce((sum,s)=>sum+(s.qty*(s.unitCost||0)),0);
-    document.getElementById('dash-finance').innerHTML =
-      statRow('Budget matériaux engagé (chantiers)', fmtEUR(budgetMateriaux)) +
-      statRow('Valeur du stock en magasin', fmtEUR(valeurStock)) +
-      statRow('Total immobilisé', fmtEUR(budgetMateriaux+valeurStock));
-  }
-  function renderDashboardTickets(){
-    const tickets = data.tickets.filter(t=>matchesSite(t.site));
-    const byStatus = { 'Nouveau':0,'En cours':0,'Terminé':0 };
-    let urgentCount = 0, totalDelay = 0, countDelay = 0;
-    tickets.forEach(t=>{
-      byStatus[t.status] = (byStatus[t.status]||0)+1;
-      if(t.priority==='urgente') urgentCount++;
-      if(t.completedAt){ totalDelay += daysDiff(t.createdAt, t.completedAt); countDelay++; }
+      const lent = !!shift && (i + di) % 5 === 4;
+      return { p: p, shift: shift, abs: abs, site: lent ? (p.s === 'CLF' ? 'BMT' : 'CLF') : p.s, lent: lent };
     });
-    const avgDelay = countDelay>0 ? Math.round((totalDelay/countDelay)*10)/10 : null;
-    document.getElementById('dash-tickets').innerHTML =
-      statRow('Total interventions', tickets.length) +
-      statRow('Nouveau', byStatus['Nouveau']) +
-      statRow('En cours', byStatus['En cours']) +
-      statRow('Terminé', byStatus['Terminé']) +
-      statRow('Dont urgentes', urgentCount) +
-      statRow('Délai moyen de traitement', avgDelay!=null ? avgDelay+' j' : '—');
-  }
-  function renderDashboardProjects(){
-    const projects = data.projects.filter(p=>matchesSite(p.site));
-    const byStatus = { 'À venir':0,'En cours':0,'En pause':0,'Terminé':0 };
-    projects.forEach(p=> byStatus[p.status] = (byStatus[p.status]||0)+1 );
-    document.getElementById('dash-projects').innerHTML =
-      statRow('Total chantiers', projects.length) +
-      statRow('À venir', byStatus['À venir']) +
-      statRow('En cours', byStatus['En cours']) +
-      statRow('En pause', byStatus['En pause']) +
-      statRow('Terminé', byStatus['Terminé']);
-  }
-  function renderDashboardTeam(){
-    const cutoff = new Date(today); cutoff.setDate(cutoff.getDate()-7);
-    const cutoffStr = iso(cutoff);
-    const recent = data.history.filter(h => h.completedAt >= cutoffStr);
-    const byMember = {};
-    recent.forEach(h => { byMember[h.member] = (byMember[h.member]||0)+1; });
-    const rows = Object.keys(byMember).sort((a,b)=>byMember[b]-byMember[a]).map(m=>statRow(m, byMember[m]+' tâche(s)')).join('');
-    document.getElementById('dash-team').innerHTML =
-      statRow('Tâches terminées (7 derniers jours)', recent.length) +
-      (rows || `<div class="empty">Aucune tâche terminée sur la période.</div>`);
-  }
-  function renderDashboard(){
-    renderDashboardConformity();
-    renderDashboardFinance();
-    renderDashboardTickets();
-    renderDashboardProjects();
-    renderDashboardTeam();
   }
 
-  /* ---------------- Tickets ---------------- */
-  const statusCycle = { 'Nouveau': 'En cours', 'En cours': 'Terminé', 'Terminé': 'Nouveau' };
-  const statusClass = { 'Nouveau': 's-nouveau', 'En cours': 's-encours', 'Terminé': 's-termine' };
-
-  function renderTicketFilters(){
-    const scoped = data.tickets.filter(t => matchesSite(t.site));
-    const counts = { Tous: scoped.length };
-    ['Nouveau','En cours','Terminé'].forEach(s => counts[s] = scoped.filter(t=>t.status===s).length);
-    document.getElementById('ticket-filters').innerHTML = Object.keys(counts).map(f =>
-      `<button class="chip ${f===ticketFilter?'active':''}" data-filter="${f}">${f} (${counts[f]})</button>`
-    ).join('');
-  }
-  function renderTickets(){
-    const list = document.getElementById('ticket-list');
-    const items = data.tickets.filter(t => matchesSite(t.site) && (ticketFilter === 'Tous' || t.status === ticketFilter))
-      .sort((a,b) => (a.createdAt < b.createdAt ? 1 : -1));
-    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucune demande dans ce filtre pour le moment.</div>`; return; }
-    list.innerHTML = items.map(t => {
-      const statusBadge = t.convertedProjectId
-        ? `<span class="badge s-termine">Converti en chantier</span>`
-        : `<button class="badge ${statusClass[t.status]}" data-cycle-ticket="${t.id}" title="Cliquer pour changer le statut">${t.status}</button>`;
-      const convertBtn = t.convertedProjectId
-        ? `<button type="button" class="mini-btn" data-goto-project="${t.convertedProjectId}">Voir le chantier →</button>`
-        : `<button type="button" class="mini-btn" data-convert-ticket="${t.id}">→ Créer un chantier</button>`;
-      return `
-      <div class="card p-${t.priority}">
-        <div class="main">
-          <p class="title">${escapeHtml(t.title)}</p>
-          <p class="meta">${escapeHtml(t.site)} · ${escapeHtml(t.location || 'Lieu non précisé')} · demandé par ${escapeHtml(t.requester || '—')} · <span class="prio-tag">priorité ${t.priority}</span>${t.dateSouhaitee ? ` · souhaité le ${fmtDate(t.dateSouhaitee)}` : ''}</p>
-          ${t.desc ? `<p class="desc">${escapeHtml(t.desc)}</p>` : ''}
-        </div>
-        <div class="side">
-          ${statusBadge}
-          ${convertBtn}
-          <button class="icon-x" data-del-ticket="${t.id}" title="Supprimer">×</button>
-        </div>
-      </div>`;
-    }).join('');
+  function baseState(d, seed) {
+    const diff = Math.round((d.getTime() - today.getTime()) / DAY);
+    if (diff < 0) return seed % 6 === 0 ? 'doing' : 'done';
+    if (diff === 0) return seed % 3 === 0 ? 'done' : (seed % 3 === 1 ? 'doing' : 'todo');
+    return seed % 7 === 0 ? 'doing' : 'todo';
   }
 
-  /* ---------------- Controls ---------------- */
-  function renderControlFilters(){
-    const scoped = data.controls.filter(c => matchesSite(c.site));
-    const counts = { Tous: scoped.length, 'En retard': 0, 'Bientôt': 0, 'À jour': 0 };
-    scoped.forEach(c => {
-      const s = controlStatus(c.nextDue);
-      if(s === 'overdue') counts['En retard']++; else if(s === 'soon') counts['Bientôt']++; else counts['À jour']++;
-    });
-    document.getElementById('control-filters').innerHTML = Object.keys(counts).map(f =>
-      `<button class="chip ${f===controlFilter?'active':''}" data-cfilter="${f}">${f} (${counts[f]})</button>`
-    ).join('');
-  }
-  function renderControls(){
-    const list = document.getElementById('control-list');
-    const statusMap = { overdue: 'En retard', soon: 'Bientôt', ok: 'À jour' };
-    const items = data.controls.filter(c => matchesSite(c.site) && (controlFilter === 'Tous' || statusMap[controlStatus(c.nextDue)] === controlFilter))
-      .sort((a,b) => new Date(a.nextDue) - new Date(b.nextDue));
-    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun contrôle dans ce filtre pour le moment.</div>`; return; }
-    list.innerHTML = items.map(c => {
-      const st = controlStatus(c.nextDue);
-      const stClass = { overdue: 'c-overdue', soon: 'c-soon', ok: 'c-ok' }[st];
-      return `
-      <div class="ctrl-row">
-        <div>
-          <div class="name">${escapeHtml(c.name)}</div>
-          <div class="tags">${escapeHtml(c.site)} · tous les ${c.freq} mois</div>
-        </div>
-        <div class="due-date">Échéance ${fmtDate(c.nextDue)}</div>
-        <div class="status-pill ${stClass}">${controlStatusLabel(c.nextDue)}</div>
-        <button class="mini-btn" data-done-control="${c.id}">Marquer comme fait</button>
-        <button class="icon-x" data-del-control="${c.id}" title="Supprimer">×</button>
-      </div>`;
-    }).join('');
-  }
-
-  /* ---------------- Stock ---------------- */
-  function renderStockFilters(){
-    const scoped = data.stock.filter(s => matchesSite(s.site));
-    const low = scoped.filter(s => s.qty <= s.threshold).length;
-    const counts = { Tous: scoped.length, 'Stock bas': low, 'OK': scoped.length - low };
-    document.getElementById('stock-filters').innerHTML = Object.keys(counts).map(f =>
-      `<button class="chip ${f===stockFilter?'active':''}" data-sfilter="${f}">${f} (${counts[f]})</button>`
-    ).join('');
-  }
-  function renderStock(){
-    const list = document.getElementById('stock-list');
-    let items = data.stock.filter(s => matchesSite(s.site));
-    if(stockFilter === 'Stock bas') items = items.filter(s => s.qty <= s.threshold);
-    else if(stockFilter === 'OK') items = items.filter(s => s.qty > s.threshold);
-    items = items.slice().sort((a,b) => (a.qty - a.threshold) - (b.qty - b.threshold));
-    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucune pièce dans ce filtre.</div>`; return; }
-    list.innerHTML = items.map(s => {
-      const low = s.qty <= s.threshold;
-      const valLine = (s.unitCost && s.unitCost>0) ? ` · valeur ${fmtEUR(s.qty*s.unitCost)}` : '';
-      return `
-      <div class="ctrl-row stock-row">
-        <div>
-          <div class="name">${escapeHtml(s.name)}</div>
-          <div class="tags">${escapeHtml(s.category)} · ${escapeHtml(s.site)}${s.location ? ' · '+escapeHtml(s.location) : ''} · seuil ${s.threshold}${valLine}</div>
-        </div>
-        <div class="qty-adjust">
-          <button type="button" class="mini-btn" data-stock-dec="${s.id}">−</button>
-          <span class="qty-val">${s.qty} ${escapeHtml(s.unit)}</span>
-          <button type="button" class="mini-btn" data-stock-inc="${s.id}">+</button>
-        </div>
-        <div class="status-pill ${low?'c-overdue':'c-ok'}">${low?'Stock bas':'OK'}</div>
-        <button class="icon-x" data-del-stock="${s.id}" title="Supprimer">×</button>
-      </div>`;
-    }).join('');
-  }
-  function renderStockMovements(){
-    const box = document.getElementById('stock-movements');
-    const items = data.stockMovements.slice().sort((a,b)=> (b.date.localeCompare(a.date)) || (b.id-a.id)).slice(0,20);
-    if(items.length === 0){ box.innerHTML = `<div class="empty">Aucun mouvement enregistré.</div>`; return; }
-    box.innerHTML = items.map(m => `
-      <div class="mini-project-row">
-        <div>
-          <strong>${m.type==='Entrée'?'+':'−'}${m.qty}</strong> — ${escapeHtml(m.itemName)}
-          <div class="assign-meta">${escapeHtml(m.type)} · ${fmtDate(m.date)}${m.note ? ' · '+escapeHtml(m.note) : ''}</div>
-        </div>
-      </div>`).join('');
-  }
-
-  /* ---------------- Equipment ---------------- */
-  function renderEquipment(){
-    const list = document.getElementById('equipment-list');
-    const items = data.equipment.filter(e => matchesSite(e.site)).slice().sort((a,b)=>a.name.localeCompare(b.name));
-    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun équipement enregistré.</div>`; return; }
-    list.innerHTML = items.map(e => `
-      <div class="provider-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-          <div>
-            <p class="provider-name">${escapeHtml(e.name)}</p>
-            <span class="provider-specialty">${escapeHtml(e.category)}</span>
-            <p class="provider-contact">${escapeHtml(e.site)}${e.location ? ' · '+escapeHtml(e.location) : ''}</p>
-            ${(e.brand || e.model) ? `<p class="provider-contact">${escapeHtml(e.brand||'')} ${escapeHtml(e.model||'')}${e.serialNumber ? ' · n° série '+escapeHtml(e.serialNumber) : ''}</p>` : ''}
-            ${e.purchaseDate ? `<p class="provider-contact">Mise en service : ${fmtDate(e.purchaseDate)}${e.warrantyEnd ? (' · Garantie jusqu\'au ' + fmtDate(e.warrantyEnd)) : ''}</p>` : ''}
-            ${e.supplier ? `<p class="provider-contact">Fournisseur : ${escapeHtml(e.supplier)}</p>` : ''}
-            ${e.notes ? `<p class="provider-notes">${escapeHtml(e.notes)}</p>` : ''}
-          </div>
-          <button class="icon-x" data-del-equipment="${e.id}" title="Supprimer">×</button>
-        </div>
-      </div>`).join('');
-  }
-
-  /* ---------------- Providers ---------------- */
-  function renderProviders(){
-    const list = document.getElementById('provider-list');
-    const items = data.providers.slice().sort((a,b)=>a.name.localeCompare(b.name));
-    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun prestataire enregistré.</div>`; return; }
-    list.innerHTML = items.map(p => `
-      <div class="provider-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-          <div>
-            <p class="provider-name">${escapeHtml(p.name)}</p>
-            <span class="provider-specialty">${escapeHtml(p.specialty)}</span>
-            <p class="provider-contact">${escapeHtml(p.contact || '—')}${p.phone ? ` · <a href="tel:${escapeHtml(p.phone.replace(/\s/g,''))}">${escapeHtml(p.phone)}</a>` : ''}${p.email ? ` · <a href="mailto:${escapeHtml(p.email)}">${escapeHtml(p.email)}</a>` : ''}</p>
-            ${p.notes ? `<p class="provider-notes">${escapeHtml(p.notes)}</p>` : ''}
-          </div>
-          <button class="icon-x" data-del-provider="${p.id}" title="Supprimer">×</button>
-        </div>
-      </div>`).join('');
-  }
-
-  /* ---------------- Team (manager) ---------------- */
-  function renderTeamDatalist(){
-    document.getElementById('team-datalist').innerHTML = data.team.map(m=>`<option value="${escapeHtml(m.name)}"></option>`).join('');
-  }
-  function renderTeamWorkload(){
-    const todayStr = iso(today);
-    const box = document.getElementById('team-workload');
-    const members = data.team.filter(m=>m.active && matchesSite(m.site));
-    if(members.length === 0){ box.innerHTML = `<div class="empty">Aucun membre enregistré.</div>`; return; }
-    box.innerHTML = members.map(m => {
-      const leave = leaveOnDay(m.id, todayStr);
-      const activeTasks = data.assignments.filter(a=>a.member===m.name && a.date===todayStr && a.status!=='Terminé');
-      const doneTasks = data.assignments.filter(a=>a.member===m.name && a.date===todayStr && a.status==='Terminé');
-      let statusLabel, statusCls, subLine = '';
-      if(leave){ statusLabel = 'En congé'; statusCls = 's-conge'; subLine = `Jusqu'au ${fmtDate(leave.end)}`; }
-      else if(activeTasks.length > 0){ statusLabel = activeTasks[0].status; statusCls = statusClass[activeTasks[0].status]; subLine = activeTasks[0].task; }
-      else if(doneTasks.length > 0){ statusLabel = 'Terminé'; statusCls = 's-termine'; subLine = 'Tâches du jour terminées'; }
-      else { statusLabel = 'Disponible'; statusCls = 's-nouveau'; subLine = "Non affecté aujourd'hui"; }
-      return `
-        <div class="workload-row">
-          <div>
-            <p class="project-name" style="font-size:14.5px;">${escapeHtml(m.name)}</p>
-            <p class="project-meta">${escapeHtml(m.trade)} · ${escapeHtml(m.site)}</p>
-          </div>
-          <div style="text-align:right;">
-            <span class="badge ${statusCls}" style="cursor:default;">${escapeHtml(statusLabel)}</span>
-            <div class="assign-meta" style="margin-top:4px;">${escapeHtml(subLine)}</div>
-          </div>
-        </div>`;
-    }).join('');
-  }
-  function renderTeamList(){
-    const box = document.getElementById('team-list');
-    const members = data.team.slice().sort((a,b)=>a.name.localeCompare(b.name));
-    if(members.length === 0){ box.innerHTML = `<div class="empty">Aucun membre enregistré.</div>`; return; }
-    box.innerHTML = members.map(m => `
-      <div class="provider-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-          <div>
-            <p class="provider-name">${escapeHtml(m.name)}</p>
-            <span class="provider-specialty">${escapeHtml(m.trade)}</span>
-            <p class="provider-contact">${escapeHtml(m.site)}${m.phone ? ` · <a href="tel:${escapeHtml(m.phone.replace(/\s/g,''))}">${escapeHtml(m.phone)}</a>` : ''}</p>
-          </div>
-          <button class="icon-x" data-del-team="${m.id}" title="Retirer">×</button>
-        </div>
-      </div>`).join('');
-  }
-  function renderTeamHistory(){
-    const box = document.getElementById('team-history');
-    const items = data.history.slice().sort((a,b)=> (b.completedAt.localeCompare(a.completedAt)) || (b.id-a.id)).slice(0,15);
-    if(items.length === 0){ box.innerHTML = `<div class="empty">Aucune tâche terminée pour le moment.</div>`; return; }
-    box.innerHTML = items.map(h => `
-      <div class="mini-project-row">
-        <div>
-          <strong>${escapeHtml(h.member)}</strong> — ${escapeHtml(h.task)}
-          <div class="assign-meta">${escapeHtml(h.team)} · terminé le ${fmtDate(h.completedAt)}</div>
-        </div>
-      </div>`).join('');
-  }
-  function renderTeamLeaves(){
-    const memberSelect = document.getElementById('lv-member');
-    memberSelect.innerHTML = data.team.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
-
-    const box = document.getElementById('team-leaves');
-    const todayStr = iso(today);
-    const items = data.leaves.filter(l => l.end >= todayStr).slice().sort((a,b)=> a.start.localeCompare(b.start));
-    if(items.length === 0){ box.innerHTML = `<div class="empty">Aucun congé en cours ou à venir.</div>`; return; }
-    box.innerHTML = items.map(l => {
-      const m = data.team.find(x=>x.id===l.memberId);
-      return `
-      <div class="mini-project-row">
-        <div>
-          <strong>${escapeHtml(m ? m.name : 'Ancien membre')}</strong> <span class="badge s-conge" style="cursor:default;">Congé</span>
-          <div class="assign-meta">${fmtDate(l.start)} → ${fmtDate(l.end)}${l.reason ? ' · ' + escapeHtml(l.reason) : ''}</div>
-        </div>
-        <button class="icon-x" data-del-leave="${l.id}" title="Supprimer">×</button>
-      </div>`;
-    }).join('');
-  }
-  function renderTeamTab(){ renderTeamWorkload(); renderTeamList(); renderTeamLeaves(); renderTeamHistory(); }
-
-  /* ---------------- Projects ---------------- */
-  const projStatusClass = { 'À venir':'proj-avenir', 'En cours':'proj-encours', 'En pause':'proj-pause', 'Terminé':'proj-termine' };
-  const matStatusClass = { 'À commander':'mat-acommander', 'Commandé':'mat-commande', 'Reçu':'mat-recu' };
-  const matStatusCycle = { 'À commander':'Commandé', 'Commandé':'Reçu', 'Reçu':'À commander' };
-
-  function teamBadgeHtml(teams){ return teams.map(t=>`<span class="team-pill">${escapeHtml(t)}</span>`).join(''); }
-
-  function projectOptionsHtml(){
-    return '<option value="">—</option>' + data.projects.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
-  }
-  function projectsActiveOnDay(dateStr){
-    return data.projects.filter(p => matchesSite(p.site) && p.startDate <= dateStr && dateStr <= p.endDate);
-  }
-
-  function stepsHtml(p){
-    if(p.steps.length === 0) return `<p class="empty" style="padding:14px;">Aucune étape définie pour ce chantier.</p>`;
-    return p.steps.slice().sort((a,b)=> new Date(a.date)-new Date(b.date)).map(s => `
-      <div class="step-row ${s.done?'done':''}">
-        <button class="step-check ${s.done?'checked':''}" data-toggle-step="${p.id}|${s.id}">${s.done?'✓':''}</button>
-        <span class="step-label">${escapeHtml(s.label)}</span>
-        <span class="step-date">${fmtDate(s.date)}</span>
-        <button class="icon-x" data-del-step="${p.id}|${s.id}" title="Supprimer">×</button>
-      </div>`).join('');
-  }
-
-  function materialsHtml(p){
-    if(p.materials.length === 0) return `<p class="empty" style="padding:14px;">Aucun matériau renseigné pour ce chantier.</p>`;
-    const rows = p.materials.map(m => {
-      const total = m.qty * m.unitCost;
-      return `<tr>
-        <td>${escapeHtml(m.name)}</td>
-        <td>${m.qty} ${escapeHtml(m.unit)}</td>
-        <td><button class="mat-status ${matStatusClass[m.status]}" data-cycle-mat="${p.id}|${m.id}">${m.status}</button></td>
-        <td>${escapeHtml(m.supplier||'—')}</td>
-        <td>${fmtEUR(m.unitCost)}</td>
-        <td>${fmtEUR(total)}</td>
-        <td><button class="icon-x" data-del-mat="${p.id}|${m.id}" title="Supprimer">×</button></td>
-      </tr>`;
-    }).join('');
-    const sum = p.materials.reduce((a,m)=>a+m.qty*m.unitCost,0);
-    return `<table class="materials">
-      <thead><tr><th>Matériau</th><th>Qté</th><th>Statut</th><th>Fournisseur</th><th>Coût unit.</th><th>Coût total</th><th></th></tr></thead>
-      <tbody>${rows}<tr class="mat-total-row"><td colspan="5">Total matériaux</td><td>${fmtEUR(sum)}</td><td></td></tr></tbody>
-    </table>`;
-  }
-
-  function projectCardHtml(p){
-    const isOpen = openProjectIds.has(p.id);
-    const totalSteps = p.steps.length;
-    const doneSteps = p.steps.filter(s=>s.done).length;
-    const pct = totalSteps ? Math.round(doneSteps/totalSteps*100) : 0;
-    return `
-    <div class="project-card ${isOpen?'open':''}">
-      <div class="project-head" data-toggle-project="${p.id}">
-        <div class="project-title-block">
-          <p class="project-name">${escapeHtml(p.name)}</p>
-          <p class="project-meta">${escapeHtml(p.site)} · ${fmtDate(p.startDate)} → ${fmtDate(p.endDate)} · ${doneSteps}/${totalSteps} étapes</p>
-        </div>
-        <div class="project-right">
-          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <span class="status-pill ${projStatusClass[p.status]}">${p.status}</span>
-          <span class="chevron">›</span>
-        </div>
-      </div>
-      <div class="project-body">
-        <div class="project-inner">
-          <p class="project-desc">${escapeHtml(p.description || '')}</p>
-          <div>${teamBadgeHtml(p.teams)}</div>
-
-          <p class="subsection-title">Étapes du chantier</p>
-          <div>${stepsHtml(p)}</div>
-          <div class="add-row-form">
-            <input class="w-name" type="text" placeholder="Nouvelle étape" id="new-step-label-${p.id}">
-            <input class="w-md" type="date" id="new-step-date-${p.id}">
-            <button type="button" class="mini-btn" data-add-step="${p.id}">+ Ajouter</button>
-          </div>
-
-          <p class="subsection-title">Matériaux nécessaires</p>
-          <div>${materialsHtml(p)}</div>
-          <div class="add-row-form">
-            <input class="w-name" type="text" placeholder="Matériau" id="new-mat-name-${p.id}">
-            <input class="w-sm" type="number" min="1" value="1" placeholder="Qté" id="new-mat-qty-${p.id}">
-            <select class="w-sm" id="new-mat-unit-${p.id}">
-              <option>unité</option><option>m²</option><option>ml</option><option>kg</option><option>lot</option>
-            </select>
-            <input class="w-md" type="text" placeholder="Fournisseur" id="new-mat-supplier-${p.id}">
-            <input class="w-sm" type="number" min="0" step="0.01" placeholder="Coût unit. €" id="new-mat-cost-${p.id}">
-            <button type="button" class="mini-btn" data-add-mat="${p.id}">+ Ajouter</button>
-          </div>
-
-          <div class="panel-actions" style="margin-top:16px;">
-            <button type="button" class="btn ghost" data-del-project="${p.id}">Supprimer ce chantier</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  function renderProjectFilters(){
-    const scoped = data.projects.filter(p => matchesSite(p.site));
-    const statuses = ['Tous','À venir','En cours','En pause','Terminé'];
-    const counts = {};
-    statuses.forEach(s => counts[s] = s==='Tous' ? scoped.length : scoped.filter(p=>p.status===s).length);
-    document.getElementById('project-filters').innerHTML = statuses.map(f =>
-      `<button class="chip ${f===projectFilter?'active':''}" data-pfilter="${f}">${f} (${counts[f]})</button>`
-    ).join('');
-  }
-  function renderProjects(){
-    const list = document.getElementById('project-list');
-    const items = data.projects.filter(p => matchesSite(p.site) && (projectFilter === 'Tous' || p.status === projectFilter));
-    if(items.length === 0){ list.innerHTML = `<div class="empty">Aucun chantier dans ce filtre.</div>`; return; }
-    list.innerHTML = items.map(projectCardHtml).join('');
-  }
-
-  /* ---------------- Day panel (shared by Calendar day-click and Aujourd'hui, manager only) ---------------- */
-  function assignmentCardHtml(a, suffix){
-    const statusCls = { 'À faire':'s-nouveau', 'En cours':'s-encours', 'Terminé':'s-termine' }[a.status];
-    const linkBtn = a.linkedProjectId ? `<button type="button" class="mini-btn" data-view-project="${a.linkedProjectId}">Voir le chantier →</button>` : '';
-    const actionArea = a.status === 'Terminé'
-      ? `<div class="reassign-form">
-           <input type="text" placeholder="Nouvelle tâche" id="reassign-task-${suffix}-${a.id}">
-           <button type="button" class="mini-btn" data-reassign="${a.id}" data-suffix="${suffix}">Réaffecter</button>
-         </div>`
-      : `<button type="button" class="mini-btn" data-finish-assign="${a.id}">Terminer</button>`;
-    return `
-      <div class="assign-card">
-        <div class="assign-main">
-          <p class="assign-member">${escapeHtml(a.member)} <span class="team-pill">${escapeHtml(a.team)}</span></p>
-          <p class="assign-meta">${escapeHtml(a.site)} · ${escapeHtml(a.horaireStart)}–${escapeHtml(a.horaireEnd)} · ${a.phone ? escapeHtml(a.phone) : 'pas de numéro renseigné'}</p>
-          <p class="assign-task">${escapeHtml(a.task)}</p>
-          ${linkBtn}
-        </div>
-        <div class="assign-side">
-          <span class="badge ${statusCls}">${a.status}</span>
-          ${actionArea}
-          <button class="icon-x" data-del-assign="${a.id}" title="Supprimer">×</button>
-        </div>
-      </div>`;
-  }
-
-  function dayPanelHtml(dateStr, suffix){
-    const evMap = eventsByDateMap();
-    const evs = (evMap[dateStr] || []).slice().sort((a,b)=> a.type.localeCompare(b.type));
-    const activeProjects = projectsActiveOnDay(dateStr);
-    const dayAssignments = data.assignments.filter(a => a.date === dateStr && matchesSite(a.site));
-
-    const eventsBlock = evs.length === 0
-      ? `<p class="empty">Rien de prévu ce jour-là.</p>`
-      : evs.map(e => `
-        <div class="agenda-item">
-          <span class="agenda-dot" style="background:${e.color}"></span>
-          <div><strong>${e.type}</strong> — ${escapeHtml(e.label)}<br><span class="agenda-sub">${escapeHtml(e.sub)}</span></div>
-        </div>`).join('');
-
-    const projectsBlock = activeProjects.length === 0
-      ? `<p class="empty">Aucun chantier en cours ce jour-là.</p>`
-      : activeProjects.map(p => `
-        <div class="mini-project-row">
-          <div>
-            <strong>${escapeHtml(p.name)}</strong> <span class="status-pill ${projStatusClass[p.status]}">${p.status}</span>
-            <div class="assign-meta">${escapeHtml(p.site)} · ${teamBadgeHtml(p.teams)}</div>
-          </div>
-          <button type="button" class="mini-btn" data-view-project="${p.id}">Voir →</button>
-        </div>`).join('');
-
-    const assignBlock = dayAssignments.length === 0
-      ? `<p class="empty">Personne d'affecté ce jour-là pour le moment.</p>`
-      : dayAssignments.map(a => assignmentCardHtml(a, suffix)).join('');
-
-    const onLeave = data.team.filter(m => matchesSite(m.site) && leaveOnDay(m.id, dateStr));
-    const leaveBlock = onLeave.length === 0 ? '' : `
-      <p class="subsection-title">Absences ce jour-là</p>
-      ${onLeave.map(m => `
-        <div class="mini-project-row">
-          <div>
-            <strong>${escapeHtml(m.name)}</strong> <span class="badge s-conge" style="cursor:default;">En congé</span>
-            <div class="assign-meta">${escapeHtml(m.trade)} · jusqu'au ${fmtDate(leaveOnDay(m.id, dateStr).end)}</div>
-          </div>
-        </div>`).join('')}`;
-
-    return `
-      <p class="subsection-title">Agenda du jour</p>
-      ${eventsBlock}
-
-      <p class="subsection-title">Chantiers en cours ce jour</p>
-      ${projectsBlock}
-      ${leaveBlock}
-
-      <p class="subsection-title">Équipes sur le terrain</p>
-      ${assignBlock}
-      <div style="margin-top:12px;">
-        <button type="button" class="btn ghost" data-toggle-assign="${suffix}">+ Affecter quelqu'un ce jour</button>
-      </div>
-      <div class="panel ${assignPanelOpen[suffix] ? 'open':''}">
-        <h3>Nouvelle affectation — ${fmtDate(dateStr)}</h3>
-        <form data-assign-form="${suffix}" data-assign-date="${dateStr}">
-          <div class="field-grid">
-            <div class="field"><label>Nom</label><input id="a-member-${suffix}" list="team-datalist" required placeholder="Ex : Julien Marchand"></div>
-            <div class="field"><label>Corps de métier</label>
-              <select id="a-team-${suffix}">
-                <option>Plomberie</option><option>Électricité</option><option>Chauffage / CVC</option>
-                <option>Prestataire externe</option><option>Direction / achats</option>
-              </select>
-            </div>
-            <div class="field"><label>Site</label>
-              <select id="a-site-${suffix}"><option>Clairefontaine</option><option>Beaumont</option></select>
-            </div>
-            <div class="field"><label>Téléphone</label><input id="a-phone-${suffix}" placeholder="06 XX XX XX XX"></div>
-            <div class="field"><label>Début</label><input id="a-start-${suffix}" type="time" value="08:00"></div>
-            <div class="field"><label>Fin</label><input id="a-end-${suffix}" type="time" value="16:00"></div>
-            <div class="field full"><label>Tâche</label><input id="a-task-${suffix}" required placeholder="Ex : Vérification tableau électrique"></div>
-            <div class="field full"><label>Lier à un chantier (optionnel)</label>
-              <select id="a-project-${suffix}">${projectOptionsHtml()}</select>
-            </div>
-          </div>
-          <div class="panel-actions">
-            <button type="button" class="btn ghost" data-cancel-assign="${suffix}">Annuler</button>
-            <button type="submit" class="btn">Affecter</button>
-          </div>
-        </form>
-      </div>`;
-  }
-
-  function renderTodayHeader(){
-    const label = today.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    document.getElementById('today-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
-  }
-  function renderTodayPanel(){
-    document.getElementById('today-panel').innerHTML = dayPanelHtml(iso(today), 'today');
-  }
-
-  /* ---------------- Calendar ---------------- */
-  let calYear = today.getFullYear();
-  let calMonth = today.getMonth();
-  let selectedDay = iso(today);
-
-  function buildMonthCells(year, month){
-    const firstOfMonth = new Date(year, month, 1);
-    const startOffset = (firstOfMonth.getDay() + 6) % 7;
-    const daysInMonth = new Date(year, month+1, 0).getDate();
-    const daysInPrevMonth = new Date(year, month, 0).getDate();
-    const cells = [];
-    for(let i=startOffset-1;i>=0;i--){
-      const d = daysInPrevMonth - i;
-      cells.push({ dateStr: iso(new Date(year, month-1, d)), dayNum: d, inMonth:false });
-    }
-    for(let d=1; d<=daysInMonth; d++){
-      cells.push({ dateStr: iso(new Date(year, month, d)), dayNum: d, inMonth:true });
-    }
-    let nextDay = 1;
-    while(cells.length < 42){
-      cells.push({ dateStr: iso(new Date(year, month+1, nextDay)), dayNum: nextDay, inMonth:false });
-      nextDay++;
-    }
-    return cells;
-  }
-
-  function getAllEvents(){
-    const events = [];
-    data.tickets.forEach(t=>{
-      if(t.dateSouhaitee){
-        const color = t.priority==='urgente' ? 'var(--rust)' : 'var(--teal)';
-        events.push({ date:t.dateSouhaitee, type:'Intervention', color, label:t.title, sub:t.site });
-      }
-    });
-    data.controls.forEach(c=>{
-      const st = controlStatus(c.nextDue);
-      const color = st==='overdue' ? 'var(--rust)' : (st==='soon' ? 'var(--amber)' : 'var(--green)');
-      events.push({ date:c.nextDue, type:'Contrôle', color, label:c.name, sub:c.site });
-    });
-    data.projects.forEach(p=>{
-      p.steps.forEach(s=>{
-        const color = s.done ? 'var(--green)' : 'var(--navy)';
-        events.push({ date:s.date, type:'Chantier', color, label:`${p.name} — ${s.label}`, sub:p.site });
+  function tasksFor(d) {
+    const di = dayIndex(d);
+    const k = key(d);
+    const out = [];
+    roster(d).forEach(function (row, i) {
+      if (!row.shift) return;
+      if ((i + di) % 2 === 1) return;
+      const src = TASK_POOL[(i * 5 + di * 3) % TASK_POOL.length];
+      const id = k + '|' + row.p.id;
+      out.push({
+        id: id, title: src.t, urg: src.u, pid: row.p.id, person: row.p.n,
+        site: row.site, shift: row.shift, hour: SHIFTS[row.shift].s + 1,
+        state: state.status[id] || baseState(d, i + di)
       });
     });
-    return events.filter(ev => matchesSite(ev.sub));
-  }
-  function eventsByDateMap(){
-    const map = {};
-    getAllEvents().forEach(ev => { (map[ev.date] = map[ev.date] || []).push(ev); });
-    return map;
-  }
-
-  function renderCalendar(){
-    document.getElementById('cal-title').textContent =
-      new Date(calYear, calMonth, 1).toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
-    const cells = buildMonthCells(calYear, calMonth);
-    const evMap = eventsByDateMap();
-    const todayStr = iso(today);
-    document.getElementById('cal-grid').innerHTML = cells.map(c => {
-      const evs = evMap[c.dateStr] || [];
-      const dots = evs.slice(0,4).map(e=>`<span class="cal-dot" style="background:${e.color}"></span>`).join('');
-      const more = evs.length > 4 ? `<span class="cal-more">+${evs.length-4}</span>` : '';
-      const classes = ['cal-cell'];
-      if(!c.inMonth) classes.push('out');
-      if(c.dateStr === todayStr) classes.push('today');
-      if(c.dateStr === selectedDay) classes.push('selected');
-      return `<div class="${classes.join(' ')}" data-cal-day="${c.dateStr}">
-        <span class="cal-daynum">${c.dayNum}</span>
-        <div class="cal-dots">${dots}${more}</div>
-      </div>`;
-    }).join('');
-    renderAgenda();
-  }
-  function renderAgenda(){
-    document.getElementById('agenda').innerHTML = `<h4>${fmtDate(selectedDay)}</h4>` + dayPanelHtml(selectedDay, 'cal');
-  }
-
-  /* ---------------- Manager render-all ---------------- */
-  function renderManagerApp(){
-    renderTodayHeader();
-    renderGauge();
-    renderKpis();
-    renderTodayTabBadge();
-    renderTeamDatalist();
-    renderDashboard();
-    renderTeamTab();
-    renderEquipment();
-    renderProjectFilters();
-    renderProjects();
-    renderTicketFilters();
-    renderTickets();
-    renderControlFilters();
-    renderControls();
-    renderStockFilters();
-    renderStock();
-    renderStockMovements();
-    renderProviders();
-    renderTodayPanel();
-    renderCalendar();
-  }
-
-  /* ---------------- Worker mode ---------------- */
-  function providerByName(name){ return data.providers.find(p => p.name === name); }
-
-  function workerStepsHtml(p){
-    if(p.steps.length === 0) return `<p class="empty" style="padding:10px;">Aucune étape définie pour ce chantier.</p>`;
-    return p.steps.slice().sort((a,b)=> new Date(a.date)-new Date(b.date)).map(s => `
-      <div class="step-row ${s.done?'done':''}">
-        <button class="step-check ${s.done?'checked':''}" data-toggle-step="${p.id}|${s.id}">${s.done?'✓':''}</button>
-        <span class="step-label">${escapeHtml(s.label)}</span>
-        <span class="step-date">${fmtDate(s.date)}</span>
-      </div>`).join('');
-  }
-
-  function workerTaskCardHtml(a){
-    let urgent = false;
-    let ticketBlock = '';
-    if(a.linkedTicketId){
-      const t = data.tickets.find(x=>x.id===a.linkedTicketId);
-      if(t){
-        if(t.priority === 'urgente') urgent = true;
-        ticketBlock = `
-          <div class="wt-context">
-            <p class="wt-context-title">Détail de la demande</p>
-            <p class="wt-meta">${escapeHtml(t.location || 'Lieu non précisé')} · demandé par ${escapeHtml(t.requester || '—')}</p>
-            ${t.desc ? `<p class="wt-meta">${escapeHtml(t.desc)}</p>` : ''}
-          </div>`;
-      }
-    }
-    let projectBlock = '';
-    if(a.linkedProjectId){
-      const p = data.projects.find(x=>x.id===a.linkedProjectId);
-      if(p){
-        const totalSteps = p.steps.length;
-        const doneSteps = p.steps.filter(s=>s.done).length;
-        const pct = totalSteps ? Math.round(doneSteps/totalSteps*100) : 0;
-        const needed = p.materials.filter(m => m.status !== 'Reçu');
-        const materialsHtml = needed.map(m => {
-          const prov = providerByName(m.supplier);
-          const provInfo = prov && prov.phone ? ` · <a href="tel:${escapeHtml(prov.phone.replace(/\s/g,''))}">${escapeHtml(prov.phone)}</a>` : '';
-          return `<p class="wt-meta">• ${escapeHtml(m.name)} — ${escapeHtml(m.status)}${m.supplier ? ' (' + escapeHtml(m.supplier) + ')' + provInfo : ''}</p>`;
-        }).join('');
-        projectBlock = `
-          <div class="wt-context">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-              <p class="wt-context-title" style="margin:0;">Chantier : ${escapeHtml(p.name)}</p>
-              <span class="status-pill ${projStatusClass[p.status]}">${p.status}</span>
-            </div>
-            <p class="wt-meta">${escapeHtml(p.site)} · ${fmtDate(p.startDate)} → ${fmtDate(p.endDate)}</p>
-            <div>${teamBadgeHtml(p.teams)}</div>
-            ${p.description ? `<p class="wt-meta" style="margin-top:6px;">${escapeHtml(p.description)}</p>` : ''}
-            <div style="display:flex;align-items:center;gap:8px;margin:10px 0 6px;">
-              <div class="progress-track" style="flex:1;"><div class="progress-fill" style="width:${pct}%"></div></div>
-              <span class="wt-meta" style="margin:0;white-space:nowrap;">${doneSteps}/${totalSteps} étapes</span>
-            </div>
-            <div class="worker-steps-list">${workerStepsHtml(p)}</div>
-            ${materialsHtml ? `<p class="wt-meta" style="font-weight:600;margin-top:10px;">Matériaux à suivre :</p>${materialsHtml}` : ''}
-          </div>`;
-      }
-    }
-    const body = a.status === 'Terminé'
-      ? `<div class="wt-done-note">✓ Terminé — en attente d'une nouvelle tâche</div>`
-      : `<button type="button" class="btn wt-finish-btn" data-worker-finish="${a.id}">✓ Marquer comme terminé</button>`;
-    return `
-      <div class="worker-task-card ${urgent?'urgent':''}">
-        ${urgent ? `<span class="wt-urgent-tag">Urgent</span>` : ''}
-        <p class="wt-time">${escapeHtml(a.horaireStart)} – ${escapeHtml(a.horaireEnd)} · ${escapeHtml(a.site)}</p>
-        <p class="wt-title">${escapeHtml(a.task)}</p>
-        ${ticketBlock}
-        ${projectBlock}
-        ${body}
-      </div>`;
-  }
-
-  function renderWorkerApp(){
-    const member = data.team.find(m => m.id === data.currentProfileId);
-    if(!member) return;
-    document.getElementById('worker-greeting').textContent = `Bonjour, ${member.name.split(' ')[0]}`;
-    const label = today.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    document.getElementById('worker-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1);
-
-    const todayStr = iso(today);
-    const leave = leaveOnDay(member.id, todayStr);
-    const upcoming = data.assignments.filter(a => a.member === member.name && a.date > todayStr)
-      .sort((a,b)=> a.date.localeCompare(b.date)).slice(0,5);
-    const upcomingHtml = upcoming.length === 0 ? '' : `
-      <div class="worker-upcoming">
-        <h3>Vos prochaines tâches</h3>
-        ${upcoming.map(a => `
-          <div class="worker-mini-row">
-            <span>${fmtDate(a.date)} · ${escapeHtml(a.task)}</span>
-            <span class="due-date">${escapeHtml(a.horaireStart)}</span>
-          </div>`).join('')}
-      </div>`;
-
-    if(leave){
-      document.getElementById('worker-tasks').innerHTML = `
-        <div class="worker-leave-banner">
-          <p class="wl-icon">🌴</p>
-          <p class="wl-title">En congé</p>
-          <p class="wl-detail">Retour prévu le ${fmtDate(leave.end)}</p>
-        </div>` + upcomingHtml;
-      return;
-    }
-
-    const todaysTasks = data.assignments.filter(a => a.member === member.name && a.date === todayStr)
-      .sort((a,b)=> a.horaireStart.localeCompare(b.horaireStart));
-    const tasksHtml = todaysTasks.length === 0
-      ? `<div class="empty">Aucune tâche affectée aujourd'hui. N'hésitez pas à signaler un problème si vous en repérez un.</div>`
-      : todaysTasks.map(workerTaskCardHtml).join('');
-
-    document.getElementById('worker-tasks').innerHTML = tasksHtml + upcomingHtml;
-  }
-
-  /* ---------------- Site filter (manager) ---------------- */
-  document.getElementById('site-filters').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-site]'); if(!btn) return;
-    siteFilter = btn.dataset.site;
-    document.querySelectorAll('#site-filters .chip').forEach(c => c.classList.toggle('active', c === btn));
-    renderManagerApp();
-  });
-
-  /* ---------------- Tab switching (manager) ---------------- */
-  document.querySelectorAll('nav.tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeTab = btn.dataset.tab;
-      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b === btn));
-      document.getElementById('view-today').style.display = activeTab === 'today' ? '' : 'none';
-      document.getElementById('view-dashboard').style.display = activeTab === 'dashboard' ? '' : 'none';
-      document.getElementById('view-team').style.display = activeTab === 'team' ? '' : 'none';
-      document.getElementById('view-equipment').style.display = activeTab === 'equipment' ? '' : 'none';
-      document.getElementById('view-projects').style.display = activeTab === 'projects' ? '' : 'none';
-      document.getElementById('view-tickets').style.display = activeTab === 'tickets' ? '' : 'none';
-      document.getElementById('view-controls').style.display = activeTab === 'controls' ? '' : 'none';
-      document.getElementById('view-stock').style.display = activeTab === 'stock' ? '' : 'none';
-      document.getElementById('view-providers').style.display = activeTab === 'providers' ? '' : 'none';
-      document.getElementById('view-calendar').style.display = activeTab === 'calendar' ? '' : 'none';
+    (state.extra[k] || []).forEach(function (t) {
+      out.push(Object.assign({}, t, { state: state.status[t.id] || 'todo' }));
     });
-  });
+    return out;
+  }
 
-  /* ---------------- Dashboard actions ---------------- */
-  document.getElementById('print-dashboard').addEventListener('click', () => window.print());
-  document.getElementById('export-dashboard-csv').addEventListener('click', () => {
-    const controls = data.controls.filter(c=>matchesSite(c.site));
-    const total = controls.length || 1;
-    const overdue = controls.filter(c=>controlStatus(c.nextDue)==='overdue').length;
-    const pct = Math.round(((total-overdue)/total)*100);
-    const projects = data.projects.filter(p=>matchesSite(p.site));
-    const stock = data.stock.filter(s=>matchesSite(s.site));
-    const budgetMateriaux = projects.reduce((sum,p)=>sum+p.materials.reduce((s,m)=>s+m.qty*m.unitCost,0),0);
-    const valeurStock = stock.reduce((sum,s)=>sum+(s.qty*(s.unitCost||0)),0);
-    const tickets = data.tickets.filter(t=>matchesSite(t.site));
-    const rows = [
-      ['Taux de conformité réglementaire', pct+'%'],
-      ['Contrôles en retard', overdue],
-      ['Budget matériaux engagé', budgetMateriaux.toFixed(2)+' €'],
-      ['Valeur du stock', valeurStock.toFixed(2)+' €'],
-      ['Interventions totales', tickets.length],
-      ['Chantiers actifs', projects.filter(p=>p.status==='En cours').length],
-      ['Date export', fmtDate(iso(today))]
+  function setStatus(id, cur) {
+    state.status[id] = CYCLE[cur];
+    render();
+  }
+
+  function taskRow(t) {
+    const st = STATES[t.state];
+    return {
+      id: t.id,
+      title: t.title,
+      who: t.person,
+      initials: initials(t.person),
+      status: st.label, statusBg: st.bg, statusFg: st.fg,
+      slot: t.shift ? SHIFTS[t.shift].name : hourLabel(t.hour),
+      meta: siteName(t.site) + ' · ' + hourLabel(t.hour),
+      urg: t.urg, urgFg: t.urg ? 'var(--todo)' : 'transparent',
+      op: t.state === 'done' ? '0.55' : '1',
+      deco: t.state === 'done' ? 'line-through' : 'none'
+    };
+  }
+
+  function planningGroups(sel, tasks) {
+    const rank = { todo: 0, doing: 1, done: 2 };
+    return SITES.map(function (st) {
+      const rows = tasks.filter(function (t) { return t.site === st.id; }).sort(function (a, b) {
+        if (rank[a.state] !== rank[b.state]) return rank[a.state] - rank[b.state];
+        return (b.urg ? 1 : 0) - (a.urg ? 1 : 0);
+      });
+      const done = rows.filter(function (t) { return t.state === 'done'; }).length;
+      return {
+        id: st.id, name: st.name, color: st.color,
+        summary: rows.length ? done + ' / ' + rows.length + ' terminées' : 'aucune tâche',
+        rows: rows.map(taskRow)
+      };
+    });
+  }
+
+  function teamGroups(roster_) {
+    return SITES.map(function (st) {
+      const here = roster_.filter(function (r) { return r.shift && r.site === st.id; });
+      const off = roster_.filter(function (r) { return !r.shift && r.p.s === st.id; });
+      const rows = [];
+      here.forEach(function (r) {
+        const p = r.lent ? PRES.moved : PRES.present;
+        rows.push({
+          name: r.p.n, initials: initials(r.p.n), muted: false,
+          state: p.label, stateBg: p.bg, stateFg: p.fg,
+          slot: SHIFTS[r.shift].name,
+          detail: r.lent ? 'prêté depuis ' + siteName(r.p.s) : SHIFTS[r.shift].short
+        });
+      });
+      off.forEach(function (r) {
+        const p = r.abs ? PRES.absent : PRES.off;
+        rows.push({
+          name: r.p.n, initials: initials(r.p.n), muted: true,
+          state: p.label, stateBg: p.bg, stateFg: p.fg,
+          slot: '—',
+          detail: r.abs ? r.abs.kind : 'Jour de repos'
+        });
+      });
+      return {
+        name: st.name, color: st.color,
+        summary: here.length + ' au poste · ' + off.filter(function (r) { return r.abs; }).length + ' absents',
+        people: rows
+      };
+    });
+  }
+
+  function worksData() {
+    const urgentZones = ZONES.filter(function (z) { return (state.clean[z.id] || z.base) === 'urgent'; }).length;
+    const works = WORKS.map(function (w) {
+      const st = SITES.filter(function (x) { return x.id === w.site; })[0];
+      return {
+        title: w.title, pct: w.pct, who: w.who, initials: initials(w.who),
+        site: siteName(w.site), mark: st.color,
+        barFg: w.late ? 'var(--doing)' : 'var(--accent)',
+        due: w.due, dueFg: w.late ? 'var(--todo)' : 'var(--text-muted)'
+      };
+    });
+    const zones = ZONES.map(function (z) {
+      const st = state.clean[z.id] || z.base;
+      const c = CLEAN[st];
+      const site = SITES.filter(function (x) { return x.id === z.site; })[0];
+      return { id: z.id, name: z.name, site: siteName(z.site), mark: site.color, label: c.label, bg: c.bg, fg: c.fg };
+    });
+    return {
+      worksSummary: WORKS.length + ' en cours · ' + WORKS.filter(function (w) { return w.late; }).length + ' en retard',
+      works: works, zones: zones,
+      cleanAlert: urgentZones ? urgentZones + ' zone' + (urgentZones > 1 ? 's' : '') + ' à traiter en urgence' : 'rien d’urgent',
+      cleanAlertFg: urgentZones ? 'var(--todo)' : 'var(--text-faint)'
+    };
+  }
+
+  function computeVals() {
+    const s = state;
+    const sel = s.selected;
+    const isChef = s.role === 'chef';
+    const ros = roster(sel);
+    const tasks = tasksFor(sel);
+
+    let me = STAFF[0];
+    if (!isChef) {
+      for (let i = 0; i < ros.length; i++) {
+        if (ros[i].p.r === 'Agent technique' && ros[i].shift) { me = ros[i].p; break; }
+      }
+    }
+
+    const tab = isChef ? s.tab : 'mine';
+    const openTasks = tasks.filter(function (t) { return t.state !== 'done'; }).length;
+    const urgentZones = ZONES.filter(function (z) { return (s.clean[z.id] || z.base) === 'urgent'; }).length;
+
+    const tabs = [
+      { id: 'planning', label: 'Tâches du jour', count: openTasks },
+      { id: 'team', label: 'Qui est où', count: ros.filter(function (r) { return r.shift; }).length },
+      { id: 'works', label: 'Chantiers et propreté', count: WORKS.length + urgentZones }
     ];
-    exportCSV('tableau-de-bord-residence.csv', ['Indicateur','Valeur'], rows);
-  });
 
-  /* ---------------- Profile switching ---------------- */
-  document.getElementById('picker-manager-btn').addEventListener('click', async () => {
-    data.currentProfileId = 'manager';
-    await saveData();
-    renderApp();
-  });
-  document.getElementById('worker-switch-profile').addEventListener('click', async () => {
-    data.currentProfileId = null;
-    await saveData();
-    renderApp();
-  });
-  document.getElementById('manager-switch-profile').addEventListener('click', async () => {
-    data.currentProfileId = null;
-    await saveData();
-    renderApp();
-  });
-
-  /* ---------------- Worker step toggle (chantier lié à la tâche) ---------------- */
-  document.getElementById('worker-tasks').addEventListener('click', async (e) => {
-    const toggleStep = e.target.closest('[data-toggle-step]');
-    if(!toggleStep) return;
-    const [pid,sid] = toggleStep.dataset.toggleStep.split('|').map(Number);
-    const p = data.projects.find(x=>x.id===pid);
-    const s = p && p.steps.find(x=>x.id===sid);
-    if(!s) return;
-    s.done = !s.done;
-    await saveData();
-    renderWorkerApp();
-  });
-
-  /* ---------------- Worker report form ---------------- */
-  document.getElementById('worker-toggle-report').addEventListener('click', () => {
-    document.getElementById('worker-report-panel').classList.toggle('open');
-    document.getElementById('worker-report-confirm').style.display = 'none';
-  });
-  document.getElementById('worker-cancel-report').addEventListener('click', () => {
-    document.getElementById('worker-report-panel').classList.remove('open');
-    document.getElementById('worker-report-form').reset();
-  });
-  document.getElementById('worker-report-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const member = data.team.find(m => m.id === data.currentProfileId);
-    const newTicket = {
-      id: Date.now(),
-      title: document.getElementById('wr-title').value.trim(),
-      site: member ? member.site : 'Clairefontaine',
-      location: document.getElementById('wr-location').value.trim(),
-      requester: member ? member.name : 'Équipe technique',
-      priority: document.getElementById('wr-priority').value,
-      status: 'Nouveau',
-      desc: document.getElementById('wr-desc').value.trim(),
-      dateSouhaitee: null,
-      createdAt: iso(today),
-      convertedProjectId: null,
-      completedAt: null
+    const vals = {
+      isChef: isChef, tab: tab,
+      userName: me.n,
+      userRole: isChef ? 'Chef d’équipe' : me.r + ' · ' + siteName(me.s),
+      userInitials: initials(me.n),
+      dayLabel: sel.getTime() === today.getTime() ? 'Aujourd’hui · ' + fmtShort.format(sel) : fmtDayFull.format(sel),
+      tabs: tabs
     };
-    if(!newTicket.title) return;
-    data.tickets.push(newTicket);
-    await saveData();
-    document.getElementById('worker-report-form').reset();
-    document.getElementById('worker-report-confirm').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('worker-report-panel').classList.remove('open');
-      document.getElementById('worker-report-confirm').style.display = 'none';
-    }, 1800);
-  });
 
-  /* ---------------- Ticket form ---------------- */
-  document.getElementById('toggle-ticket-form').addEventListener('click', () => document.getElementById('ticket-panel').classList.toggle('open'));
-  document.getElementById('cancel-ticket').addEventListener('click', () => {
-    document.getElementById('ticket-panel').classList.remove('open');
-    document.getElementById('ticket-form').reset();
-  });
-  document.getElementById('ticket-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newTicket = {
-      id: Date.now(),
-      title: document.getElementById('t-title').value.trim(),
-      site: document.getElementById('t-site').value,
-      location: document.getElementById('t-location').value.trim(),
-      requester: document.getElementById('t-requester').value.trim(),
-      priority: document.getElementById('t-priority').value,
-      status: 'Nouveau',
-      desc: document.getElementById('t-desc').value.trim(),
-      dateSouhaitee: document.getElementById('t-date').value || null,
-      createdAt: iso(new Date()),
-      convertedProjectId: null,
-      completedAt: null
-    };
-    if(!newTicket.title) return;
-    data.tickets.push(newTicket);
-    await saveData();
-    document.getElementById('ticket-form').reset();
-    document.getElementById('ticket-panel').classList.remove('open');
-    renderManagerApp();
-  });
-  document.getElementById('ticket-filters').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-filter]'); if(!btn) return;
-    ticketFilter = btn.dataset.filter; renderTicketFilters(); renderTickets();
-  });
-  document.getElementById('ticket-list').addEventListener('click', async (e) => {
-    const cycleBtn = e.target.closest('[data-cycle-ticket]');
-    const delBtn = e.target.closest('[data-del-ticket]');
-    const convertBtn = e.target.closest('[data-convert-ticket]');
-    const gotoBtn = e.target.closest('[data-goto-project]');
+    if (isChef && tab === 'planning') vals.groups = planningGroups(sel, tasks);
+    if (isChef && tab === 'team') vals.teamGroups = teamGroups(ros);
+    if (isChef && tab === 'works') Object.assign(vals, worksData());
 
-    if(cycleBtn){
-      const id = Number(cycleBtn.dataset.cycleTicket);
-      const t = data.tickets.find(x => x.id === id);
-      if(t){
-        t.status = statusCycle[t.status];
-        t.completedAt = (t.status === 'Terminé') ? iso(today) : null;
-        await saveData(); renderManagerApp();
+    if (tab === 'mine') {
+      const myRow = ros.filter(function (r) { return r.p.id === me.id; })[0];
+      const myState = myRow && myRow.shift ? (myRow.lent ? PRES.moved : PRES.present) : (myRow && myRow.abs ? PRES.absent : PRES.off);
+      vals.myStatusColor = myState.bg;
+      vals.myStatusLabel = myRow && myRow.shift
+        ? 'Site de ' + siteName(myRow.site) + (myRow.lent ? ' (prêté)' : '')
+        : (myRow && myRow.abs ? myRow.abs.kind : 'Jour de repos');
+      vals.myShiftLabel = myRow && myRow.shift ? SHIFTS[myRow.shift].short : '';
+      const mine = tasks.filter(function (t) { return t.pid === me.id; });
+      vals.myTasks = mine.map(taskRow);
+      vals.myEmptyLabel = myRow && myRow.shift ? 'Aucune tâche assignée' : 'Pas de service ce jour';
+      vals.myProgress = mine.length ? mine.filter(function (t) { return t.state === 'done'; }).length + ' / ' + mine.length + ' terminées' : '';
+
+      const wStart = addDays(sel, -((sel.getDay() + 6) % 7));
+      vals.weekLabel = 'du ' + fmtShort.format(wStart) + ' au ' + fmtShort.format(addDays(wStart, 6));
+      const myWeek = [];
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(wStart, i);
+        const row = roster(d).filter(function (r) { return r.p.id === me.id; })[0];
+        const n = tasksFor(d).filter(function (t) { return t.pid === me.id; }).length;
+        const p = row.shift ? (row.lent ? PRES.moved : PRES.present) : (row.abs ? PRES.absent : PRES.off);
+        const on = d.getTime() === sel.getTime();
+        myWeek.push({
+          date: key(d), iso: d.toISOString().slice(0, 10),
+          day: fmtWeekday.format(d),
+          dayFg: on ? 'var(--accent-active)' : 'var(--text)',
+          mark: on ? 'var(--accent)' : 'transparent',
+          rowBg: on ? 'var(--accent-wash)' : 'var(--surface)',
+          state: p.label, stateBg: p.bg, stateFg: p.fg,
+          detail: row.shift ? SHIFTS[row.shift].short + ' · ' + siteName(row.site) : (row.abs ? row.abs.kind : 'Repos'),
+          tasks: row.shift && n ? n + (n > 1 ? ' tâches' : ' tâche') : ''
+        });
       }
-      return;
+      vals.myWeek = myWeek;
     }
-    if(delBtn){
-      const id = Number(delBtn.dataset.delTicket);
-      data.tickets = data.tickets.filter(x => x.id !== id);
-      await saveData(); renderManagerApp();
-      return;
-    }
-    if(convertBtn){
-      const id = Number(convertBtn.dataset.convertTicket);
-      const t = data.tickets.find(x => x.id === id);
-      if(!t) return;
-      pendingConversionTicketId = id;
-      document.querySelector('nav.tabs button[data-tab="projects"]').click();
-      document.getElementById('project-panel').classList.add('open');
-      document.getElementById('p-name').value = t.title;
-      document.getElementById('p-site').value = (t.site === 'Beaumont' ? 'Beaumont' : 'Clairefontaine');
-      document.getElementById('p-desc').value = t.desc || '';
-      document.getElementById('p-status').value = 'À venir';
-      return;
-    }
-    if(gotoBtn){
-      const pid = Number(gotoBtn.dataset.gotoProject);
-      document.querySelector('nav.tabs button[data-tab="projects"]').click();
-      openProjectIds.add(pid);
-      projectFilter = 'Tous';
-      renderProjectFilters(); renderProjects();
-      return;
-    }
-  });
 
-  /* ---------------- Control form ---------------- */
-  document.getElementById('toggle-control-form').addEventListener('click', () => document.getElementById('control-panel').classList.toggle('open'));
-  document.getElementById('cancel-control').addEventListener('click', () => {
-    document.getElementById('control-panel').classList.remove('open');
-    document.getElementById('control-form').reset();
-  });
-  document.getElementById('control-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newControl = {
-      id: Date.now(),
-      name: document.getElementById('c-name').value.trim(),
-      site: document.getElementById('c-site').value,
-      freq: parseInt(document.getElementById('c-freq').value, 10) || 12,
-      lastDone: null,
-      nextDue: document.getElementById('c-due').value
-    };
-    if(!newControl.name || !newControl.nextDue) return;
-    data.controls.push(newControl);
-    await saveData();
-    document.getElementById('control-form').reset();
-    document.getElementById('control-panel').classList.remove('open');
-    renderManagerApp();
-  });
-  document.getElementById('control-filters').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-cfilter]'); if(!btn) return;
-    controlFilter = btn.dataset.cfilter; renderControlFilters(); renderControls();
-  });
-  document.getElementById('control-list').addEventListener('click', async (e) => {
-    const doneBtn = e.target.closest('[data-done-control]');
-    const delBtn = e.target.closest('[data-del-control]');
-    if(doneBtn){
-      const id = Number(doneBtn.dataset.doneControl);
-      const c = data.controls.find(x => x.id === id);
-      if(c){ c.lastDone = iso(today); c.nextDue = addMonths(iso(today), c.freq); await saveData(); renderManagerApp(); }
-    }
-    if(delBtn){
-      const id = Number(delBtn.dataset.delControl);
-      data.controls = data.controls.filter(x => x.id !== id);
-      await saveData(); renderManagerApp();
-    }
-  });
+    return vals;
+  }
 
-  /* ---------------- Stock form ---------------- */
-  document.getElementById('toggle-stock-form').addEventListener('click', () => document.getElementById('stock-panel').classList.toggle('open'));
-  document.getElementById('cancel-stock').addEventListener('click', () => {
-    document.getElementById('stock-panel').classList.remove('open');
-    document.getElementById('stock-form').reset();
-  });
-  document.getElementById('stock-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const qty0 = parseFloat(document.getElementById('s-qty').value) || 0;
-    const newItem = {
-      id: Date.now(),
-      name: document.getElementById('s-name').value.trim(),
-      category: document.getElementById('s-category').value,
-      site: document.getElementById('s-site').value,
-      qty: qty0,
-      threshold: parseFloat(document.getElementById('s-threshold').value) || 0,
-      unit: document.getElementById('s-unit').value.trim() || 'unité',
-      unitCost: parseFloat(document.getElementById('s-cost').value) || 0,
-      location: document.getElementById('s-location').value.trim()
-    };
-    if(!newItem.name) return;
-    data.stock.push(newItem);
-    if(qty0 > 0){
-      data.stockMovements.push({ id: Date.now()+1, stockItemId: newItem.id, itemName: newItem.name, type: 'Entrée', qty: qty0, date: iso(today), note: 'Stock initial' });
+  function headerHtml(v) {
+    return '' +
+      '<div class="header-row">' +
+        '<h1>Service technique</h1>' +
+        '<div class="role-toggle">' +
+          '<button class="role-btn' + (v.isChef ? ' active' : '') + '" data-action="role" data-role="chef">Chef d’équipe</button>' +
+          '<button class="role-btn' + (!v.isChef ? ' active' : '') + '" data-action="role" data-role="emp">Employé</button>' +
+        '</div>' +
+        '<div class="user-box">' +
+          '<div class="user-id">' +
+            '<div class="user-name">' + esc(v.userName) + '</div>' +
+            '<div class="user-role">' + esc(v.userRole) + '</div>' +
+          '</div>' +
+          '<div class="avatar">' + esc(v.userInitials) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tabs-row">' +
+        '<div class="tabs">' +
+          v.tabs.map(function (t) {
+            const on = v.isChef && v.tab === t.id;
+            return '<button class="tab-btn' + (on ? ' active' : '') + '" data-action="tab" data-tab="' + t.id + '"' + (v.isChef ? '' : ' disabled') + '>' +
+              esc(t.label) + '<span class="tab-count">' + t.count + '</span></button>';
+          }).join('') +
+        '</div>' +
+        '<div class="day-nav">' +
+          '<button class="icon-btn" data-action="prev-day">←</button>' +
+          '<span class="day-label">' + esc(v.dayLabel) + '</span>' +
+          '<button class="icon-btn" data-action="next-day">→</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function planningHtml(v) {
+    return '<div>' + v.groups.map(function (g) {
+      const rowsHtml = g.rows.length ? g.rows.map(function (r) {
+        return '<div class="grid-row" style="grid-template-columns:minmax(0,2.2fr) 152px 128px 118px 96px">' +
+          '<span class="cell" style="border-left-color:' + g.color + '"><span class="cell-title" style="opacity:' + r.op + ';text-decoration:' + r.deco + '">' + esc(r.title) + '</span></span>' +
+          '<span class="cell" style="gap:9px"><span class="avatar sm">' + esc(r.initials) + '</span><span class="cell-title">' + esc(r.who) + '</span></span>' +
+          '<button class="pill-btn" data-action="cycle-task" data-id="' + esc(r.id) + '" style="background:' + r.statusBg + ';color:' + r.statusFg + '">' + esc(r.status) + '</button>' +
+          '<span class="cell center" style="color:var(--text-muted)">' + esc(r.slot) + '</span>' +
+          '<span class="cell center" style="color:' + r.urgFg + '">' + esc(r.urg) + '</span>' +
+        '</div>';
+      }).join('') : '<div class="empty-row">Aucune tâche sur ce site</div>';
+      return '<div class="section">' +
+        '<div class="section-head"><span class="section-title" style="color:' + g.color + '">' + esc(g.name) + '</span><span class="section-sub">' + esc(g.summary) + '</span></div>' +
+        '<div class="scroll-x"><div style="min-width:720px">' +
+          '<div class="grid-head" style="grid-template-columns:minmax(0,2.2fr) 152px 128px 118px 96px;padding-left:14px"><span>Tâche</span><span>Qui</span><span style="text-align:center">Statut</span><span style="text-align:center">Créneau</span><span style="text-align:center">Urgence</span></div>' +
+          '<div class="grid-box">' + rowsHtml + '<button class="add-row" data-action="add-task" data-site="' + g.id + '"><span class="plus">+</span> Ajouter une tâche</button></div>' +
+        '</div></div>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
+  function teamHtml(v) {
+    return '<div>' + v.teamGroups.map(function (g) {
+      const rowsHtml = g.people.map(function (p) {
+        return '<div class="grid-row" style="grid-template-columns:minmax(0,2fr) 148px 132px minmax(0,1.4fr)">' +
+          '<span class="cell" style="border-left-color:' + g.color + ';gap:11px"><span class="avatar sm' + (p.muted ? ' muted' : '') + '">' + esc(p.initials) + '</span><span class="cell-title">' + esc(p.name) + '</span></span>' +
+          '<span class="cell center" style="background:' + p.stateBg + ';color:' + p.stateFg + '">' + esc(p.state) + '</span>' +
+          '<span class="cell center" style="color:var(--text-muted)">' + esc(p.slot) + '</span>' +
+          '<span class="cell" style="color:var(--text-muted)">' + esc(p.detail) + '</span>' +
+        '</div>';
+      }).join('');
+      return '<div class="section">' +
+        '<div class="section-head"><span class="section-title" style="color:' + g.color + '">' + esc(g.name) + '</span><span class="section-sub">' + esc(g.summary) + '</span></div>' +
+        '<div class="scroll-x"><div style="min-width:640px">' +
+          '<div class="grid-head" style="grid-template-columns:minmax(0,2fr) 148px 132px minmax(0,1.4fr);padding-left:14px"><span>Salarié</span><span style="text-align:center">Présence</span><span style="text-align:center">Créneau</span><span>Détail</span></div>' +
+          '<div class="grid-box">' + rowsHtml + '</div>' +
+        '</div></div>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
+  function worksHtml(v) {
+    const worksRows = v.works.map(function (w) {
+      return '<div class="grid-row" style="grid-template-columns:minmax(0,2.2fr) 152px 108px minmax(0,1.3fr) 108px">' +
+        '<span class="cell" style="border-left-color:' + w.mark + '"><span class="cell-title">' + esc(w.title) + '</span></span>' +
+        '<span class="cell" style="gap:9px"><span class="avatar sm">' + esc(w.initials) + '</span><span class="cell-title">' + esc(w.who) + '</span></span>' +
+        '<span class="cell center" style="color:var(--text-muted)">' + esc(w.site) + '</span>' +
+        '<span class="cell" style="gap:10px"><span class="bar-track"><span class="bar-fill" style="background:' + w.barFg + ';width:' + w.pct + '%"></span></span><span style="flex:none;font-size:13.5px;color:var(--text-muted)">' + w.pct + '%</span></span>' +
+        '<span class="cell center" style="color:' + w.dueFg + '">' + esc(w.due) + '</span>' +
+      '</div>';
+    }).join('');
+    const zoneRows = v.zones.map(function (z) {
+      return '<div class="grid-row" style="grid-template-columns:minmax(0,2fr) 108px 152px">' +
+        '<span class="cell" style="border-left-color:' + z.mark + '"><span class="cell-title">' + esc(z.name) + '</span></span>' +
+        '<span class="cell center" style="color:var(--text-muted)">' + esc(z.site) + '</span>' +
+        '<button class="pill-btn" data-action="cycle-zone" data-id="' + z.id + '" style="background:' + z.bg + ';color:' + z.fg + '">' + esc(z.label) + '</button>' +
+      '</div>';
+    }).join('');
+    return '<div>' +
+      '<div class="section">' +
+        '<div class="section-head"><span class="section-title">Chantiers ouverts</span><span class="section-sub">' + esc(v.worksSummary) + '</span></div>' +
+        '<div class="scroll-x"><div style="min-width:700px">' +
+          '<div class="grid-head" style="grid-template-columns:minmax(0,2.2fr) 152px 108px minmax(0,1.3fr) 108px;padding-left:14px"><span>Chantier</span><span>Responsable</span><span style="text-align:center">Site</span><span>Avancement</span><span style="text-align:center">Échéance</span></div>' +
+          '<div class="grid-box">' + worksRows + '</div>' +
+        '</div></div>' +
+      '</div>' +
+      '<div class="section">' +
+        '<div class="section-head"><span class="section-title">Propreté par site</span><span class="section-sub" style="color:' + v.cleanAlertFg + '">' + esc(v.cleanAlert) + '</span></div>' +
+        '<div class="scroll-x"><div style="min-width:560px">' +
+          '<div class="grid-head" style="grid-template-columns:minmax(0,2fr) 108px 152px;padding-left:14px"><span>Zone</span><span style="text-align:center">Site</span><span style="text-align:center">État</span></div>' +
+          '<div class="grid-box">' + zoneRows + '</div>' +
+        '</div></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function mineHtml(v) {
+    const taskRows = v.myTasks.length ? v.myTasks.map(function (r) {
+      return '<div class="grid-row" style="grid-template-columns:minmax(0,1fr) 118px 140px">' +
+        '<span class="cell" style="min-height:62px;border-left-color:var(--accent)"><span><span class="cell-title" style="display:block;font-size:17px;opacity:' + r.op + ';text-decoration:' + r.deco + '">' + esc(r.title) + '</span><span class="cell-sub">' + esc(r.meta) + '</span></span></span>' +
+        '<span class="cell center" style="min-height:62px;color:' + r.urgFg + '">' + esc(r.urg) + '</span>' +
+        '<button class="pill-btn" data-action="cycle-task" data-id="' + esc(r.id) + '" style="min-height:62px;background:' + r.statusBg + ';color:' + r.statusFg + '">' + esc(r.status) + '</button>' +
+      '</div>';
+    }).join('') : '<div class="empty-row" style="min-height:58px">' + esc(v.myEmptyLabel) + '</div>';
+
+    const weekRows = v.myWeek.map(function (d) {
+      return '<button class="week-row" data-action="pick-day" data-date="' + d.iso + '" style="grid-template-columns:128px 132px minmax(0,1fr) 104px">' +
+        '<span class="week-day" style="background:' + d.rowBg + ';border-left-color:' + d.mark + ';color:' + d.dayFg + '">' + esc(d.day) + '</span>' +
+        '<span class="week-state" style="background:' + d.stateBg + ';color:' + d.stateFg + '">' + esc(d.state) + '</span>' +
+        '<span class="week-detail" style="background:' + d.rowBg + '">' + esc(d.detail) + '</span>' +
+        '<span class="week-tasks" style="background:' + d.rowBg + '">' + esc(d.tasks) + '</span>' +
+      '</button>';
+    }).join('');
+
+    return '<div style="max-width:860px">' +
+      '<div class="status-card">' +
+        '<span class="status-dot" style="background:' + v.myStatusColor + '"></span>' +
+        '<span class="status-label">' + esc(v.myStatusLabel) + '</span>' +
+        '<span class="status-shift">' + esc(v.myShiftLabel) + '</span>' +
+      '</div>' +
+      '<div class="section">' +
+        '<div class="section-head"><span class="section-title">Mes tâches</span><span class="section-sub">' + esc(v.myProgress) + '</span></div>' +
+        '<div class="grid-box">' + taskRows + '</div>' +
+        '<div class="hint-text">Touchez le statut pour le changer.</div>' +
+      '</div>' +
+      '<div class="section">' +
+        '<div class="section-head"><span class="section-title">Ma semaine</span><span class="section-sub">' + esc(v.weekLabel) + '</span></div>' +
+        '<div class="grid-box">' + weekRows + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function dialogHtml() {
+    if (!state.dialog) return '';
+    const staffOptions = STAFF.filter(function (p) { return p.r === 'Agent technique'; })
+      .map(function (p) { return '<option value="' + p.id + '"' + (p.id === state.dialog.person ? ' selected' : '') + '>' + esc(p.n + ' · ' + p.r) + '</option>'; }).join('');
+    const siteOptions = SITES.map(function (s) { return '<option value="' + s.id + '"' + (s.id === state.dialog.site ? ' selected' : '') + '>' + esc(s.name) + '</option>'; }).join('');
+    return '<div class="dialog-backdrop" data-action="dialog-backdrop">' +
+      '<div class="dialog">' +
+        '<div class="dialog-title">Nouvelle tâche</div>' +
+        '<div class="dialog-body">' +
+          '<div class="field"><label>Quoi</label><input class="input" id="dlg-title" placeholder="Ex. Réparer la porte du local 12"></div>' +
+          '<div class="field"><label>Qui</label><select class="input" id="dlg-person">' + staffOptions + '</select></div>' +
+          '<div class="dialog-row">' +
+            '<div class="field"><label>Où</label><select class="input" id="dlg-site">' + siteOptions + '</select></div>' +
+            '<div class="field"><label>Urgence</label><select class="input" id="dlg-urg"><option value="Normal">Normal</option><option value="Urgent">Urgent</option></select></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="dialog-actions">' +
+          '<button class="btn btn-secondary" data-action="dialog-close">Annuler</button>' +
+          '<button class="btn btn-primary" data-action="dialog-submit">Ajouter</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function render() {
+    const v = computeVals();
+    let mainHtml;
+    if (v.tab === 'planning') mainHtml = planningHtml(v);
+    else if (v.tab === 'team') mainHtml = teamHtml(v);
+    else if (v.tab === 'works') mainHtml = worksHtml(v);
+    else mainHtml = mineHtml(v);
+
+    document.getElementById('app').innerHTML =
+      '<header class="app-header">' + headerHtml(v) + '</header>' +
+      '<main>' + mainHtml + '</main>' +
+      dialogHtml();
+  }
+
+  document.getElementById('app').addEventListener('click', function (e) {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+    if (action === 'role') { state.role = el.dataset.role; if (state.role === 'chef') state.tab = 'planning'; render(); }
+    else if (action === 'tab') { if (state.role === 'chef') { state.tab = el.dataset.tab; render(); } }
+    else if (action === 'prev-day') { state.selected = addDays(state.selected, -1); render(); }
+    else if (action === 'next-day') { state.selected = addDays(state.selected, 1); render(); }
+    else if (action === 'cycle-task') {
+      const id = el.dataset.id;
+      const tasks = tasksFor(state.selected);
+      const t = tasks.filter(function (x) { return x.id === id; })[0];
+      if (t) setStatus(id, t.state);
     }
-    await saveData();
-    document.getElementById('stock-form').reset();
-    document.getElementById('stock-panel').classList.remove('open');
-    renderManagerApp();
-  });
-  document.getElementById('stock-filters').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-sfilter]'); if(!btn) return;
-    stockFilter = btn.dataset.sfilter; renderStockFilters(); renderStock();
-  });
-  document.getElementById('stock-list').addEventListener('click', async (e) => {
-    const dec = e.target.closest('[data-stock-dec]');
-    const inc = e.target.closest('[data-stock-inc]');
-    const del = e.target.closest('[data-del-stock]');
-    if(dec){
-      const id = Number(dec.dataset.stockDec);
-      const s = data.stock.find(x=>x.id===id);
-      if(s && s.qty>0){
-        s.qty -= 1;
-        data.stockMovements.push({ id: Date.now(), stockItemId: s.id, itemName: s.name, type: 'Sortie', qty: 1, date: iso(today), note: '' });
-        await saveData(); renderManagerApp();
+    else if (action === 'cycle-zone') {
+      const id = el.dataset.id;
+      const z = ZONES.filter(function (x) { return x.id === id; })[0];
+      const cur = state.clean[id] || z.base;
+      state.clean[id] = CLEAN_CYCLE[cur];
+      render();
+    }
+    else if (action === 'add-task') {
+      state.dialog = { title: '', person: 3, site: el.dataset.site, urg: 'Normal' };
+      render();
+    }
+    else if (action === 'dialog-backdrop') { if (e.target !== el) return; state.dialog = false; render(); }
+    else if (action === 'dialog-close') { state.dialog = false; render(); }
+    else if (action === 'dialog-submit') {
+      const title = document.getElementById('dlg-title').value.trim();
+      if (title) {
+        const pid = Number(document.getElementById('dlg-person').value);
+        const site = document.getElementById('dlg-site').value;
+        const urg = document.getElementById('dlg-urg').value;
+        const p = STAFF.filter(function (x) { return x.id === pid; })[0];
+        const selKey = key(state.selected);
+        const list = (state.extra[selKey] || []).slice();
+        list.push({
+          id: selKey + '|x' + list.length + '|' + pid,
+          title: title, urg: urg === 'Urgent' ? 'Urgent' : '',
+          pid: pid, person: p.n, site: site, shift: null, hour: 9
+        });
+        state.extra[selKey] = list;
       }
-      return;
+      state.dialog = false;
+      render();
     }
-    if(inc){
-      const id = Number(inc.dataset.stockInc);
-      const s = data.stock.find(x=>x.id===id);
-      if(s){
-        s.qty += 1;
-        data.stockMovements.push({ id: Date.now(), stockItemId: s.id, itemName: s.name, type: 'Entrée', qty: 1, date: iso(today), note: '' });
-        await saveData(); renderManagerApp();
-      }
-      return;
-    }
-    if(del){
-      const id = Number(del.dataset.delStock);
-      data.stock = data.stock.filter(x=>x.id!==id);
-      await saveData(); renderManagerApp();
-      return;
-    }
-  });
-  document.getElementById('export-stock-csv').addEventListener('click', () => {
-    const headers = ['Nom','Catégorie','Site','Emplacement','Quantité','Unité','Seuil alerte','Coût unitaire €','Valeur totale €'];
-    const rows = data.stock.map(s => [s.name, s.category, s.site, s.location||'', s.qty, s.unit, s.threshold, (s.unitCost||0).toFixed(2), (s.qty*(s.unitCost||0)).toFixed(2)]);
-    exportCSV('stock-residence.csv', headers, rows);
+    else if (action === 'pick-day') { state.selected = new Date(el.dataset.date + 'T00:00:00'); render(); }
   });
 
-  /* ---------------- Equipment form ---------------- */
-  document.getElementById('toggle-equipment-form').addEventListener('click', () => document.getElementById('equipment-panel').classList.toggle('open'));
-  document.getElementById('cancel-equipment').addEventListener('click', () => {
-    document.getElementById('equipment-panel').classList.remove('open');
-    document.getElementById('equipment-form').reset();
-  });
-  document.getElementById('equipment-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newEquipment = {
-      id: Date.now(),
-      name: document.getElementById('eq-name').value.trim(),
-      category: document.getElementById('eq-category').value,
-      site: document.getElementById('eq-site').value,
-      location: document.getElementById('eq-location').value.trim(),
-      brand: document.getElementById('eq-brand').value.trim(),
-      model: document.getElementById('eq-model').value.trim(),
-      serialNumber: document.getElementById('eq-serial').value.trim(),
-      purchaseDate: document.getElementById('eq-purchase').value || null,
-      warrantyEnd: document.getElementById('eq-warranty').value || null,
-      supplier: document.getElementById('eq-supplier').value.trim(),
-      notes: document.getElementById('eq-notes').value.trim()
-    };
-    if(!newEquipment.name) return;
-    data.equipment.push(newEquipment);
-    await saveData();
-    document.getElementById('equipment-form').reset();
-    document.getElementById('equipment-panel').classList.remove('open');
-    renderEquipment();
-  });
-  document.getElementById('equipment-list').addEventListener('click', async (e) => {
-    const del = e.target.closest('[data-del-equipment]');
-    if(del){
-      const id = Number(del.dataset.delEquipment);
-      data.equipment = data.equipment.filter(x=>x.id!==id);
-      await saveData(); renderEquipment();
-    }
-  });
-  document.getElementById('export-equipment-csv').addEventListener('click', () => {
-    const headers = ['Nom','Catégorie','Site','Emplacement','Marque','Modèle','N° série','Mise en service','Fin garantie','Fournisseur','Notes'];
-    const rows = data.equipment.map(e => [e.name, e.category, e.site, e.location||'', e.brand||'', e.model||'', e.serialNumber||'',
-      e.purchaseDate ? fmtDate(e.purchaseDate) : '', e.warrantyEnd ? fmtDate(e.warrantyEnd) : '', e.supplier||'', e.notes||'']);
-    exportCSV('equipements-residence.csv', headers, rows);
-  });
-
-  /* ---------------- Providers form ---------------- */
-  document.getElementById('toggle-provider-form').addEventListener('click', () => document.getElementById('provider-panel').classList.toggle('open'));
-  document.getElementById('cancel-provider').addEventListener('click', () => {
-    document.getElementById('provider-panel').classList.remove('open');
-    document.getElementById('provider-form').reset();
-  });
-  document.getElementById('provider-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newProvider = {
-      id: Date.now(),
-      name: document.getElementById('pr-name').value.trim(),
-      specialty: document.getElementById('pr-specialty').value.trim(),
-      contact: document.getElementById('pr-contact').value.trim(),
-      phone: document.getElementById('pr-phone').value.trim(),
-      email: document.getElementById('pr-email').value.trim(),
-      notes: document.getElementById('pr-notes').value.trim()
-    };
-    if(!newProvider.name) return;
-    data.providers.push(newProvider);
-    await saveData();
-    document.getElementById('provider-form').reset();
-    document.getElementById('provider-panel').classList.remove('open');
-    renderProviders();
-  });
-  document.getElementById('provider-list').addEventListener('click', async (e) => {
-    const del = e.target.closest('[data-del-provider]');
-    if(del){
-      const id = Number(del.dataset.delProvider);
-      data.providers = data.providers.filter(x=>x.id!==id);
-      await saveData(); renderProviders();
-    }
-  });
-
-  /* ---------------- Team form ---------------- */
-  document.getElementById('toggle-team-form').addEventListener('click', () => document.getElementById('team-panel').classList.toggle('open'));
-  document.getElementById('cancel-team').addEventListener('click', () => {
-    document.getElementById('team-panel').classList.remove('open');
-    document.getElementById('team-form').reset();
-  });
-  document.getElementById('team-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newMember = {
-      id: Date.now(),
-      name: document.getElementById('tm-name').value.trim(),
-      trade: document.getElementById('tm-trade').value,
-      site: document.getElementById('tm-site').value,
-      phone: document.getElementById('tm-phone').value.trim(),
-      active: true
-    };
-    if(!newMember.name) return;
-    data.team.push(newMember);
-    await saveData();
-    document.getElementById('team-form').reset();
-    document.getElementById('team-panel').classList.remove('open');
-    renderTeamTab();
-    renderTeamDatalist();
-    renderPicker();
-  });
-  document.getElementById('team-list').addEventListener('click', async (e) => {
-    const del = e.target.closest('[data-del-team]');
-    if(del){
-      const id = Number(del.dataset.delTeam);
-      data.team = data.team.filter(x=>x.id!==id);
-      await saveData();
-      renderTeamTab();
-      renderTeamDatalist();
-      renderPicker();
-    }
-  });
-
-  /* ---------------- Leave (congés) form ---------------- */
-  document.getElementById('add-leave').addEventListener('click', async () => {
-    const memberId = Number(document.getElementById('lv-member').value);
-    const start = document.getElementById('lv-start').value;
-    const end = document.getElementById('lv-end').value;
-    const reason = document.getElementById('lv-reason').value.trim();
-    if(!memberId || !start || !end || end < start) return;
-    data.leaves.push({ id: Date.now(), memberId, start, end, reason });
-    await saveData();
-    document.getElementById('lv-start').value = '';
-    document.getElementById('lv-end').value = '';
-    document.getElementById('lv-reason').value = '';
-    renderTeamLeaves(); renderTeamWorkload(); renderPicker(); renderTodayPanel(); renderCalendar();
-    if(document.getElementById('worker-app').style.display !== 'none') renderWorkerApp();
-  });
-  document.getElementById('team-leaves').addEventListener('click', async (e) => {
-    const del = e.target.closest('[data-del-leave]');
-    if(del){
-      const id = Number(del.dataset.delLeave);
-      data.leaves = data.leaves.filter(x=>x.id!==id);
-      await saveData();
-      renderTeamLeaves(); renderTeamWorkload(); renderPicker(); renderTodayPanel(); renderCalendar();
-      if(document.getElementById('worker-app').style.display !== 'none') renderWorkerApp();
-    }
-  });
-
-  /* ---------------- Project form & interactions ---------------- */
-  document.getElementById('toggle-project-form').addEventListener('click', () => document.getElementById('project-panel').classList.toggle('open'));
-  document.getElementById('cancel-project').addEventListener('click', () => {
-    document.getElementById('project-panel').classList.remove('open');
-    document.getElementById('project-form').reset();
-    pendingConversionTicketId = null;
-  });
-  document.getElementById('project-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const teams = Array.from(document.querySelectorAll('#p-teams input:checked')).map(i=>i.value);
-    const newProject = {
-      id: Date.now(),
-      name: document.getElementById('p-name').value.trim(),
-      site: document.getElementById('p-site').value,
-      status: document.getElementById('p-status').value,
-      startDate: document.getElementById('p-start').value,
-      endDate: document.getElementById('p-end').value,
-      description: document.getElementById('p-desc').value.trim(),
-      teams, steps: [], materials: []
-    };
-    if(!newProject.name || !newProject.startDate || !newProject.endDate) return;
-    data.projects.push(newProject);
-    openProjectIds.add(newProject.id);
-    if(pendingConversionTicketId){
-      const t = data.tickets.find(x => x.id === pendingConversionTicketId);
-      if(t){ t.convertedProjectId = newProject.id; t.status = 'Terminé'; t.completedAt = iso(today); }
-      pendingConversionTicketId = null;
-    }
-    await saveData();
-    document.getElementById('project-form').reset();
-    document.getElementById('project-panel').classList.remove('open');
-    renderManagerApp();
-  });
-  document.getElementById('project-filters').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-pfilter]'); if(!btn) return;
-    projectFilter = btn.dataset.pfilter; renderProjectFilters(); renderProjects();
-  });
-
-  document.getElementById('project-list').addEventListener('click', async (e) => {
-    const toggleP = e.target.closest('[data-toggle-project]');
-    const toggleStep = e.target.closest('[data-toggle-step]');
-    const delStep = e.target.closest('[data-del-step]');
-    const addStep = e.target.closest('[data-add-step]');
-    const cycleMat = e.target.closest('[data-cycle-mat]');
-    const delMat = e.target.closest('[data-del-mat]');
-    const addMat = e.target.closest('[data-add-mat]');
-    const delProject = e.target.closest('[data-del-project]');
-
-    if(toggleP){
-      const id = Number(toggleP.dataset.toggleProject);
-      if(openProjectIds.has(id)) openProjectIds.delete(id); else openProjectIds.add(id);
-      renderProjects();
-      return;
-    }
-    if(toggleStep){
-      const [pid,sid] = toggleStep.dataset.toggleStep.split('|').map(Number);
-      const p = data.projects.find(x=>x.id===pid);
-      const s = p.steps.find(x=>x.id===sid);
-      s.done = !s.done;
-      await saveData(); renderProjects(); renderKpis(); renderCalendar(); renderTodayPanel();
-      return;
-    }
-    if(delStep){
-      const [pid,sid] = delStep.dataset.delStep.split('|').map(Number);
-      const p = data.projects.find(x=>x.id===pid);
-      p.steps = p.steps.filter(x=>x.id!==sid);
-      await saveData(); renderProjects(); renderCalendar(); renderTodayPanel();
-      return;
-    }
-    if(addStep){
-      const pid = Number(addStep.dataset.addStep);
-      const p = data.projects.find(x=>x.id===pid);
-      const labelEl = document.getElementById(`new-step-label-${pid}`);
-      const dateEl = document.getElementById(`new-step-date-${pid}`);
-      const label = labelEl.value.trim();
-      const dateVal = dateEl.value;
-      if(!label || !dateVal) return;
-      const nextId = p.steps.length ? Math.max(...p.steps.map(s=>s.id))+1 : 1;
-      p.steps.push({ id:nextId, label, date:dateVal, done:false });
-      await saveData(); renderProjects(); renderCalendar(); renderTodayPanel();
-      return;
-    }
-    if(cycleMat){
-      const [pid,mid] = cycleMat.dataset.cycleMat.split('|').map(Number);
-      const p = data.projects.find(x=>x.id===pid);
-      const m = p.materials.find(x=>x.id===mid);
-      m.status = matStatusCycle[m.status];
-      await saveData(); renderProjects();
-      return;
-    }
-    if(delMat){
-      const [pid,mid] = delMat.dataset.delMat.split('|').map(Number);
-      const p = data.projects.find(x=>x.id===pid);
-      p.materials = p.materials.filter(x=>x.id!==mid);
-      await saveData(); renderProjects(); renderKpis();
-      return;
-    }
-    if(addMat){
-      const pid = Number(addMat.dataset.addMat);
-      const p = data.projects.find(x=>x.id===pid);
-      const name = document.getElementById(`new-mat-name-${pid}`).value.trim();
-      const qty = parseFloat(document.getElementById(`new-mat-qty-${pid}`).value) || 1;
-      const unit = document.getElementById(`new-mat-unit-${pid}`).value;
-      const supplier = document.getElementById(`new-mat-supplier-${pid}`).value.trim();
-      const unitCost = parseFloat(document.getElementById(`new-mat-cost-${pid}`).value) || 0;
-      if(!name) return;
-      const nextId = p.materials.length ? Math.max(...p.materials.map(m=>m.id))+1 : 1;
-      p.materials.push({ id:nextId, name, qty, unit, supplier, unitCost, status:'À commander' });
-      await saveData(); renderProjects(); renderKpis();
-      return;
-    }
-    if(delProject){
-      const id = Number(delProject.dataset.delProject);
-      data.projects = data.projects.filter(x=>x.id!==id);
-      openProjectIds.delete(id);
-      await saveData(); renderProjects(); renderKpis(); renderCalendar(); renderTodayPanel();
-      return;
-    }
-  });
-
-  /* ---------------- Calendar interactions ---------------- */
-  document.getElementById('cal-prev').addEventListener('click', () => {
-    calMonth--; if(calMonth<0){ calMonth=11; calYear--; }
-    renderCalendar();
-  });
-  document.getElementById('cal-next').addEventListener('click', () => {
-    calMonth++; if(calMonth>11){ calMonth=0; calYear++; }
-    renderCalendar();
-  });
-  document.getElementById('cal-grid').addEventListener('click', (e) => {
-    const cell = e.target.closest('[data-cal-day]'); if(!cell) return;
-    selectedDay = cell.dataset.calDay;
-    const [y,m] = selectedDay.split('-').map(Number);
-    calYear = y; calMonth = m-1;
-    renderCalendar();
-  });
-
-  /* ---------------- Day-panel interactions (shared: Calendar + Aujourd'hui, manager) + profile picker + worker finish ---------------- */
-  document.body.addEventListener('click', async (e) => {
-    const pickProfile = e.target.closest('[data-pick-profile]');
-    const workerFinish = e.target.closest('[data-worker-finish]');
-    const toggleAssign = e.target.closest('[data-toggle-assign]');
-    const cancelAssign = e.target.closest('[data-cancel-assign]');
-    const viewProject = e.target.closest('[data-view-project]');
-    const finishBtn = e.target.closest('[data-finish-assign]');
-    const reassignBtn = e.target.closest('[data-reassign]');
-    const delAssignBtn = e.target.closest('[data-del-assign]');
-
-    if(pickProfile){
-      data.currentProfileId = Number(pickProfile.dataset.pickProfile);
-      await saveData();
-      renderApp();
-      return;
-    }
-    if(workerFinish){
-      const id = Number(workerFinish.dataset.workerFinish);
-      const a = data.assignments.find(x=>x.id===id);
-      if(a){
-        data.history.push({ id:Date.now(), date:a.date, member:a.member, team:a.team, task:a.task,
-                             linkedProjectId:a.linkedProjectId, linkedTicketId:a.linkedTicketId, completedAt: iso(today) });
-        a.status = 'Terminé';
-        await saveData();
-        renderWorkerApp();
-      }
-      return;
-    }
-    if(toggleAssign){
-      const suffix = toggleAssign.dataset.toggleAssign;
-      assignPanelOpen[suffix] = !assignPanelOpen[suffix];
-      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
-      return;
-    }
-    if(cancelAssign){
-      const suffix = cancelAssign.dataset.cancelAssign;
-      assignPanelOpen[suffix] = false;
-      if(suffix === 'cal') renderAgenda(); else renderTodayPanel();
-      return;
-    }
-    if(viewProject){
-      const pid = Number(viewProject.dataset.viewProject);
-      document.querySelector('nav.tabs button[data-tab="projects"]').click();
-      openProjectIds.add(pid);
-      projectFilter = 'Tous';
-      renderProjectFilters(); renderProjects();
-      return;
-    }
-    if(finishBtn){
-      const id = Number(finishBtn.dataset.finishAssign);
-      const a = data.assignments.find(x=>x.id===id);
-      if(a){
-        data.history.push({ id:Date.now(), date:a.date, member:a.member, team:a.team, task:a.task,
-                             linkedProjectId:a.linkedProjectId, linkedTicketId:a.linkedTicketId, completedAt: iso(today) });
-        a.status = 'Terminé';
-        await saveData();
-        renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab(); renderDashboard();
-      }
-      return;
-    }
-    if(reassignBtn){
-      const id = Number(reassignBtn.dataset.reassign);
-      const suffix = reassignBtn.dataset.suffix;
-      const input = document.getElementById(`reassign-task-${suffix}-${id}`);
-      const a = data.assignments.find(x=>x.id===id);
-      if(!a || !input) return;
-      const newTask = input.value.trim();
-      if(!newTask) return;
-      a.task = newTask; a.status = 'À faire'; a.linkedProjectId = null; a.linkedTicketId = null;
-      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab();
-      return;
-    }
-    if(delAssignBtn){
-      const id = Number(delAssignBtn.dataset.delAssign);
-      data.assignments = data.assignments.filter(x=>x.id!==id);
-      await saveData(); renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab();
-      return;
-    }
-  });
-
-  document.body.addEventListener('submit', async (e) => {
-    const form = e.target.closest('[data-assign-form]');
-    if(!form) return;
-    e.preventDefault();
-    const suffix = form.dataset.assignForm;
-    const dateStr = form.dataset.assignDate;
-    const val = (id) => document.getElementById(`${id}-${suffix}`).value;
-    const newAssign = {
-      id: Date.now(),
-      date: dateStr,
-      member: val('a-member').trim(),
-      team: val('a-team'),
-      site: val('a-site'),
-      phone: val('a-phone').trim(),
-      horaireStart: val('a-start'),
-      horaireEnd: val('a-end'),
-      task: val('a-task').trim(),
-      linkedProjectId: val('a-project') ? Number(val('a-project')) : null,
-      linkedTicketId: null,
-      status: 'À faire'
-    };
-    if(!newAssign.member || !newAssign.task) return;
-    data.assignments.push(newAssign);
-    assignPanelOpen[suffix] = false;
-    await saveData();
-    renderAgenda(); renderTodayPanel(); renderKpis(); renderTeamTab();
-  });
-
-  loadData();
+  render();
 })();
 </script>
 </body>
