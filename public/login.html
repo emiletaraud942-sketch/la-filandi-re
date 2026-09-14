@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — Résidence Les Cerisiers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFF1EE; --surface:#FFFFFF; --ink:#1B2523; --ink-soft:#5B6864; --ink-faint:#8B948F;
+    --line:#DBDFD8; --navy:#1C2E33; --teal:#2E6E68; --rust:#B14B33; --rust-soft:#F6E4DF;
+    --radius:10px; --shadow:0 1px 2px rgba(28,46,51,0.06), 0 6px 16px rgba(28,46,51,0.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:'IBM Plex Sans',sans-serif;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow);
+    padding:36px 32px; max-width:380px; width:100%; text-align:center;
+  }
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 6px;}
+  h1{font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; text-transform:uppercase; margin:0 0 24px; color:var(--navy);}
+  .field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px; text-align:left;}
+  .field label{font-size:12px; color:var(--ink-soft); font-weight:500;}
+  .field input{
+    font-family:inherit; font-size:14.5px; padding:11px 12px; border:1px solid var(--line);
+    border-radius:8px; background:#FCFCFB; color:var(--ink);
+  }
+  button{
+    width:100%; font-family:inherit; font-weight:600; font-size:14.5px; background:var(--navy);
+    color:#fff; border:none; padding:12px; border-radius:8px; cursor:pointer; margin-top:6px;
+  }
+  button:hover{background:#132125;}
+  button:disabled{opacity:.6; cursor:default;}
+  .error{color:var(--rust); background:var(--rust-soft); border-radius:8px; padding:9px 12px; font-size:13px; margin:0 0 16px; display:none;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">Résidence Les Cerisiers</p>
+    <h1>Service Technique</h1>
+    <p class="error" id="login-error"></p>
+    <form id="login-form">
+      <div class="field">
+        <label for="username">Identifiant</label>
+        <input id="username" name="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" id="submit-btn">Se connecter</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('login-error');
+      const btn = document.getElementById('submit-btn');
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Connexion...';
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+          }),
+        });
+        const body = await res.json();
+        if(!res.ok){
+          errorEl.textContent = body.error || 'Une erreur est survenue.';
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Se connecter';
+          return;
+        }
+        window.location.href = body.mustChangePassword ? '/change-password.html' : '/app.html';
+      } catch (err) {
+        errorEl.textContent = 'Impossible de contacter le serveur. Réessayez.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Se connecter';
+      }
+    });
+  </script>
+</body>
+</html>
