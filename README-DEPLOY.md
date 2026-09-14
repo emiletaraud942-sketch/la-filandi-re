@@ -9,20 +9,34 @@ ci-dessous sont à faire une seule fois.
 
 ## 1. Créer la base de données
 
-1. Dans le tableau de bord Vercel, ouvrez le projet `la-filandi-re`.
-2. Onglet **Storage** → **Create Database** → **Postgres**.
-3. Choisissez une région **Europe** (Frankfurt) — obligatoire pour la RGPD.
-4. Une fois créée, Vercel relie automatiquement la base au projet et injecte
-   la variable `POSTGRES_URL` — rien à copier à la main.
+1. Dans le tableau de bord Vercel, ouvrez le projet `la-filandiere`.
+2. Onglet **Storage** → choisissez un fournisseur du Marketplace : **Neon**
+   (Serverless Postgres) — Vercel n'a plus de "Postgres" natif.
+3. Choisissez une région **Europe** (Frankfurt) si proposée — pour la RGPD.
+4. Une fois créée, Vercel injecte automatiquement les variables de connexion
+   dans le projet. **Important** : contrairement à l'ancien "Vercel
+   Postgres", Neon (via le Marketplace) nomme sa variable principale
+   `DATABASE_URL` et non `POSTGRES_URL`. Le code (`lib/db.ts`) accepte les
+   deux noms (ainsi que `POSTGRES_URL_NO_SSL`/`POSTGRES_URL_NON_POOLING`),
+   donc rien à renommer à la main — assurez-vous juste qu'au moins une de
+   ces variables existe (Settings → Environment Variables).
 
 ## 2. Définir le secret de session
 
 1. Générez une valeur aléatoire, par exemple avec `openssl rand -base64 32`
    (ou demandez-la-moi, je peux la générer).
-2. Projet Vercel → **Settings** → **Environment Variables** → ajoutez
-   `SESSION_SECRET` avec cette valeur, pour l'environnement **Production**
-   (et Preview si vous voulez tester avant mise en production).
-3. Redéployez le projet pour que la variable soit prise en compte.
+2. Projet Vercel → **Settings** → **Environment Variables** → ajoutez une
+   variable nommée **exactement** `SESSION_SECRET` (tout en majuscules —
+   les noms de variables sont sensibles à la casse ; `session_secret` en
+   minuscules ne sera pas reconnu par le code) avec cette valeur, pour
+   l'environnement **Production** (et Preview si vous voulez tester avant).
+3. Vérifiez aussi **Settings → General → Build & Development Settings →
+   Framework Preset** : doit être **Next.js** (pas "Other") — sinon les
+   redirections et l'API ne fonctionnent pas et le site renvoie une 404.
+4. Redéployez le projet (**Deployments** → dernier déploiement → **⋯** →
+   **Redeploy**) pour que ces changements soient pris en compte : ajouter
+   une variable d'environnement ou changer le Framework Preset ne redéploie
+   jamais automatiquement.
 
 ## 3. Initialiser la base
 
