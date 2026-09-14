@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getSession(req);
@@ -8,5 +9,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ error: 'Réservé au responsable technique' }, { status: 403 });
   }
   await sql`DELETE FROM leaves WHERE id = ${Number(params.id)}`;
+  await logAction(session, 'leave.delete', `leave:${params.id}`);
   return NextResponse.json({ ok: true });
 }

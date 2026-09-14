@@ -161,6 +161,24 @@
   .msg-form{flex:none;display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--divider);}
   .msg-form input{flex:1 1 auto;min-width:0;}
   .offline-banner{flex:none;padding:8px 16px;background:var(--todo);color:#fff;font-size:13px;text-align:center;}
+
+  .admin-btn{flex:none;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:1px solid var(--divider);border-radius:var(--radius-md);color:var(--text-muted);font-size:15px;}
+  .admin-btn:hover{background:rgba(27,29,38,.05);color:var(--text);}
+  .admin-window{width:min(760px,95vw);height:min(640px,85vh);display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-lg);overflow:hidden;}
+  .admin-tabs{flex:none;display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--divider);}
+  .admin-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:16px;}
+  .admin-section{margin-bottom:22px;}
+  .admin-section h3{font-size:15px;font-weight:600;margin:0 0 10px;}
+  .admin-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:var(--surface);box-shadow:var(--shadow-sm);margin-bottom:6px;flex-wrap:wrap;}
+  .admin-row .grow{flex:1 1 160px;min-width:0;}
+  .admin-row .muted{color:var(--text-faint);font-size:13px;}
+  .admin-form{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:10px;padding:12px;border-radius:8px;background:var(--neutral-wash);}
+  .admin-form .field{margin:0;min-width:130px;}
+  .btn-sm{padding:6px 10px;font-size:13px;}
+  .btn-danger{border-color:var(--todo);color:var(--todo);}
+  .btn-danger:hover{background:rgba(177,75,51,.08);}
+  .audit-item{padding:8px 10px;border-bottom:1px solid var(--divider);font-size:13.5px;}
+  .audit-item .muted{color:var(--text-faint);font-size:12px;}
 </style>
 </head>
 <body>
@@ -175,6 +193,18 @@
       <input id="msg-input" class="input" placeholder="Écrire un message…" autocomplete="off" maxlength="2000">
       <button type="submit" class="btn btn-primary">Envoyer</button>
     </form>
+  </div>
+</div>
+
+<div id="admin-backdrop" class="msg-backdrop" hidden>
+  <div class="admin-window">
+    <div class="msg-header"><span>Administration</span><button id="admin-close" class="icon-btn" aria-label="Fermer">✕</button></div>
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-admin-tab="accounts">Comptes</button>
+      <button class="tab-btn" data-admin-tab="team">Équipe</button>
+      <button class="tab-btn" data-admin-tab="log">Journal d'audit</button>
+    </div>
+    <div id="admin-body" class="admin-body"></div>
   </div>
 </div>
 
@@ -543,6 +573,7 @@
             '<div class="user-role">' + esc(v.userRole) + '</div>' +
           '</div>' +
           '<div class="avatar">' + esc(v.userInitials) + '</div>' +
+          (v.canToggleRole ? '<button class="admin-btn" data-action="open-admin" title="Administration">⚙</button>' : '') +
           '<button class="logout-btn" data-action="logout" title="Se déconnecter">⏻</button>' +
         '</div>' +
       '</div>' +
@@ -684,6 +715,7 @@
       '<div class="section">' +
         '<div class="section-head"><span class="section-title">Ma semaine</span><span class="section-sub">' + esc(v.weekLabel) + '</span></div>' +
         '<div class="grid-box">' + weekRows + '</div>' +
+        '<div class="hint-text"><a href="/api/ics" target="_blank" rel="noopener">Exporter mon planning (.ics, Outlook/Google Agenda)</a></div>' +
       '</div>' +
     '</div>';
   }
@@ -788,10 +820,169 @@
       render();
     }
     else if (action === 'pick-day') { state.selected = new Date(el.dataset.date + 'T00:00:00'); render(); }
+    else if (action === 'open-admin') { openAdmin(); }
     else if (action === 'logout') {
       apiCall('/api/auth/logout', { method: 'POST' }).finally(function () { window.location.href = '/login.html'; });
     }
   });
+
+  // ---------- Administration (lot 09) & journal d'audit (lot 08) ----------
+  let ADMIN_TAB = 'accounts';
+  let ADMIN_USERS = [];
+  let ADMIN_TEAM = [];
+  let ADMIN_LOG = [];
+  let ADMIN_LOG_MORE = true;
+
+  function fmtAuditTime(iso) {
+    return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderAdminBody() {
+    const body = document.getElementById('admin-body');
+    if (ADMIN_TAB === 'accounts') {
+      const rows = ADMIN_USERS.map(function (u) {
+        return '<div class="admin-row">' +
+          '<span class="grow"><strong>' + esc(u.username) + '</strong> — ' + (u.role === 'manager' ? 'Responsable/Chef' : 'Agent') +
+          (u.teamMemberName ? ' · ' + esc(u.teamMemberName) : '') + '</span>' +
+          '<span class="muted">' + (u.lastLoginAt ? 'dernière connexion ' + fmtAuditTime(u.lastLoginAt) : 'jamais connecté') + '</span>' +
+          '<button class="btn btn-secondary btn-sm" data-admin-action="reset-password" data-id="' + u.id + '">Réinitialiser le mot de passe</button>' +
+          '<button class="btn btn-danger btn-sm" data-admin-action="delete-user" data-id="' + u.id + '">Supprimer le compte</button>' +
+        '</div>';
+      }).join('') || '<p class="muted">Aucun compte.</p>';
+
+      const memberOptions = ADMIN_TEAM.filter(function (m) {
+        return m.active && !ADMIN_USERS.some(function (u) { return u.teamMemberId === m.id; });
+      }).map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + '</option>'; }).join('');
+
+      body.innerHTML =
+        '<div class="admin-section"><h3>Comptes de connexion</h3>' + rows +
+          '<form class="admin-form" id="create-account-form">' +
+            '<div class="field"><label>Identifiant</label><input class="input" id="acc-username" required></div>' +
+            '<div class="field"><label>Mot de passe temporaire</label><input class="input" id="acc-password" required minlength="8"></div>' +
+            '<div class="field"><label>Rôle</label><select class="input" id="acc-role"><option value="agent">Agent</option><option value="manager">Responsable/Chef</option></select></div>' +
+            '<div class="field" id="acc-member-field"><label>Membre d\'équipe</label><select class="input" id="acc-member">' + memberOptions + '</select></div>' +
+            '<button type="submit" class="btn btn-primary btn-sm">Créer le compte</button>' +
+          '</form>' +
+        '</div>';
+    } else if (ADMIN_TAB === 'team') {
+      const rows = ADMIN_TEAM.map(function (m) {
+        return '<div class="admin-row">' +
+          '<span class="grow">' + esc(m.name) + ' — ' + esc(m.trade) + ' · ' + esc(siteName(m.site)) + (m.active ? '' : ' (désactivé)') + '</span>' +
+          '<a class="btn btn-secondary btn-sm" href="/api/ics?memberId=' + m.id + '" target="_blank" rel="noopener">.ics</a>' +
+          '<button class="btn btn-secondary btn-sm" data-admin-action="toggle-team" data-id="' + m.id + '" data-active="' + (!m.active) + '">' + (m.active ? 'Désactiver' : 'Réactiver') + '</button>' +
+          '<button class="btn btn-danger btn-sm" data-admin-action="delete-team" data-id="' + m.id + '">Supprimer définitivement</button>' +
+        '</div>';
+      }).join('') || '<p class="muted">Équipe vide.</p>';
+
+      body.innerHTML =
+        '<div class="admin-section"><h3>Équipe (' + ADMIN_TEAM.length + ')</h3>' + rows +
+          '<form class="admin-form" id="create-member-form">' +
+            '<div class="field"><label>Nom</label><input class="input" id="mem-name" required></div>' +
+            '<div class="field"><label>Fonction</label><input class="input" id="mem-trade" placeholder="Agent technique" required></div>' +
+            '<div class="field"><label>Site</label><select class="input" id="mem-site"><option value="CLF">Clairefontaine</option><option value="BMT">Beaumont</option></select></div>' +
+            '<div class="field"><label>Téléphone</label><input class="input" id="mem-phone"></div>' +
+            '<button type="submit" class="btn btn-primary btn-sm">Ajouter à l\'équipe</button>' +
+          '</form>' +
+        '</div>';
+    } else {
+      const rows = ADMIN_LOG.map(function (e) {
+        return '<div class="audit-item"><strong>' + esc(e.actorName) + '</strong> — ' + esc(e.action) +
+          (e.target ? ' (' + esc(e.target) + ')' : '') + (e.details ? ' : ' + esc(e.details) : '') +
+          '<div class="muted">' + fmtAuditTime(e.createdAt) + '</div></div>';
+      }).join('') || '<p class="muted">Aucune entrée.</p>';
+      body.innerHTML =
+        '<div class="admin-section"><h3>Journal d\'audit</h3>' + rows +
+          (ADMIN_LOG_MORE ? '<button class="btn btn-secondary btn-sm" id="audit-load-more" style="margin-top:8px">Charger plus</button>' : '') +
+        '</div>';
+      const btn = document.getElementById('audit-load-more');
+      if (btn) btn.addEventListener('click', function () { loadAuditLog(true); });
+    }
+
+    const createAccountForm = document.getElementById('create-account-form');
+    if (createAccountForm) createAccountForm.addEventListener('submit', onCreateAccount);
+    const createMemberForm = document.getElementById('create-member-form');
+    if (createMemberForm) createMemberForm.addEventListener('submit', onCreateMember);
+  }
+
+  function loadAdminAccounts() {
+    return apiCall('/api/admin/users').then(function (r) { ADMIN_USERS = r; });
+  }
+  function loadAdminTeam() {
+    return apiCall('/api/team').then(function (r) { ADMIN_TEAM = r; });
+  }
+  function loadAuditLog(append) {
+    const before = append && ADMIN_LOG.length ? ADMIN_LOG[ADMIN_LOG.length - 1].id : 0;
+    return apiCall('/api/admin/audit-log' + (before ? '?before=' + before : '')).then(function (r) {
+      ADMIN_LOG_MORE = r.entries.length === 50;
+      ADMIN_LOG = append ? ADMIN_LOG.concat(r.entries) : r.entries;
+      renderAdminBody();
+    });
+  }
+
+  function onCreateAccount(e) {
+    e.preventDefault();
+    const username = document.getElementById('acc-username').value.trim();
+    const password = document.getElementById('acc-password').value;
+    const role = document.getElementById('acc-role').value;
+    const memberSel = document.getElementById('acc-member');
+    const teamMemberId = memberSel && memberSel.value ? Number(memberSel.value) : null;
+    apiCall('/api/admin/users', {
+      method: 'POST',
+      body: JSON.stringify({ username: username, tempPassword: password, role: role, teamMemberId: teamMemberId })
+    }).then(function () { return loadAdminAccounts(); }).then(renderAdminBody).catch(function (err) { alert(err.message); });
+  }
+
+  function onCreateMember(e) {
+    e.preventDefault();
+    const name = document.getElementById('mem-name').value.trim();
+    const trade = document.getElementById('mem-trade').value.trim();
+    const site = document.getElementById('mem-site').value;
+    const phone = document.getElementById('mem-phone').value.trim();
+    apiCall('/api/team', { method: 'POST', body: JSON.stringify({ name: name, trade: trade, site: site, phone: phone }) })
+      .then(function () { return loadAdminTeam(); }).then(renderAdminBody).catch(function (err) { alert(err.message); });
+  }
+
+  function openAdmin() {
+    document.getElementById('admin-backdrop').hidden = false;
+    Promise.all([loadAdminAccounts(), loadAdminTeam()]).then(renderAdminBody).catch(function (e) { alert(e.message); });
+  }
+  function closeAdmin() { document.getElementById('admin-backdrop').hidden = true; }
+
+  function initAdmin() {
+    document.getElementById('admin-close').addEventListener('click', closeAdmin);
+    document.getElementById('admin-backdrop').addEventListener('click', function (e) {
+      if (e.target.id === 'admin-backdrop') closeAdmin();
+    });
+    document.querySelectorAll('[data-admin-tab]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        ADMIN_TAB = btn.dataset.adminTab;
+        document.querySelectorAll('[data-admin-tab]').forEach(function (b) { b.classList.toggle('active', b === btn); });
+        if (ADMIN_TAB === 'log' && !ADMIN_LOG.length) loadAuditLog(false);
+        else renderAdminBody();
+      });
+    });
+    document.getElementById('admin-body').addEventListener('click', function (e) {
+      const el = e.target.closest('[data-admin-action]');
+      if (!el) return;
+      const id = Number(el.dataset.id);
+      if (el.dataset.adminAction === 'reset-password') {
+        const pw = prompt('Nouveau mot de passe temporaire (8 caractères min.) :');
+        if (!pw) return;
+        apiCall('/api/admin/users/' + id, { method: 'PATCH', body: JSON.stringify({ action: 'resetPassword', tempPassword: pw }) })
+          .then(function () { alert('Mot de passe réinitialisé.'); }).catch(function (err) { alert(err.message); });
+      } else if (el.dataset.adminAction === 'delete-user') {
+        if (!confirm('Supprimer ce compte de connexion ?')) return;
+        apiCall('/api/admin/users/' + id, { method: 'DELETE' }).then(function () { return loadAdminAccounts(); }).then(renderAdminBody).catch(function (err) { alert(err.message); });
+      } else if (el.dataset.adminAction === 'toggle-team') {
+        const active = el.dataset.active === 'true';
+        apiCall('/api/team/' + id, { method: 'PATCH', body: JSON.stringify({ active: active }) })
+          .then(function () { return loadAdminTeam(); }).then(renderAdminBody).catch(function (err) { alert(err.message); });
+      } else if (el.dataset.adminAction === 'delete-team') {
+        if (!confirm('Supprimer définitivement cette personne et toutes ses données (congés, tâches) ? Cette action est irréversible.')) return;
+        apiCall('/api/team/' + id, { method: 'DELETE' }).then(function () { return loadAdminTeam(); }).then(renderAdminBody).catch(function (err) { alert(err.message); });
+      }
+    });
+  }
 
   // ---------- Messagerie d'équipe (lot 04) ----------
   let MSG_LAST_ID = 0;
@@ -944,6 +1135,7 @@
 
     render();
     initMessaging();
+    initAdmin();
     setInterval(pollBoardState, 20000);
   }).catch(function (e) {
     showError('Impossible de charger les données : ' + e.message);

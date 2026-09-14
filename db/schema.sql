@@ -223,3 +223,15 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_messages_created ON messages (id);
+
+-- ---------- Journal d'audit (Phase 3, lot 08) ----------
+CREATE TABLE IF NOT EXISTS audit_log (
+  id             BIGSERIAL PRIMARY KEY,
+  actor_user_id  INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  actor_name     TEXT NOT NULL,
+  action         TEXT NOT NULL,
+  target         TEXT,
+  details        TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_audit_log_id ON audit_log (id DESC);

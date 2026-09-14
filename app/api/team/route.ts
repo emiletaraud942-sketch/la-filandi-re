@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
+
+// Réservé au responsable technique : à la différence de /api/bootstrap
+// (qui ne renvoie que les membres actifs pour le planning), ce endpoint
+// renvoie toute l'équipe, y compris désactivée, pour le panneau d'admin.
+export async function GET(req: NextRequest) {
+  const session = await getSession(req);
+  if (!session || session.role !== 'manager') {
+    return NextResponse.json({ error: 'Réservé au responsable technique' }, { status: 403 });
+  }
+  const { rows } = await sql`SELECT id, name, trade, site, phone, active FROM team ORDER BY id`;
+  return NextResponse.json(rows);
+}
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -15,5 +28,6 @@ export async function POST(req: NextRequest) {
     VALUES (${b.name}, ${b.trade}, ${b.site}, ${b.phone || null}, true)
     RETURNING id, name, trade, site, phone, active
   `;
+  await logAction(session, 'team.create', `member:${rows[0].id}`, b.name);
   return NextResponse.json(rows[0], { status: 201 });
 }

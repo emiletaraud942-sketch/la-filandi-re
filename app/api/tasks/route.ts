@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 // Ajout d'une tâche à la main sur le planning du jour — réservé au
 // responsable/chef d'équipe (seul rôle pour qui l'écran propose ce bouton).
@@ -26,5 +27,6 @@ export async function POST(req: NextRequest) {
     VALUES (${day}, ${title}, ${urgent}, ${memberId}, ${site})
     RETURNING id, day, title, urgent, member_id AS "memberId", site
   `;
+  await logAction(session, 'task.create', `member:${memberId}`, title);
   return NextResponse.json(rows[0], { status: 201 });
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession, hashPassword } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 // Gestion minimale des comptes (Lot 01) : le responsable technique peut créer
 // un accès pour un membre de l'équipe déjà enregistré, ou un second compte
@@ -29,7 +30,10 @@ export async function POST(req: NextRequest) {
   const username = String(b.username || '').trim().toLowerCase();
   const tempPassword = String(b.tempPassword || '');
   const role = b.role === 'manager' ? 'manager' : 'agent';
-  const teamMemberId = role === 'agent' ? Number(b.teamMemberId) || null : null;
+  // Un compte "manager" peut aussi être lié à un membre d'équipe (cas d'un
+  // chef d'équipe qui apparaît dans le planning) — seul un compte agent
+  // l'exige.
+  const teamMemberId = Number(b.teamMemberId) || null;
 
   if (!username || tempPassword.length < 8) {
     return NextResponse.json({ error: 'Identifiant et mot de passe (8 caractères min.) requis' }, { status: 400 });
@@ -49,5 +53,6 @@ export async function POST(req: NextRequest) {
     VALUES (${username}, ${hash}, ${role}, ${teamMemberId}, true)
     RETURNING id, username, role, team_member_id AS "teamMemberId"
   `;
+  await logAction(session, 'user.create', `user:${rows[0].id}`, `${username} (${role})`);
   return NextResponse.json(rows[0], { status: 201 });
 }

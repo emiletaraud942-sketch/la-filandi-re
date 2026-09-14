@@ -1,4 +1,4 @@
-# Mise en service — Phases 1 & 2
+# Mise en service — Phases 1, 2 & 3
 
 Ce dépôt contient maintenant une vraie application (Next.js + Postgres) et
 non plus une simple page statique. L'écran "Planning Service Technique"
@@ -112,5 +112,50 @@ Ajoutée par-dessus la Phase 1, sans rien casser de ce qui précède :
   démonstration statiques (la table `projects` existe déjà en base pour une
   mise en service future de cet onglet).
 
+## Phase 3 — conformité & maturité (lots 08, 09, 10 partiels)
+
+- **Panneau d'administration** (lot 09) : bouton ⚙ dans l'en-tête, visible
+  uniquement pour les comptes "Chef d'équipe/Responsable". Trois onglets :
+  - *Comptes* : créer un compte (identifiant, mot de passe temporaire, rôle,
+    membre d'équipe lié), réinitialiser un mot de passe, supprimer un compte.
+  - *Équipe* : ajouter une personne, la désactiver (disparaît du planning
+    sans perdre son historique) ou la **supprimer définitivement** (droit à
+    l'effacement RGPD — supprime aussi ses congés et tâches ajoutées).
+  - *Journal d'audit* : liste des actions sensibles horodatées.
+- **Journal d'audit complet** (lot 08) : chaque connexion sensible (compte
+  créé/supprimé, mot de passe réinitialisé, membre désactivé/supprimé,
+  congé ajouté/supprimé, tâche terminée, zone nettoyée) est tracée avec
+  l'auteur, la date et le détail — table `audit_log`, consultable dans le
+  panneau d'administration.
+- **Export .ics du planning** (lot 10) : chaque agent peut exporter son
+  planning des 4 prochaines semaines (bouton dans "Ma journée" → "Ma
+  semaine") vers Outlook/Google Agenda ; un chef d'équipe peut l'exporter
+  pour n'importe quel membre depuis l'onglet Équipe du panneau d'admin.
+
+### Vérifier la Phase 3
+
+- Se connecter avec `rt` → ouvrir le panneau ⚙ → créer un compte de test
+  pour un membre de l'équipe sans compte, vérifier qu'il peut se connecter.
+- Désactiver un membre → il doit disparaître du planning immédiatement
+  (chef comme employé) sans que ses tâches passées ne disparaissent.
+- Vérifier que les actions ci-dessus apparaissent dans l'onglet "Journal
+  d'audit", avec le bon auteur et la bonne date.
+- Depuis un compte agent, cliquer "Exporter mon planning (.ics)" et
+  l'importer dans Google Agenda / Outlook pour vérifier le format.
+
+### Ce qui reste hors de cette passe (voir aussi le reliquat de Phase 2)
+
+- **Registre RGPD formel** (liste des données conservées et durées) : le
+  mécanisme de suppression existe (droit à l'effacement), le document de
+  registre lui-même reste à rédiger avec vous.
+- **Export PDF horodaté des contrôles réglementaires** : le module
+  "contrôles" (légionellose, ascenseurs, désenfumage…) n'est pas encore
+  branché sur l'écran actuel (voir "Chantiers et propreté" en Phase 2) —
+  l'export PDF n'a de sens qu'une fois ce module réel.
+- **Seuils configurables**, **gestion des sites/corps de métier** : pas
+  encore de terrain nécessitant ces réglages avec seulement 2 sites fixes.
+- **Email de commande fournisseur automatique**, **connexion à un logiciel
+  RH** : nécessitent des décisions/accès externes (lot 10, non prioritaire).
+
 Voir le document "Cahier des Charges" pour le détail complet et l'ordre
-recommandé (Phase 3 : conformité réglementaire, administration, intégrations).
+recommandé.

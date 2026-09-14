@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -18,5 +19,6 @@ export async function POST(req: NextRequest) {
     VALUES (${memberId}, ${b.start}, ${b.end}, ${b.reason || null})
     RETURNING id, member_id AS "memberId", start_date AS start, end_date AS "end", reason
   `;
+  await logAction(session, 'leave.create', `member:${memberId}`, `${b.start} → ${b.end} (${b.reason || 'sans motif'})`);
   return NextResponse.json(rows[0], { status: 201 });
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession, hashPassword, verifyPassword, signSession, sessionCookieOptions, SESSION_COOKIE } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -27,6 +28,8 @@ export async function POST(req: NextRequest) {
 
   const newHash = await hashPassword(newPassword);
   await sql`UPDATE users SET password_hash = ${newHash}, must_change_password = false WHERE id = ${session.uid}`;
+
+  await logAction(session, 'auth.change-password');
 
   const token = await signSession({ ...session, mustChangePassword: false });
   const res = NextResponse.json({ ok: true });

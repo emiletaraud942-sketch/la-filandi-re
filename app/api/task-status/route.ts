@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 const VALID_STATUSES = new Set(['todo', 'doing', 'done']);
 
@@ -35,5 +36,6 @@ export async function POST(req: NextRequest) {
     VALUES (${taskId}, ${status}, now())
     ON CONFLICT (task_id) DO UPDATE SET status = EXCLUDED.status, updated_at = now()
   `;
+  if (status === 'done') await logAction(session, 'task.done', taskId);
   return NextResponse.json({ ok: true });
 }

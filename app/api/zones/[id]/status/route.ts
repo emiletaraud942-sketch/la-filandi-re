@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
 
 const VALID_STATUSES = new Set(['ok', 'soon', 'urgent']);
 
@@ -21,5 +22,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     VALUES (${params.id}, ${status}, now())
     ON CONFLICT (zone_id) DO UPDATE SET status = EXCLUDED.status, updated_at = now()
   `;
+  await logAction(session, 'zone.status', params.id, status);
   return NextResponse.json({ ok: true });
 }
