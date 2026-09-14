@@ -13,27 +13,55 @@
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- ---------- Équipe ----------
+-- ---------- Équipe (les 2 sites, 15 personnes — reprend le planning actuel) ----------
 INSERT INTO team (id, name, trade, site, phone, active) VALUES
-  (1, 'Julien Marchand', 'Plomberie', 'Clairefontaine', '06 14 82 35 09', true),
-  (2, 'Karim Haddad', 'Électricité', 'Clairefontaine', '06 27 91 44 58', true),
-  (3, 'Nicolas Fournier', 'Chauffage / CVC', 'Les deux sites', '06 33 05 78 12', true),
-  (4, 'Marc Delaunay', 'Agent polyvalent', 'Beaumont', '06 50 22 18 44', true)
+  (1, 'Julien Marchand', 'Chef d''équipe', 'CLF', '06 14 82 35 09', true),
+  (2, 'Camille Roussel', 'Chef d''équipe', 'BMT', '06 27 91 44 58', true),
+  (3, 'Karim Haddad', 'Agent technique', 'CLF', '06 33 05 78 12', true),
+  (4, 'Nicolas Fournier', 'Agent technique', 'CLF', '06 50 22 18 44', true),
+  (5, 'Sophie Berthier', 'Agent technique', 'CLF', '06 12 34 56 78', true),
+  (6, 'Antoine Lefort', 'Agent technique', 'CLF', '06 12 34 56 79', true),
+  (7, 'Claire Dumont', 'Agent technique', 'CLF', '06 12 34 56 80', true),
+  (8, 'Mathieu Girard', 'Agent technique', 'CLF', '06 12 34 56 81', true),
+  (9, 'Marc Delaunay', 'Agent technique', 'BMT', '06 12 34 56 82', true),
+  (10, 'Émilie Charpentier', 'Agent technique', 'BMT', '06 12 34 56 83', true),
+  (11, 'Rachid Benali', 'Agent technique', 'BMT', '06 12 34 56 84', true),
+  (12, 'Isabelle Faure', 'Agent technique', 'BMT', '06 12 34 56 85', true),
+  (13, 'Vincent Picard', 'Agent technique', 'BMT', '06 12 34 56 86', true),
+  (14, 'Laura Simon', 'Agent technique', 'BMT', '06 12 34 56 87', true),
+  (15, 'Thomas Bertin', 'Agent technique', 'BMT', '06 12 34 56 88', true)
 ON CONFLICT (id) DO NOTHING;
 SELECT setval('team_id_seq', (SELECT max(id) FROM team));
 
 -- ---------- Comptes utilisateurs ----------
+-- (un compte de démo par profil ; les 11 autres membres de l'équipe n'ont
+-- pas encore de compte — à créer via l'écran d'administration des comptes)
 INSERT INTO users (username, password_hash, role, team_member_id, must_change_password) VALUES
   ('rt', crypt('RT-2026-Init!', gen_salt('bf', 12)), 'manager', NULL, true),
-  ('julien', crypt('Julien-2026!', gen_salt('bf', 12)), 'agent', 1, true),
-  ('karim', crypt('Karim-2026!', gen_salt('bf', 12)), 'agent', 2, true),
-  ('nicolas', crypt('Nicolas-2026!', gen_salt('bf', 12)), 'agent', 3, true),
-  ('marc', crypt('Marc-2026!', gen_salt('bf', 12)), 'agent', 4, true)
+  ('julien', crypt('Julien-2026!', gen_salt('bf', 12)), 'manager', 1, true),
+  ('karim', crypt('Karim-2026!', gen_salt('bf', 12)), 'agent', 3, true),
+  ('nicolas', crypt('Nicolas-2026!', gen_salt('bf', 12)), 'agent', 4, true),
+  ('marc', crypt('Marc-2026!', gen_salt('bf', 12)), 'agent', 9, true)
 ON CONFLICT (username) DO NOTHING;
 
 -- ---------- Congés ----------
 INSERT INTO leaves (member_id, start_date, end_date, reason) VALUES
-  (3, CURRENT_DATE - 1, CURRENT_DATE + 3, 'Congés');
+  (4, CURRENT_DATE + 2, CURRENT_DATE + 9, 'Congés payés'),
+  (11, CURRENT_DATE - 1, CURRENT_DATE + 4, 'Arrêt maladie'),
+  (8, CURRENT_DATE + 15, CURRENT_DATE + 22, 'Congés payés'),
+  (13, CURRENT_DATE + 6, CURRENT_DATE + 7, 'Formation'),
+  (6, CURRENT_DATE + 3, CURRENT_DATE + 3, 'Récupération')
+ON CONFLICT DO NOTHING;
+
+-- ---------- Zones (propreté) ----------
+INSERT INTO zones (id, site, name, base_status) VALUES
+  ('z1', 'CLF', 'Hall et couloirs', 'ok'),
+  ('z2', 'CLF', 'Salle à manger', 'soon'),
+  ('z3', 'CLF', 'Sanitaires 2e étage', 'urgent'),
+  ('z4', 'BMT', 'Hall et couloirs', 'ok'),
+  ('z5', 'BMT', 'Cuisine', 'soon'),
+  ('z6', 'BMT', 'Local déchets', 'urgent')
+ON CONFLICT (id) DO NOTHING;
 
 -- ---------- Prestataires ----------
 INSERT INTO providers (id, name, specialty, contact, phone, email, notes) VALUES
@@ -127,18 +155,8 @@ INSERT INTO equipment (id, name, category, site, location, brand, model, serial_
 ON CONFLICT (id) DO NOTHING;
 SELECT setval('equipment_id_seq', (SELECT max(id) FROM equipment));
 
--- ---------- Affectations du jour et à venir ----------
-INSERT INTO assignments (date, member_id, team_label, site, horaire_start, horaire_end, phone, task, linked_project_id, linked_ticket_id, status) VALUES
-  (CURRENT_DATE, 1, 'Plomberie', 'Clairefontaine', '08:00', '12:00', '06 14 82 35 09', 'Pose des sanitaires et de la faïence – salles de bain Le Moulin', 1, NULL, 'En cours'),
-  (CURRENT_DATE, 1, 'Plomberie', 'Clairefontaine', '13:00', '15:00', '06 14 82 35 09', 'Remplacement des joints de robinetterie – Chambre 12 (L''Étang)', NULL, NULL, 'À faire'),
-  (CURRENT_DATE + 2, 1, 'Plomberie', 'Clairefontaine', '08:00', '12:00', '06 14 82 35 09', 'Fuite robinetterie – Chambre 45 (Le Moulin)', NULL, 2, 'À faire'),
-  (CURRENT_DATE, 2, 'Électricité', 'Clairefontaine', '08:00', '12:00', '06 27 91 44 58', 'Remplacement d''un disjoncteur défectueux – tableau général', NULL, NULL, 'À faire'),
-  (CURRENT_DATE, 2, 'Électricité', 'Clairefontaine', '13:00', '16:00', '06 27 91 44 58', 'Diagnostic volet roulant électrique – Salon La Clairière', NULL, 3, 'À faire'),
-  (CURRENT_DATE + 3, 2, 'Électricité', 'Clairefontaine', '08:00', '16:00', '06 27 91 44 58', 'Vérification tableau électrique – aile La Clairière', NULL, NULL, 'À faire'),
-  (CURRENT_DATE, 4, 'Agent polyvalent', 'Beaumont', '08:00', '12:00', '06 50 22 18 44', 'Relevés avant dépose – chaudière collective', 3, NULL, 'À faire'),
-  (CURRENT_DATE, 4, 'Agent polyvalent', 'Beaumont', '13:00', '16:00', '06 50 22 18 44', 'Entretien des espaces extérieurs – aile Petite Maison', NULL, NULL, 'À faire'),
-  (CURRENT_DATE + 4, 4, 'Agent polyvalent', 'Beaumont', '08:00', '16:00', '06 50 22 18 44', 'Vérification chauffage – aile Petite Maison', NULL, NULL, 'À faire'),
-  (CURRENT_DATE + 5, 3, 'Chauffage / CVC', 'Clairefontaine', '08:00', '16:00', '06 33 05 78 12', 'Vérification du groupe électrogène', NULL, NULL, 'À faire');
-
-INSERT INTO assignments (date, external_member_name, team_label, site, horaire_start, horaire_end, phone, task, linked_project_id, linked_ticket_id, status) VALUES
-  (CURRENT_DATE + 10, 'M. Petit (Normandie Sécurité Incendie)', 'Prestataire externe', 'Clairefontaine', '09:00', '12:00', '06 45 60 12 78', 'Intervention désenfumage – La Clairière', 2, NULL, 'À faire');
+-- Remarque : la table `assignments` (et le reste du planning détaillé
+-- chantiers/tickets ci-dessus) n'est pas encore utilisée par l'écran
+-- "Planning Service Technique" actuel, qui calcule son propre planning du
+-- jour à la volée (voir task_status / extra_tasks plus haut). Elle est
+-- conservée pour une phase ultérieure (module chantiers complet).

@@ -176,3 +176,39 @@ CREATE INDEX IF NOT EXISTS idx_assignments_date ON assignments (date);
 CREATE INDEX IF NOT EXISTS idx_leaves_member ON leaves (member_id);
 CREATE INDEX IF NOT EXISTS idx_project_steps_project ON project_steps (project_id);
 CREATE INDEX IF NOT EXISTS idx_project_materials_project ON project_materials (project_id);
+
+-- ---------- Données du tableau "Planning Service Technique" (design actuel) ----------
+-- Le statut d'une tâche (todo/doing/done), qu'elle soit générée par le
+-- planning du jour ou ajoutée à la main, est identifié par un id texte
+-- stable (ex. "2026-9-14|3" ou "2026-9-14|x0|3"), dont le dernier segment
+-- après le dernier "|" est toujours l'id du membre concerné (team.id) —
+-- utilisé pour vérifier qu'un agent ne modifie que ses propres tâches.
+CREATE TABLE IF NOT EXISTS task_status (
+  task_id     TEXT PRIMARY KEY,
+  status      TEXT NOT NULL CHECK (status IN ('todo', 'doing', 'done')),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS extra_tasks (
+  id          SERIAL PRIMARY KEY,
+  day         DATE NOT NULL,
+  title       TEXT NOT NULL,
+  urgent      BOOLEAN NOT NULL DEFAULT false,
+  member_id   INTEGER NOT NULL REFERENCES team(id) ON DELETE CASCADE,
+  site        TEXT NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_extra_tasks_day ON extra_tasks (day);
+
+CREATE TABLE IF NOT EXISTS zones (
+  id           TEXT PRIMARY KEY,
+  site         TEXT NOT NULL,
+  name         TEXT NOT NULL,
+  base_status  TEXT NOT NULL CHECK (base_status IN ('ok', 'soon', 'urgent'))
+);
+
+CREATE TABLE IF NOT EXISTS zone_status (
+  zone_id     TEXT PRIMARY KEY REFERENCES zones(id) ON DELETE CASCADE,
+  status      TEXT NOT NULL CHECK (status IN ('ok', 'soon', 'urgent')),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);

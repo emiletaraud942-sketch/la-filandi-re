@@ -1,9 +1,11 @@
 # Mise en service — Phase 1 (socle technique)
 
 Ce dépôt contient maintenant une vraie application (Next.js + Postgres) et
-non plus une simple page statique. Le fichier `public/app.html` (l'outil
-lui-même) et `index.html` (l'ancien prototype, conservé pour mémoire mais
-plus utilisé) coexistent. Les étapes ci-dessous sont à faire une seule fois.
+non plus une simple page statique. L'écran "Planning Service Technique"
+(`public/app.html`) est protégé par une connexion réelle et lit/écrit ses
+données (équipe, congés, statut des tâches, propreté des zones) dans
+Postgres au lieu de les regénérer à chaque rechargement. Les étapes
+ci-dessous sont à faire une seule fois.
 
 ## 1. Créer la base de données
 
@@ -39,26 +41,37 @@ l'application les redirige vers cet écran.
 
 | Identifiant | Mot de passe temporaire | Rôle |
 |---|---|---|
-| `rt` | `RT-2026-Init!` | Responsable technique |
-| `julien` | `Julien-2026!` | Agent — Plomberie |
-| `karim` | `Karim-2026!` | Agent — Électricité |
-| `nicolas` | `Nicolas-2026!` | Agent — Chauffage / CVC |
-| `marc` | `Marc-2026!` | Agent — Agent polyvalent |
+| `rt` | `RT-2026-Init!` | Responsable technique (vue complète) |
+| `julien` | `Julien-2026!` | Chef d'équipe — Clairefontaine |
+| `karim` | `Karim-2026!` | Agent technique — Clairefontaine |
+| `nicolas` | `Nicolas-2026!` | Agent technique — Clairefontaine |
+| `marc` | `Marc-2026!` | Agent technique — Beaumont |
+
+Les 15 membres de l'équipe existent dans la base (`db/seed.sql`) mais seuls
+ces 5 ont un compte de connexion pour l'instant ; les autres sont créés via
+**Admin → Comptes** (`/api/admin/users`, à réserver au responsable) le jour
+où ils doivent se connecter eux-mêmes.
 
 ## 5. Vérifier
 
 - Ouvrir l'URL du site → doit rediriger vers `/login.html`.
 - Se connecter avec `rt` / `RT-2026-Init!` → doit demander un nouveau mot
-  de passe, puis afficher l'espace responsable complet.
-- Se connecter avec un compte agent → doit afficher directement ses tâches
-  du jour.
-- Créer un nouveau compte depuis l'onglet **Équipe → Comptes de connexion**
-  pour vérifier que la gestion minimale des comptes fonctionne (utile le
-  jour où un 6ᵉ agent rejoint l'équipe).
+  de passe, puis afficher la vue "Chef d'équipe" (avec bascule Chef/Employé).
+- Se connecter avec `karim` / `Karim-2026!` → doit afficher directement
+  "Ma journée" pour Karim Haddad, sans bascule de rôle.
+- Cocher le statut d'une tâche, recharger la page → le statut doit être
+  conservé (persistance en base, plus seulement en mémoire).
+- Depuis un compte "Chef d'équipe", ajouter une tâche ou faire évoluer la
+  propreté d'une zone, recharger → doit persister également.
+- Vérifier qu'un agent ne peut pas changer le statut de la tâche d'un
+  collègue (403 attendu si on force l'appel API avec un autre id).
 
 ## Ce qui n'est pas encore fait (Phases 2 et 3 du cahier des charges)
 
-Messagerie d'équipe, mode hors-ligne/PWA, notifications email/SMS, export
-PDF réglementaire, panneau d'administration complet (sites/corps de métier
-configurables), intégrations externes. Voir le document "Cahier des
-Charges" pour le détail et l'ordre recommandé.
+Le module "Chantiers et propreté" affiche encore des chantiers de
+démonstration statiques (la table `projects` existe déjà en base pour une
+mise en service future de cet onglet). Messagerie d'équipe, mode hors-ligne
+/PWA, notifications email/SMS, export PDF réglementaire, panneau
+d'administration complet (sites/corps de métier configurables),
+intégrations externes. Voir le document "Cahier des Charges" pour le détail
+et l'ordre recommandé.
