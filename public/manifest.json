@@ -1,0 +1,14 @@
+{
+  "name": "Résidence Les Cerisiers — Service Technique",
+  "short_name": "Service Technique",
+  "description": "Planning et suivi du service technique — Résidence Les Cerisiers",
+  "start_url": "/app.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6157b0",
+  "lang": "fr",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

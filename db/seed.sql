@@ -44,6 +44,12 @@ INSERT INTO users (username, password_hash, role, team_member_id, must_change_pa
   ('marc', crypt('Marc-2026!', gen_salt('bf', 12)), 'agent', 9, true)
 ON CONFLICT (username) DO NOTHING;
 
+-- ---------- Message de bienvenue ----------
+INSERT INTO messages (author_user_id, author_name, body)
+SELECT id, 'Résidence Les Cerisiers', 'Bienvenue sur la messagerie d''équipe du service technique 👋'
+FROM users WHERE username = 'rt'
+AND NOT EXISTS (SELECT 1 FROM messages);
+
 -- ---------- Congés ----------
 INSERT INTO leaves (member_id, start_date, end_date, reason) VALUES
   (4, CURRENT_DATE + 2, CURRENT_DATE + 9, 'Congés payés'),

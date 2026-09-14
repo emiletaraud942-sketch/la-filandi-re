@@ -1,4 +1,4 @@
-# Mise en service — Phase 1 (socle technique)
+# Mise en service — Phases 1 & 2
 
 Ce dépôt contient maintenant une vraie application (Next.js + Postgres) et
 non plus une simple page statique. L'écran "Planning Service Technique"
@@ -66,12 +66,51 @@ où ils doivent se connecter eux-mêmes.
 - Vérifier qu'un agent ne peut pas changer le statut de la tâche d'un
   collègue (403 attendu si on force l'appel API avec un autre id).
 
-## Ce qui n'est pas encore fait (Phases 2 et 3 du cahier des charges)
+## Phase 2 — l'usage quotidien (lots 03, 04, 05 partiels)
 
-Le module "Chantiers et propreté" affiche encore des chantiers de
-démonstration statiques (la table `projects` existe déjà en base pour une
-mise en service future de cet onglet). Messagerie d'équipe, mode hors-ligne
-/PWA, notifications email/SMS, export PDF réglementaire, panneau
-d'administration complet (sites/corps de métier configurables),
-intégrations externes. Voir le document "Cahier des Charges" pour le détail
-et l'ordre recommandé.
+Ajoutée par-dessus la Phase 1, sans rien casser de ce qui précède :
+
+- **Messagerie d'équipe** (lot 04) : bouton 💬 en bas à droite, visible sur
+  tous les rôles. Canal unique pour toute l'équipe (pas encore de fil par
+  chantier/ticket — ces entités ne sont pas branchées sur l'écran actuel).
+  Un badge indique les messages non lus (vérifié toutes les 8 secondes).
+- **Mise à jour en direct** (lot 03) : le statut des tâches et la propreté
+  des zones se resynchronisent automatiquement toutes les 20 secondes, pour
+  qu'un changement fait par un collègue apparaisse sans recharger la page.
+  Implémenté en polling léger (pas de websocket) — largement suffisant à ce
+  volume d'utilisateurs.
+- **PWA installable** (lot 05, partiel) : `manifest.json` + `sw.js` rendent
+  l'app installable sur l'écran d'accueil d'un téléphone (icône, plein
+  écran, sans barre d'adresse), et gardent le dernier planning chargé
+  consultable hors connexion (lecture seule — une action nécessite toujours
+  une connexion).
+
+### Vérifier la Phase 2
+
+- Ouvrir l'app sur deux appareils/comptes différents, envoyer un message
+  depuis l'un → doit apparaître (badge puis contenu) sur l'autre en
+  quelques secondes.
+- Cocher une tâche depuis un compte, l'observer changer sur un autre
+  compte connecté simultanément sans recharger.
+- Sur mobile (Chrome/Safari) : proposition "Ajouter à l'écran d'accueil"
+  doit apparaître ; une fois installée, l'icône ouvre l'app en plein écran.
+- Couper le réseau après un premier chargement réussi → le planning du jour
+  doit rester affichable (données mises en cache par le service worker).
+
+### Ce qui reste explicitement hors de cette passe
+
+- **Pièces jointes** (lot 06 — photos sur ticket/chantier/équipement) :
+  demande de choisir et provisionner un stockage de fichiers (ex. Vercel
+  Blob) — décision à prendre avec vous avant de le construire.
+- **Notifications email/SMS** (lot 07) : demande une clé d'API d'un
+  fournisseur externe (ex. Resend, Twilio) que je n'ai pas ; le centre de
+  notifications actuel se limite au badge de messages non lus.
+- **Notifications push téléphone**, **synchronisation des écritures faites
+  hors-ligne**, **indicateur de présence en ligne** : non implémentés dans
+  cette passe.
+- Le module "Chantiers et propreté" affiche encore des chantiers de
+  démonstration statiques (la table `projects` existe déjà en base pour une
+  mise en service future de cet onglet).
+
+Voir le document "Cahier des Charges" pour le détail complet et l'ordre
+recommandé (Phase 3 : conformité réglementaire, administration, intégrations).

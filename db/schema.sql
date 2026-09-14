@@ -12,14 +12,15 @@ CREATE TABLE IF NOT EXISTS team (
 );
 
 CREATE TABLE IF NOT EXISTS users (
-  id                    SERIAL PRIMARY KEY,
-  username              TEXT NOT NULL UNIQUE,
-  password_hash         TEXT NOT NULL,
-  role                  TEXT NOT NULL CHECK (role IN ('manager', 'agent')),
-  team_member_id        INTEGER REFERENCES team(id) ON DELETE SET NULL,
-  must_change_password  BOOLEAN NOT NULL DEFAULT true,
-  created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
-  last_login_at         TIMESTAMPTZ
+  id                     SERIAL PRIMARY KEY,
+  username               TEXT NOT NULL UNIQUE,
+  password_hash          TEXT NOT NULL,
+  role                   TEXT NOT NULL CHECK (role IN ('manager', 'agent')),
+  team_member_id         INTEGER REFERENCES team(id) ON DELETE SET NULL,
+  must_change_password   BOOLEAN NOT NULL DEFAULT true,
+  created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_login_at          TIMESTAMPTZ,
+  last_read_message_id   INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS login_attempts (
@@ -212,3 +213,13 @@ CREATE TABLE IF NOT EXISTS zone_status (
   status      TEXT NOT NULL CHECK (status IN ('ok', 'soon', 'urgent')),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ---------- Messagerie d'équipe (Phase 2, lot 04) ----------
+CREATE TABLE IF NOT EXISTS messages (
+  id              SERIAL PRIMARY KEY,
+  author_user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  author_name     TEXT NOT NULL,
+  body            TEXT NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_messages_created ON messages (id);
