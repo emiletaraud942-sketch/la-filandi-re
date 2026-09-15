@@ -173,3 +173,19 @@ Ajoutée par-dessus la Phase 1, sans rien casser de ce qui précède :
 
 Voir le document "Cahier des Charges" pour le détail complet et l'ordre
 recommandé.
+
+## Suite à froid — module Stock
+
+Suite à l'audit organisationnel, le module **Stock** (consommables, pièces
+détachées) est maintenant branché sur l'écran — bouton 📦 dans l'en-tête,
+visible pour tous les rôles :
+
+- Tout compte connecté peut ajuster une quantité (+1/−1) — un agent qui
+  utilise une pièce la décompte lui-même.
+- Seul le responsable/chef d'équipe peut ajouter un article ou le
+  supprimer.
+- Un badge sur le bouton 📦 indique le nombre d'articles sous leur seuil
+  d'alerte (déjà configuré dans les données de départ).
+
+Les données existent déjà en base si `db/seed.sql` a été exécuté (8
+articles de démonstration) — rien à réinitialiser.

@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { logAction } from '@/lib/audit';
+
+export async function GET(req: NextRequest) {
+  const session = await getSession(req);
+  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  const { rows } = await sql`
+    SELECT id, name, category, site, qty, threshold, unit, unit_cost AS "unitCost", location
+    FROM stock ORDER BY category, name
+  `;
+  return NextResponse.json(rows);
+}
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -22,5 +33,6 @@ export async function POST(req: NextRequest) {
       VALUES (${item.id}, 'Entrée', ${item.qty}, CURRENT_DATE, 'Stock initial')
     `;
   }
+  await logAction(session, 'stock.create', `stock:${item.id}`, `${item.name} (${item.qty} ${item.unit})`);
   return NextResponse.json(item, { status: 201 });
 }

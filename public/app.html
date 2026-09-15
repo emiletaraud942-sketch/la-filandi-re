@@ -163,7 +163,8 @@
   .msg-form input{flex:1 1 auto;min-width:0;}
   .offline-banner{flex:none;padding:8px 16px;background:var(--todo);color:#fff;font-size:13px;text-align:center;}
 
-  .admin-btn{flex:none;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:1px solid var(--divider);border-radius:var(--radius-md);color:var(--text-muted);font-size:15px;}
+  .admin-btn{position:relative;flex:none;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:1px solid var(--divider);border-radius:var(--radius-md);color:var(--text-muted);font-size:15px;}
+  .stock-row-low{box-shadow:0 0 0 1px var(--todo)!important;}
   .admin-btn:hover{background:rgba(27,29,38,.05);color:var(--text);}
   .admin-window{width:min(760px,95vw);height:min(640px,85vh);display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-lg);overflow:hidden;}
   .admin-tabs{flex:none;display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--divider);}
@@ -194,6 +195,13 @@
       <input id="msg-input" class="input" placeholder="Écrire un message…" autocomplete="off" maxlength="2000">
       <button type="submit" class="btn btn-primary">Envoyer</button>
     </form>
+  </div>
+</div>
+
+<div id="stock-backdrop" class="msg-backdrop" hidden>
+  <div class="admin-window">
+    <div class="msg-header"><span>Stock</span><button id="stock-close" class="icon-btn" aria-label="Fermer">✕</button></div>
+    <div id="stock-body" class="admin-body"></div>
   </div>
 </div>
 
@@ -574,6 +582,7 @@
             '<div class="user-role">' + esc(v.userRole) + '</div>' +
           '</div>' +
           '<div class="avatar">' + esc(v.userInitials) + '</div>' +
+          '<button class="admin-btn" data-action="open-stock" title="Stock">📦<span id="stock-badge" class="msg-badge" hidden></span></button>' +
           (v.canToggleRole ? '<button class="admin-btn" data-action="open-admin" title="Administration">⚙</button>' : '') +
           '<button class="logout-btn" data-action="logout" title="Se déconnecter">⏻</button>' +
         '</div>' +
@@ -757,6 +766,7 @@
       '<header class="app-header">' + headerHtml(v) + '</header>' +
       '<main>' + mainHtml + '</main>' +
       dialogHtml();
+    updateStockBadge();
   }
 
   document.getElementById('app').addEventListener('click', function (e) {
@@ -821,11 +831,118 @@
       render();
     }
     else if (action === 'pick-day') { state.selected = new Date(el.dataset.date + 'T00:00:00'); render(); }
+    else if (action === 'open-stock') { openStock(); }
     else if (action === 'open-admin') { openAdmin(); }
     else if (action === 'logout') {
       apiCall('/api/auth/logout', { method: 'POST' }).finally(function () { window.location.href = '/login.html'; });
     }
   });
+
+  // ---------- Stock (consommables, pièces détachées) ----------
+  let STOCK = [];
+
+  function stockBadgeCount() {
+    return STOCK.filter(function (s) { return s.qty <= s.threshold; }).length;
+  }
+
+  function updateStockBadge() {
+    const b = document.getElementById('stock-badge');
+    if (!b) return;
+    const n = stockBadgeCount();
+    if (n > 0) { b.hidden = false; b.textContent = n > 99 ? '99+' : String(n); }
+    else { b.hidden = true; }
+  }
+
+  function loadStock() {
+    return apiCall('/api/stock').then(function (r) { STOCK = r; updateStockBadge(); });
+  }
+
+  function renderStockBody() {
+    const body = document.getElementById('stock-body');
+    const byCategory = {};
+    STOCK.forEach(function (s) { (byCategory[s.category] = byCategory[s.category] || []).push(s); });
+    const cats = Object.keys(byCategory).sort();
+    const sections = cats.map(function (cat) {
+      const rows = byCategory[cat].map(function (s) {
+        const low = s.qty <= s.threshold;
+        return '<div class="admin-row' + (low ? ' stock-row-low' : '') + '">' +
+          '<span class="grow"><strong>' + esc(s.name) + '</strong> — ' + esc(s.site) + (s.location ? ' · ' + esc(s.location) : '') + '</span>' +
+          '<span' + (low ? ' style="color:var(--todo);font-weight:600"' : ' class="muted"') + '>' +
+            s.qty + ' ' + esc(s.unit) + (low ? ' (seuil ' + s.threshold + ')' : '') +
+          '</span>' +
+          '<button class="btn btn-secondary btn-sm" data-stock-action="dec" data-id="' + s.id + '">−1</button>' +
+          '<button class="btn btn-secondary btn-sm" data-stock-action="inc" data-id="' + s.id + '">+1</button>' +
+          (SESSION.role === 'manager' ? '<button class="btn btn-danger btn-sm" data-stock-action="delete" data-id="' + s.id + '">Supprimer</button>' : '') +
+        '</div>';
+      }).join('');
+      return '<div class="admin-section"><h3>' + esc(cat) + '</h3>' + rows + '</div>';
+    }).join('') || '<p class="muted">Aucun article en stock.</p>';
+
+    const addForm = SESSION.role !== 'manager' ? '' :
+      '<form class="admin-form" id="create-stock-form">' +
+        '<div class="field"><label>Nom</label><input class="input" id="stk-name" required></div>' +
+        '<div class="field"><label>Catégorie</label><input class="input" id="stk-category" placeholder="Consommable" required></div>' +
+        '<div class="field"><label>Site</label><select class="input" id="stk-site">' +
+          '<option value="Clairefontaine">Clairefontaine</option><option value="Beaumont">Beaumont</option><option value="Les deux sites">Les deux sites</option>' +
+        '</select></div>' +
+        '<div class="field"><label>Quantité</label><input class="input" id="stk-qty" type="number" min="0" value="0"></div>' +
+        '<div class="field"><label>Seuil d\'alerte</label><input class="input" id="stk-threshold" type="number" min="0" value="0"></div>' +
+        '<div class="field"><label>Unité</label><input class="input" id="stk-unit" value="unité"></div>' +
+        '<div class="field"><label>Emplacement</label><input class="input" id="stk-location"></div>' +
+        '<button type="submit" class="btn btn-primary btn-sm">Ajouter l\'article</button>' +
+      '</form>';
+
+    body.innerHTML = sections + addForm;
+    const form = document.getElementById('create-stock-form');
+    if (form) form.addEventListener('submit', onCreateStock);
+  }
+
+  function onCreateStock(e) {
+    e.preventDefault();
+    const payload = {
+      name: document.getElementById('stk-name').value.trim(),
+      category: document.getElementById('stk-category').value.trim(),
+      site: document.getElementById('stk-site').value,
+      qty: Number(document.getElementById('stk-qty').value) || 0,
+      threshold: Number(document.getElementById('stk-threshold').value) || 0,
+      unit: document.getElementById('stk-unit').value.trim() || 'unité',
+      location: document.getElementById('stk-location').value.trim() || null
+    };
+    if (!payload.name || !payload.category) return;
+    apiCall('/api/stock', { method: 'POST', body: JSON.stringify(payload) })
+      .then(function () { return loadStock(); }).then(renderStockBody)
+      .catch(function (err) { alert(err.message); });
+  }
+
+  function openStock() {
+    document.getElementById('stock-backdrop').hidden = false;
+    loadStock().then(renderStockBody).catch(function (e) { alert(e.message); });
+  }
+  function closeStock() { document.getElementById('stock-backdrop').hidden = true; }
+
+  function initStock() {
+    document.getElementById('stock-close').addEventListener('click', closeStock);
+    document.getElementById('stock-backdrop').addEventListener('click', function (e) {
+      if (e.target.id === 'stock-backdrop') closeStock();
+    });
+    document.getElementById('stock-body').addEventListener('click', function (e) {
+      const el = e.target.closest('[data-stock-action]');
+      if (!el) return;
+      const id = Number(el.dataset.id);
+      const action = el.dataset.stockAction;
+      if (action === 'inc' || action === 'dec') {
+        const delta = action === 'inc' ? 1 : -1;
+        apiCall('/api/stock/' + id, { method: 'PATCH', body: JSON.stringify({ action: 'adjust', delta: delta }) })
+          .then(function () { return loadStock(); }).then(renderStockBody)
+          .catch(function (err) { alert(err.message); });
+      } else if (action === 'delete') {
+        if (!confirm('Supprimer cet article du stock ?')) return;
+        apiCall('/api/stock/' + id, { method: 'DELETE' })
+          .then(function () { return loadStock(); }).then(renderStockBody)
+          .catch(function (err) { alert(err.message); });
+      }
+    });
+  }
 
   // ---------- Administration (lot 09) & journal d'audit (lot 08) ----------
   let ADMIN_TAB = 'accounts';
@@ -1133,10 +1250,12 @@
     });
 
     state.role = SESSION.role === 'manager' ? 'chef' : 'emp';
+    STOCK = boot.stock || [];
 
     render();
     initMessaging();
     initAdmin();
+    initStock();
     setInterval(pollBoardState, 20000);
   }).catch(function (e) {
     showError('Impossible de charger les données : ' + e.message);
