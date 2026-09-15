@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créer votre compte — Résidence Les Cerisiers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f5f8; --surface:#ffffff; --text:#1b1d26; --text-muted:rgba(27,29,38,.55); --text-faint:rgba(27,29,38,.45);
+    --accent:#6157b0; --accent-ink:#2b2470; --accent-active:#362e80;
+    --divider:rgba(27,29,38,.12); --todo:#B14B33; --todo-soft:#f7e6e1;
+    --shadow:0 0 0 1px #e6e8ee, 0 16px 40px rgba(27,29,38,.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--bg); color:var(--text); font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{
+    background:var(--surface); border-radius:14px; box-shadow:var(--shadow);
+    padding:36px 32px; max-width:400px; width:100%;
+  }
+  .eyebrow{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); margin:0 0 6px; text-align:center;}
+  h1{font-weight:600; font-size:20px; margin:0 0 10px; color:var(--accent-ink); text-align:center; letter-spacing:-.01em;}
+  .intro{font-size:13.5px; color:var(--text-muted); text-align:center; margin:0 0 24px; line-height:1.5;}
+  .field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+  .field label{font-size:12px; color:var(--text-muted); font-weight:500;}
+  .field input{
+    font-family:inherit; font-size:14.5px; padding:10px 12px; border:1px solid var(--divider);
+    border-radius:8px; background:var(--surface); color:var(--text);
+  }
+  .field input:focus-visible{outline:2px solid var(--accent); outline-offset:0; border-color:var(--accent);}
+  button{
+    width:100%; font-family:inherit; font-weight:500; font-size:14.5px; background:var(--accent);
+    color:#fff; border:none; padding:11px; border-radius:8px; cursor:pointer; margin-top:6px;
+  }
+  button:hover{background:var(--accent-active);}
+  button:disabled{opacity:.6; cursor:default;}
+  .error{color:var(--todo); background:var(--todo-soft); border-radius:8px; padding:9px 12px; font-size:13px; margin:0 0 16px; display:none;}
+  .loading, .done{text-align:center; color:var(--text-muted); font-size:14px;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">Résidence Les Cerisiers</p>
+    <div id="content"><p class="loading">Vérification du lien…</p></div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token') || '';
+    const content = document.getElementById('content');
+
+    function showForm(invite) {
+      content.innerHTML =
+        '<h1>Bienvenue ' + invite.teamMemberName.split(' ')[0] + '</h1>' +
+        '<p class="intro">Choisissez votre identifiant et votre mot de passe pour accéder au planning du service technique.</p>' +
+        '<p class="error" id="err"></p>' +
+        '<form id="form">' +
+          '<div class="field"><label for="username">Identifiant</label><input id="username" autocomplete="username" required autofocus></div>' +
+          '<div class="field"><label for="password">Mot de passe</label><input id="password" type="password" autocomplete="new-password" required minlength="8"></div>' +
+          '<div class="field"><label for="password2">Confirmer le mot de passe</label><input id="password2" type="password" autocomplete="new-password" required minlength="8"></div>' +
+          '<button type="submit" id="submit-btn">Créer mon compte</button>' +
+        '</form>';
+
+      document.getElementById('form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const errEl = document.getElementById('err');
+        const btn = document.getElementById('submit-btn');
+        errEl.style.display = 'none';
+        const password = document.getElementById('password').value;
+        if (password !== document.getElementById('password2').value) {
+          errEl.textContent = 'Les deux mots de passe ne correspondent pas.';
+          errEl.style.display = 'block';
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = 'Création…';
+        try {
+          const res = await fetch('/api/invites/' + encodeURIComponent(token) + '/accept', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: document.getElementById('username').value, password: password })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            errEl.textContent = data.error || 'Une erreur est survenue.';
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Créer mon compte';
+            return;
+          }
+          content.innerHTML = '<h1>Compte créé</h1><p class="done">Vous pouvez maintenant vous connecter.</p>';
+          setTimeout(function () { window.location.href = '/login.html'; }, 1500);
+        } catch (err) {
+          errEl.textContent = 'Impossible de contacter le serveur. Réessayez.';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Créer mon compte';
+        }
+      });
+    }
+
+    if (!token) {
+      content.innerHTML = '<h1>Lien invalide</h1><p class="done">Ce lien d\'invitation est incomplet.</p>';
+    } else {
+      fetch('/api/invites/' + encodeURIComponent(token))
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (r) {
+          if (!r.ok) {
+            content.innerHTML = '<h1>Lien invalide</h1><p class="done">' + (r.data.error || 'Ce lien ne fonctionne plus.') + '</p>';
+            return;
+          }
+          showForm(r.data);
+        })
+        .catch(function () {
+          content.innerHTML = '<h1>Erreur</h1><p class="done">Impossible de contacter le serveur.</p>';
+        });
+    }
+  </script>
+</body>
+</html>

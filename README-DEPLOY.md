@@ -189,3 +189,31 @@ visible pour tous les rôles :
 
 Les données existent déjà en base si `db/seed.sql` a été exécuté (8
 articles de démonstration) — rien à réinitialiser.
+
+## Suite à froid — reste de l'audit organisationnel
+
+- **Urgent, tous sites** : un bandeau rouge apparaît en haut de l'onglet
+  "Tâches du jour" (vue chef) dès qu'une tâche urgente et non terminée
+  existe sur l'un ou l'autre site — plus besoin d'ouvrir chaque site pour
+  vérifier.
+- **Messagerie par canal** : 3 onglets dans la fenêtre 💬 — "Tous",
+  "Clairefontaine", "Beaumont". Chaque canal est indépendant (un message
+  posté sur "Clairefontaine" n'apparaît pas dans "Tous"). Le badge de
+  messages non lus reste global (tous canaux confondus) : ouvrir un canal
+  marque tout comme lu, par simplicité — un raffinement par canal pourra
+  suivre si le bruit redevient un problème.
+- **Mentions @Nom** : taper `@Prénom` ou `@Prénom Nom` dans un message le
+  met en évidence (surlignage) s'il correspond à un membre de l'équipe.
+  Pas encore de notification dédiée à la mention (juste un repère visuel).
+- **Lien d'invitation** : dans le panneau ⚙ Admin → Comptes → section
+  "Membres sans compte", bouton "Générer un lien d'invitation" par
+  personne. Le lien (`/invite.html?token=...`, valable 7 jours, usage
+  unique) est copié dans le presse-papier et affiché pour transmission
+  manuelle (SMS, WhatsApp...) — la personne choisit elle-même son
+  identifiant et son mot de passe en l'ouvrant, sans qu'un mot de passe
+  temporaire n'ait besoin d'être communiqué.
+- **Journal d'audit filtrable/exportable** : dans l'onglet "Journal
+  d'audit" du panneau Admin, deux menus déroulants (par type d'action, par
+  personne) filtrent la liste affichée, et un bouton "Exporter (CSV)"
+  télécharge jusqu'à 1000 entrées correspondant au filtre courant —
+  exploitable pour une revue RH ou un contrôle.

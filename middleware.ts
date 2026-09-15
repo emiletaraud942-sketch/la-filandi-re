@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from './lib/session';
 
 const PUBLIC_API_PATHS = new Set(['/api/auth/login', '/api/auth/logout', '/api/session']);
+// Point d'entrée d'un membre pas encore inscrit (lien d'invitation) —
+// forcément public, aucune session n'existe encore à ce stade.
+const PUBLIC_API_PREFIXES = ['/api/invites/'];
 const MANAGER_ONLY_PREFIXES = ['/api/admin/'];
 
 export async function middleware(req: NextRequest) {
@@ -10,7 +13,9 @@ export async function middleware(req: NextRequest) {
   const isApi = pathname.startsWith('/api/');
   const isProtectedPage = pathname === '/app.html' || pathname === '/change-password.html';
 
-  if (isApi && PUBLIC_API_PATHS.has(pathname)) return NextResponse.next();
+  if (isApi && (PUBLIC_API_PATHS.has(pathname) || PUBLIC_API_PREFIXES.some((p) => pathname.startsWith(p)))) {
+    return NextResponse.next();
+  }
   if (!isApi && !isProtectedPage) return NextResponse.next();
 
   const session = await getSession(req);

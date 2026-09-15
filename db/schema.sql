@@ -220,9 +220,11 @@ CREATE TABLE IF NOT EXISTS messages (
   author_user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   author_name     TEXT NOT NULL,
   body            TEXT NOT NULL,
+  channel         TEXT NOT NULL DEFAULT 'all' CHECK (channel IN ('all', 'CLF', 'BMT')),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_messages_created ON messages (id);
+CREATE INDEX IF NOT EXISTS idx_messages_channel ON messages (channel, id);
 
 -- ---------- Journal d'audit (Phase 3, lot 08) ----------
 CREATE TABLE IF NOT EXISTS audit_log (
@@ -235,3 +237,16 @@ CREATE TABLE IF NOT EXISTS audit_log (
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_audit_log_id ON audit_log (id DESC);
+
+-- ---------- Liens d'invitation (au lieu de transmettre un mot de passe temporaire à la main) ----------
+CREATE TABLE IF NOT EXISTS invites (
+  id              SERIAL PRIMARY KEY,
+  token           TEXT NOT NULL UNIQUE,
+  team_member_id  INTEGER REFERENCES team(id) ON DELETE CASCADE,
+  role            TEXT NOT NULL CHECK (role IN ('manager', 'agent')),
+  created_by      INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at      TIMESTAMPTZ NOT NULL,
+  used_at         TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_invites_token ON invites (token);

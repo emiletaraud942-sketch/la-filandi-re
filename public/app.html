@@ -190,6 +190,11 @@
 <div id="msg-backdrop" class="msg-backdrop" hidden>
   <div class="msg-window">
     <div class="msg-header"><span>Messages d'équipe</span><button id="msg-close" class="icon-btn" aria-label="Fermer">✕</button></div>
+    <div class="admin-tabs" id="msg-channels">
+      <button class="tab-btn active" data-msg-channel="all">Tous</button>
+      <button class="tab-btn" data-msg-channel="CLF">Clairefontaine</button>
+      <button class="tab-btn" data-msg-channel="BMT">Beaumont</button>
+    </div>
     <div id="msg-list" class="msg-list"></div>
     <form id="msg-form" class="msg-form">
       <input id="msg-input" class="input" placeholder="Écrire un message…" autocomplete="off" maxlength="2000">
@@ -523,7 +528,16 @@
       });
     }
 
-    if (isChef && tab === 'planning') vals.groups = planningGroups(sel, tasks);
+    if (isChef && tab === 'planning') {
+      vals.groups = planningGroups(sel, tasks);
+      const urgentRows = tasks.filter(function (t) { return t.urg && t.state !== 'done'; })
+        .map(function (t) {
+          const r = taskRow(t);
+          r.siteLabel = siteName(t.site);
+          return r;
+        });
+      vals.urgentAcrossSites = urgentRows;
+    }
     if (isChef && tab === 'team') vals.teamGroups = teamGroups(ros);
     if (isChef && tab === 'works') Object.assign(vals, worksData());
 
@@ -617,8 +631,27 @@
       '</div>';
   }
 
+  function urgentBannerHtml(v) {
+    if (!v.urgentAcrossSites.length) return '';
+    const rows = v.urgentAcrossSites.map(function (r) {
+      return '<div class="grid-row" style="grid-template-columns:minmax(0,2.2fr) 140px 152px 128px">' +
+        '<span class="cell" style="border-left-color:var(--todo)"><span class="cell-title">' + esc(r.title) + '</span></span>' +
+        '<span class="cell center" style="color:var(--text-muted)">' + esc(r.siteLabel) + '</span>' +
+        '<span class="cell" style="gap:9px"><span class="avatar sm">' + esc(r.initials) + '</span><span class="cell-title">' + esc(r.who) + '</span></span>' +
+        '<button class="pill-btn" data-action="cycle-task" data-id="' + esc(r.id) + '" style="background:' + r.statusBg + ';color:' + r.statusFg + '">' + esc(r.status) + '</button>' +
+      '</div>';
+    }).join('');
+    return '<div class="section">' +
+      '<div class="section-head"><span class="section-title" style="color:var(--todo)">Urgent — tous sites</span><span class="section-sub">' + v.urgentAcrossSites.length + ' tâche' + (v.urgentAcrossSites.length > 1 ? 's' : '') + '</span></div>' +
+      '<div class="scroll-x"><div style="min-width:620px">' +
+        '<div class="grid-head" style="grid-template-columns:minmax(0,2.2fr) 140px 152px 128px;padding-left:14px"><span>Tâche</span><span style="text-align:center">Site</span><span>Qui</span><span style="text-align:center">Statut</span></div>' +
+        '<div class="grid-box">' + rows + '</div>' +
+      '</div></div>' +
+    '</div>';
+  }
+
   function planningHtml(v) {
-    return '<div>' + v.groups.map(function (g) {
+    return '<div>' + urgentBannerHtml(v) + v.groups.map(function (g) {
       const rowsHtml = g.rows.length ? g.rows.map(function (r) {
         return '<div class="grid-row" style="grid-template-columns:minmax(0,2.2fr) 152px 128px 118px 96px">' +
           '<span class="cell" style="border-left-color:' + g.color + '"><span class="cell-title" style="opacity:' + r.op + ';text-decoration:' + r.deco + '">' + esc(r.title) + '</span></span>' +
@@ -950,6 +983,9 @@
   let ADMIN_TEAM = [];
   let ADMIN_LOG = [];
   let ADMIN_LOG_MORE = true;
+  let ADMIN_LOG_FILTER = { action: '', actor: '' };
+  let ADMIN_LOG_ACTIONS = [];
+  let ADMIN_LOG_ACTORS = [];
 
   function fmtAuditTime(iso) {
     return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -968,9 +1004,17 @@
         '</div>';
       }).join('') || '<p class="muted">Aucun compte.</p>';
 
-      const memberOptions = ADMIN_TEAM.filter(function (m) {
+      const unlinked = ADMIN_TEAM.filter(function (m) {
         return m.active && !ADMIN_USERS.some(function (u) { return u.teamMemberId === m.id; });
-      }).map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + '</option>'; }).join('');
+      });
+      const memberOptions = unlinked.map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + '</option>'; }).join('');
+
+      const inviteRows = unlinked.map(function (m) {
+        return '<div class="admin-row">' +
+          '<span class="grow">' + esc(m.name) + ' — ' + esc(m.trade) + '</span>' +
+          '<button class="btn btn-secondary btn-sm" data-admin-action="gen-invite" data-id="' + m.id + '">Générer un lien d\'invitation</button>' +
+        '</div>';
+      }).join('') || '<p class="muted">Tout le monde a déjà un compte.</p>';
 
       body.innerHTML =
         '<div class="admin-section"><h3>Comptes de connexion</h3>' + rows +
@@ -981,6 +1025,10 @@
             '<div class="field" id="acc-member-field"><label>Membre d\'équipe</label><select class="input" id="acc-member">' + memberOptions + '</select></div>' +
             '<button type="submit" class="btn btn-primary btn-sm">Créer le compte</button>' +
           '</form>' +
+        '</div>' +
+        '<div class="admin-section"><h3>Membres sans compte — lien d\'invitation</h3>' +
+          '<p class="muted" style="margin:0 0 10px">Plus simple qu\'un mot de passe temporaire : la personne choisit elle-même son identifiant et son mot de passe en ouvrant le lien (valable 7 jours, à usage unique).</p>' +
+          inviteRows +
         '</div>';
     } else if (ADMIN_TAB === 'team') {
       const rows = ADMIN_TEAM.map(function (m) {
@@ -1008,10 +1056,32 @@
           (e.target ? ' (' + esc(e.target) + ')' : '') + (e.details ? ' : ' + esc(e.details) : '') +
           '<div class="muted">' + fmtAuditTime(e.createdAt) + '</div></div>';
       }).join('') || '<p class="muted">Aucune entrée.</p>';
+
+      const actionOptions = '<option value="">Toutes les actions</option>' + ADMIN_LOG_ACTIONS.map(function (a) {
+        return '<option value="' + esc(a) + '"' + (a === ADMIN_LOG_FILTER.action ? ' selected' : '') + '>' + esc(a) + '</option>';
+      }).join('');
+      const actorOptions = '<option value="">Toutes les personnes</option>' + ADMIN_LOG_ACTORS.map(function (a) {
+        return '<option value="' + esc(a) + '"' + (a === ADMIN_LOG_FILTER.actor ? ' selected' : '') + '>' + esc(a) + '</option>';
+      }).join('');
+
       body.innerHTML =
-        '<div class="admin-section"><h3>Journal d\'audit</h3>' + rows +
+        '<div class="admin-section"><h3>Journal d\'audit</h3>' +
+          '<div class="admin-form" style="margin:0 0 12px">' +
+            '<div class="field"><label>Action</label><select class="input" id="audit-filter-action">' + actionOptions + '</select></div>' +
+            '<div class="field"><label>Personne</label><select class="input" id="audit-filter-actor">' + actorOptions + '</select></div>' +
+            '<button class="btn btn-secondary btn-sm" id="audit-export">Exporter (CSV)</button>' +
+          '</div>' +
+          rows +
           (ADMIN_LOG_MORE ? '<button class="btn btn-secondary btn-sm" id="audit-load-more" style="margin-top:8px">Charger plus</button>' : '') +
         '</div>';
+
+      document.getElementById('audit-filter-action').addEventListener('change', function (e) {
+        ADMIN_LOG_FILTER.action = e.target.value; loadAuditLog(false);
+      });
+      document.getElementById('audit-filter-actor').addEventListener('change', function (e) {
+        ADMIN_LOG_FILTER.actor = e.target.value; loadAuditLog(false);
+      });
+      document.getElementById('audit-export').addEventListener('click', exportAuditLogCsv);
       const btn = document.getElementById('audit-load-more');
       if (btn) btn.addEventListener('click', function () { loadAuditLog(true); });
     }
@@ -1028,13 +1098,53 @@
   function loadAdminTeam() {
     return apiCall('/api/team').then(function (r) { ADMIN_TEAM = r; });
   }
+  function loadAuditLogFilterOptions() {
+    return Promise.all([
+      apiCall('/api/admin/audit-log?distinct=actions').then(function (r) { ADMIN_LOG_ACTIONS = r.actions; }),
+      apiCall('/api/admin/audit-log?distinct=actors').then(function (r) { ADMIN_LOG_ACTORS = r.actors; })
+    ]);
+  }
+
+  function auditQueryParams(extra) {
+    const p = new URLSearchParams();
+    if (ADMIN_LOG_FILTER.action) p.set('action', ADMIN_LOG_FILTER.action);
+    if (ADMIN_LOG_FILTER.actor) p.set('actor', ADMIN_LOG_FILTER.actor);
+    Object.keys(extra || {}).forEach(function (k) { p.set(k, extra[k]); });
+    return p.toString();
+  }
+
   function loadAuditLog(append) {
     const before = append && ADMIN_LOG.length ? ADMIN_LOG[ADMIN_LOG.length - 1].id : 0;
-    return apiCall('/api/admin/audit-log' + (before ? '?before=' + before : '')).then(function (r) {
+    const qs = auditQueryParams(before ? { before: before } : {});
+    return apiCall('/api/admin/audit-log' + (qs ? '?' + qs : '')).then(function (r) {
       ADMIN_LOG_MORE = r.entries.length === 50;
       ADMIN_LOG = append ? ADMIN_LOG.concat(r.entries) : r.entries;
       renderAdminBody();
     });
+  }
+
+  function csvEscape(v) {
+    const s = String(v == null ? '' : v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+
+  function exportAuditLogCsv() {
+    const qs = auditQueryParams({ limit: 1000 });
+    apiCall('/api/admin/audit-log' + (qs ? '?' + qs : '')).then(function (r) {
+      const header = ['date', 'personne', 'action', 'cible', 'détail'];
+      const lines = [header.join(',')].concat(r.entries.map(function (e) {
+        return [e.createdAt, e.actorName, e.action, e.target || '', e.details || ''].map(csvEscape).join(',');
+      }));
+      const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'journal-audit-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }).catch(function (e) { alert(e.message); });
   }
 
   function onCreateAccount(e) {
@@ -1075,8 +1185,9 @@
       btn.addEventListener('click', function () {
         ADMIN_TAB = btn.dataset.adminTab;
         document.querySelectorAll('[data-admin-tab]').forEach(function (b) { b.classList.toggle('active', b === btn); });
-        if (ADMIN_TAB === 'log' && !ADMIN_LOG.length) loadAuditLog(false);
-        else renderAdminBody();
+        if (ADMIN_TAB === 'log' && !ADMIN_LOG.length) {
+          loadAuditLogFilterOptions().then(function () { return loadAuditLog(false); });
+        } else renderAdminBody();
       });
     });
     document.getElementById('admin-body').addEventListener('click', function (e) {
@@ -1098,15 +1209,32 @@
       } else if (el.dataset.adminAction === 'delete-team') {
         if (!confirm('Supprimer définitivement cette personne et toutes ses données (congés, tâches) ? Cette action est irréversible.')) return;
         apiCall('/api/team/' + id, { method: 'DELETE' }).then(function () { return loadAdminTeam(); }).then(renderAdminBody).catch(function (err) { alert(err.message); });
+      } else if (el.dataset.adminAction === 'gen-invite') {
+        apiCall('/api/admin/invites', { method: 'POST', body: JSON.stringify({ teamMemberId: id, role: 'agent' }) })
+          .then(function (r) {
+            if (navigator.clipboard) navigator.clipboard.writeText(r.url).catch(function () {});
+            prompt('Lien d\'invitation (copié si possible), valable 7 jours — transmettez-le à la personne :', r.url);
+          }).catch(function (err) { alert(err.message); });
       }
     });
   }
 
   // ---------- Messagerie d'équipe (lot 04) ----------
   let MSG_LAST_ID = 0;
+  let MSG_CHANNEL = 'all';
 
   function fmtMsgTime(iso) {
     return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Met en évidence "@Prénom" ou "@Prénom Nom" quand ça correspond à un
+  // membre de l'équipe — pas d'notification dédiée, juste un repère visuel.
+  function highlightMentions(text) {
+    const escaped = esc(text);
+    return escaped.replace(/@([A-ZÀ-Ý][\wÀ-ÿ'-]*(?:\s[A-ZÀ-Ý][\wÀ-ÿ'-]*)?)/g, function (match, name) {
+      const found = STAFF.some(function (p) { return p.n === name || p.n.split(' ')[0] === name; });
+      return found ? '<strong style="color:var(--accent-ink);background:var(--accent-soft);padding:0 3px;border-radius:4px">@' + name + '</strong>' : match;
+    });
   }
 
   function appendMessages(msgs) {
@@ -1117,7 +1245,7 @@
       div.className = 'msg-item';
       div.innerHTML = '<div class="msg-item-head"><span class="msg-item-author">' + esc(m.authorName) +
         '</span><span class="msg-item-time">' + fmtMsgTime(m.createdAt) + '</span></div>' +
-        '<div class="msg-item-body">' + esc(m.body) + '</div>';
+        '<div class="msg-item-body">' + highlightMentions(m.body) + '</div>';
       el.appendChild(div);
       if (m.id > MSG_LAST_ID) MSG_LAST_ID = m.id;
     });
@@ -1134,17 +1262,25 @@
     if (MSG_LAST_ID) apiCall('/api/messages/read', { method: 'POST', body: JSON.stringify({ lastId: MSG_LAST_ID }) }).catch(function () {});
   }
 
-  function openMessages() {
-    document.getElementById('msg-backdrop').hidden = false;
+  function loadChannel(channel) {
+    MSG_CHANNEL = channel;
+    document.querySelectorAll('#msg-channels [data-msg-channel]').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.msgChannel === channel);
+    });
     setMsgBadge(0);
-    apiCall('/api/messages').then(function (r) {
+    return apiCall('/api/messages?channel=' + channel).then(function (r) {
       const list = document.getElementById('msg-list');
       list.innerHTML = r.messages.length ? '' : '<div class="msg-empty">Aucun message pour l’instant.</div>';
       MSG_LAST_ID = 0;
       appendMessages(r.messages);
       list.scrollTop = list.scrollHeight;
       markMessagesRead();
-    }).catch(function (e) { alert(e.message); });
+    });
+  }
+
+  function openMessages() {
+    document.getElementById('msg-backdrop').hidden = false;
+    loadChannel(MSG_CHANNEL).catch(function (e) { alert(e.message); });
   }
 
   function closeMessages() { document.getElementById('msg-backdrop').hidden = true; }
@@ -1157,13 +1293,16 @@
     document.getElementById('msg-backdrop').addEventListener('click', function (e) {
       if (e.target.id === 'msg-backdrop') closeMessages();
     });
+    document.querySelectorAll('#msg-channels [data-msg-channel]').forEach(function (b) {
+      b.addEventListener('click', function () { loadChannel(b.dataset.msgChannel).catch(function (e) { alert(e.message); }); });
+    });
     document.getElementById('msg-form').addEventListener('submit', function (e) {
       e.preventDefault();
       const input = document.getElementById('msg-input');
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
-      apiCall('/api/messages', { method: 'POST', body: JSON.stringify({ body: text }) }).then(function (m) {
+      apiCall('/api/messages', { method: 'POST', body: JSON.stringify({ body: text, channel: MSG_CHANNEL }) }).then(function (m) {
         appendMessages([m]);
         document.getElementById('msg-list').scrollTop = document.getElementById('msg-list').scrollHeight;
         markMessagesRead();
@@ -1172,7 +1311,7 @@
 
     setInterval(function () {
       if (!document.getElementById('msg-backdrop').hidden) {
-        apiCall('/api/messages?after=' + MSG_LAST_ID).then(function (r) {
+        apiCall('/api/messages?channel=' + MSG_CHANNEL + '&after=' + MSG_LAST_ID).then(function (r) {
           if (r.messages.length) { appendMessages(r.messages); markMessagesRead(); }
         }).catch(function () {});
       } else {
