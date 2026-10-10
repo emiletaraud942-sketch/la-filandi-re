@@ -55,3 +55,13 @@ a { color: inherit }
 @media (max-width: 1100px) { .nav { order: 3; flex-basis: 100%; flex: 1 0 100% } }
 @media (max-width: 520px) { .page-head h1 { font-size: 25px } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+
+/* Messages de confirmation et d'erreur */
+.toasts { position: fixed; z-index: 50; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; width: min(92vw, 420px); pointer-events: none }
+.toast { pointer-events: auto; background: var(--ink); color: #fff; border-radius: 12px; padding: 11px 16px; font-weight: 600; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .22); display: flex; gap: 10px; align-items: flex-start }
+.toast.err { background: var(--late) }
+.toast.ok::before { content: '✓'; font-weight: 800 }
+.toast.err::before { content: '!'; font-weight: 800 }
+.busy { opacity: .6; pointer-events: none }
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px }
+@keyframes spin { to { transform: rotate(360deg) } }

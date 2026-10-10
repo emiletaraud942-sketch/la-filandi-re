@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Nav } from '@/components/Nav'
+import { ToastProvider } from '@/components/Toast'
 import { DEMO } from '@/lib/mode'
 import { createClient } from '@/lib/supabase/server'
 import { signOut } from '../login/actions'
@@ -29,7 +30,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </div>
-      <main className="page">{children}</main>
+      <ToastProvider>
+        <main className="page">{children}</main>
+      </ToastProvider>
     </>
   )
 }
