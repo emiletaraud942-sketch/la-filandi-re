@@ -3,6 +3,7 @@ import { DEMO } from '@/lib/mode'
 import { createClient } from '@/lib/supabase/server'
 import { LOCATIONS, STOCK, type Art } from '@/lib/demo/stock'
 import { RATE, SUBS, demoEntries, type Cat, type Entry } from '@/lib/demo/expenses'
+import { DEMO_REQS, demoSlots, type Slot, type VReq } from '@/lib/demo/visits'
 import { BOOKINGS, LOGS, TODAY_IDX, VEHICLES, WEEK, type Booking, type Log, type Vehicle, type WeekDay } from '@/lib/demo/vehicles'
 import {
   CAT, FLOORS, NOW, ROLES, ROLE_LBL, dotOf, floorData, residentDay, staffAll,
@@ -373,3 +374,47 @@ export async function loadTaskAdmin(): Promise<TaskAdmin | null> {
   }
 }
 export { SUBS }
+
+export type VisitsData = { slots: Slot[]; requests: VReq[] | null; canManage: boolean; unsent: number; mailConfigured: boolean }
+
+const mailConfigured = () => !!process.env.RESEND_API_KEY && !!process.env.MAIL_FROM
+
+/** Créneaux de visite des deux prochaines semaines, avec places restantes, et file de demandes (accueil et responsables). */
+export async function loadVisits(): Promise<VisitsData> {
+  if (DEMO) return { slots: demoSlots(), requests: DEMO_REQS, canManage: true, unsent: 2, mailConfigured: false }
+  const sb = await createClient()
+  const today = parisToday()
+  const end = new Date(new Date(today + 'T12:00:00Z').getTime() + 13 * 86400000).toISOString().slice(0, 10)
+  const role = await loadMyRole()
+  const canManage = !!role && ['admin', 'direction', 'cadre', 'accueil'].includes(role)
+  const [slots, avail] = await Promise.all([
+    sb.from('visit_slots').select('id, day, start_min, capacity').gte('day', today).lte('day', end).order('day').order('start_min'),
+    sb.rpc('public_visit_slots'),
+  ])
+  fail('créneaux', slots.error); fail('disponibilités', avail.error)
+  const rem = new Map((avail.data ?? []).map((a) => [a.slot_id, a.remaining]))
+  const list: Slot[] = (slots.data ?? []).filter((s) => rem.has(s.id)).map((s) => ({ id: s.id, iso: s.day, start: s.start_min, capacity: s.capacity, remaining: rem.get(s.id) ?? 0 }))
+  if (!canManage) return { slots: list, requests: null, canManage, unsent: 0, mailConfigured: mailConfigured() }
+  const [reqs, outbox] = await Promise.all([
+    sb.from('visit_requests').select('id, visitor_name, visitor_email, resident_label, persons, status, created_at, slot_id, visit_slots(day, start_min)').order('created_at', { ascending: false }).limit(100),
+    sb.from('outbox').select('id', { count: 'exact', head: true }).is('sent_at', null),
+  ])
+  fail('demandes', reqs.error)
+  const ago = (iso: string) => {
+    const h = Math.round((Date.now() - new Date(iso).getTime()) / 3600000)
+    return h < 1 ? 'reçue à l’instant' : h < 24 ? `reçue il y a ${h} h` : `reçue il y a ${Math.round(h / 24)} j`
+  }
+  return {
+    slots: list, canManage, unsent: outbox.count ?? 0, mailConfigured: mailConfigured(),
+    requests: (reqs.data ?? []).map((r): VReq => ({ id: r.id, visitor: r.visitor_name, email: r.visitor_email, who: r.resident_label, slotId: r.slot_id, iso: r.visit_slots?.day ?? '', start: r.visit_slots?.start_min ?? 0, n: r.persons, st: r.status === 'confirmed' ? 'ok' : r.status === 'refused' ? 'no' : 'pending', at: ago(r.created_at) })),
+  }
+}
+
+/** Créneaux ouverts au public (sans compte). */
+export async function loadPublicSlots(): Promise<Slot[]> {
+  if (DEMO) return demoSlots()
+  const sb = await createClient()
+  const { data, error } = await sb.rpc('public_visit_slots')
+  fail('créneaux', error)
+  return (data ?? []).map((a) => ({ id: a.slot_id, iso: a.day, start: a.start_min, capacity: 12, remaining: a.remaining }))
+}

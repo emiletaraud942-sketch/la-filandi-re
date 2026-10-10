@@ -71,4 +71,10 @@
   .m-s{margin:10px 0 8px;font:700 16px var(--font-body);border-top:1px solid #d7d2c3;padding-top:10px}
   .mailc pre{margin:0;white-space:pre-wrap;font:400 13px/1.5 var(--font-body)}
   .tabs{margin-bottom:14px}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .ferr{color:var(--late);font-weight:600;margin:12px 0 0}
+  .share{max-width:560px;margin:10px auto 0;font-size:13px}
+  .empty{padding:18px 4px}
+  .outb{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13.5px}
+  .outb .btn{margin-top:0;padding:10px 16px;font-size:14px}
 }

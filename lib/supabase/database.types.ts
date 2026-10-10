@@ -15,6 +15,12 @@ export type Database = {
   }
   public: {
     Tables: {
+      outbox: {
+        Row: { id: string; to_email: string; subject: string; body: string; kind: string; request_id: string | null; created_at: string; sent_at: string | null; error: string | null }
+        Insert: { id?: string; to_email: string; subject: string; body: string; kind: string; request_id?: string | null; created_at?: string; sent_at?: string | null; error?: string | null }
+        Update: { id?: string; to_email?: string; subject?: string; body?: string; kind?: string; request_id?: string | null; created_at?: string; sent_at?: string | null; error?: string | null }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -1178,6 +1184,9 @@ export type Database = {
     Functions: {
       demo_seed_today: { Args: never; Returns: Json }
       generate_daily_tasks: { Args: { p_day?: string }; Returns: number }
+      generate_visit_slots: { Args: { p_from?: string; p_days?: number }; Returns: number }
+      public_visit_slots: { Args: never; Returns: { slot_id: string; day: string; start_min: number; remaining: number }[] }
+      request_visit: { Args: { p_slot: string; p_name: string; p_email: string; p_resident: string; p_persons: number; p_charter: boolean }; Returns: string }
     }
     Enums: {
       app_role:
