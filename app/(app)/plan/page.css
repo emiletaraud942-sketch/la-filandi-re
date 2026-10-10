@@ -1,0 +1,55 @@
+.pg-1 {
+  .p1-sum{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .p1-floor{margin:0 0 14px;color:var(--ink2)}
+  .p1-floor b{font-size:21px;color:var(--ink);margin-right:4px;font-weight:600}
+  .p1-h{font-size:16px;margin:18px 0 10px;font-weight:600}
+  .p1-hint{margin:0 0 12px}
+  .p1-detail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:6px;box-shadow:var(--shadow)}
+  .p1-detail header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .p1-detail h3{margin:0;font-size:21px;font-weight:600}
+  .p1-detail p{margin:4px 0 8px}
+  .p1-tasks{list-style:none;margin:0;padding:0}
+  .p1-tasks li{display:grid;grid-template-columns:48px 1fr auto auto;gap:4px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .p1-tasks time{font-variant-numeric:tabular-nums;color:var(--ink2)}
+  .p1-tasks em{font-style:normal;color:var(--ink2);font-size:12.5px}
+  @media(max-width:560px){.p1-tasks li{grid-template-columns:44px 1fr auto}.p1-tasks em{display:none}}
+  /* A : cartes par couloir */
+  .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+  .rc{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:3px;color:var(--ink);box-shadow:var(--shadow)}
+  .rc.free{background:transparent;border-style:dashed;box-shadow:none;color:var(--ink2)}
+  .rc.sel{outline:2px solid var(--accent);outline-offset:1px}
+  .rc-top{display:flex;justify-content:space-between;align-items:center}
+  .rc-no{font-size:24px;font-weight:600;line-height:1.1}
+  .rc .dot{width:12px;height:12px;box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
+  .rc-who{font-weight:600;font-size:14px}
+  .rc-st{font-size:12.5px;color:var(--ink2)}
+  /* B : plan SVG */
+  .splan{display:block;min-width:900px;width:100%;height:auto}
+  .sroom rect{fill:color-mix(in srgb,var(--c) 22%,var(--surface));stroke:var(--c);stroke-width:1.5;cursor:pointer}
+  .sroom text{fill:var(--ink);text-anchor:middle;pointer-events:none}
+  .sroom .sn{font:600 15px var(--font-display)}
+  .sroom .sg{font:700 20px var(--font-body);fill:var(--c)}
+  .sroom .sw{font:600 10.5px var(--font-body);fill:var(--ink2)}
+  .sroom.sel rect{stroke:var(--accent);stroke-width:3.5}
+  .sroom.free rect{fill:none;stroke:var(--none);stroke-dasharray:4 3}
+  .sroom.free .sg{fill:var(--ink3);font-size:11px}
+  .sblock{fill:none;stroke:var(--line);stroke-width:1.25}
+  .slabel{font:600 11px var(--font-body);fill:var(--ink2);text-anchor:middle;letter-spacing:.06em;text-transform:uppercase}
+  .splan-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px;margin-bottom:12px}
+  /* C : tuiles pleines */
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+  .tile{border:0;border-radius:var(--r);height:92px;padding:8px 10px;text-align:left;cursor:pointer;background:var(--c);color:#14110a;display:flex;flex-direction:column;justify-content:space-between;position:relative;font-family:var(--font-body)}
+  .tile.st-none{color:var(--ink)}
+  .tile.free{background:transparent;border:1px dashed var(--none);color:var(--ink3)}
+  .tile.sel{outline:3px solid #fff;outline-offset:2px}
+  .tile.dim{opacity:.2}
+  .t-no{font-size:30px;line-height:1;font-weight:700}
+  .t-g{position:absolute;bottom:6px;right:9px;font-size:22px;font-weight:800;line-height:1}
+  .t-w{font-size:12px;font-weight:700}
+  .cnt{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin:12px 0 14px}
+  .cnt button{background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:var(--r);padding:10px 12px;text-align:left;cursor:pointer;display:flex;align-items:baseline;gap:8px;font-family:var(--font-body)}
+  .cnt b{font:700 34px/1 var(--font-display)}
+  .cnt span{font-size:12.5px;color:var(--ink2)}
+  .cnt button[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .cnt .st-late b{color:var(--late)}
+}

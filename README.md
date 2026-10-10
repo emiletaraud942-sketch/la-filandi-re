@@ -14,6 +14,12 @@ npm install
 npm run dev
 ```
 
+## Pages (style A « Calme »)
+
+Plan des chambres, tâches, espace soignant, équipes, résidents, visites, stock, véhicules, émargement, frais invisibles. Elles lisent pour l'instant un jeu de données fictif (`lib/demo/data.ts`, exposé par `lib/data.ts`) : les écrans fonctionnent, mais rien n'est enregistré. Avec `DEMO_MODE=1`, aucune connexion n'est demandée (aperçu).
+
+Brancher Supabase = remplacer, page par page, les données fictives passées aux composants par des requêtes ; les composants clients ne changent pas.
+
 ## Base de données (Supabase uniquement)
 
 Les migrations sont dans `supabase/migrations/` et s'appliquent dans l'ordre. `supabase/seed.sql` contient des résidents fictifs pour l'essai : ne jamais l'utiliser avec de vraies données.
