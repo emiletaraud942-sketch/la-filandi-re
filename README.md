@@ -18,13 +18,15 @@ npm run dev
 
 Plan des chambres, tâches, espace soignant, équipes, résidents, visites, stock, véhicules, émargement, frais invisibles. Elles lisent pour l'instant un jeu de données fictif (`lib/demo/data.ts`, exposé par `lib/data.ts`) : les écrans fonctionnent, mais rien n'est enregistré. Avec `DEMO_MODE=1`, aucune connexion n'est demandée (aperçu).
 
-Brancher Supabase = remplacer, page par page, les données fictives passées aux composants par des requêtes ; les composants clients ne changent pas.
+État du branchement sur Supabase (hors `DEMO_MODE`) : **branchées** — plan des chambres, tâches (changement d'avancement), espace soignant (validation), équipes, résidents, stock (commande), véhicules (réservation), émargement (signature et clôture), frais invisibles (saisie, réservé aux responsables). **À faire** — réservation de visite : le formulaire public des familles passe par une route serveur avec clé de service et un fournisseur d'e-mails ; en attendant, la page reste en données fictives.
+
+Les données de démonstration se chargent avec `supabase/seed.sql` (et se retirent avec `supabase/unseed.sql`) ; sans cela, les pages affichent des états vides.
 
 ## Base de données (Supabase uniquement)
 
 Les migrations sont dans `supabase/migrations/` et s'appliquent dans l'ordre. `supabase/seed.sql` contient des résidents fictifs pour l'essai : ne jamais l'utiliser avec de vraies données.
 
-État : les migrations 1 à 6 ci-dessous sont appliquées sur le projet `la-filandiere` (tables, sécurité, helpers dans le schéma `private`, étages, postes, 124 chambres). `20261010000002_split_write_policies.sql` est en attente : elle supprime des politiques, donc l'application demande une confirmation.
+État : les migrations de fondations et de phase 2 sont appliquées sur le projet `la-filandiere` (tables, sécurité, helpers dans le schéma `private`, étages, postes, 124 chambres). `20261010000002_split_write_policies.sql` est en attente : elle supprime des politiques, donc l'application demande une confirmation.
 
 **Premier administrateur** : créer l'utilisateur dans Supabase (Authentication > Users > Add user), puis, dans le SQL Editor :
 `update public.profiles set role = 'admin' where id = (select id from auth.users where email = 'VOTRE_EMAIL');`
