@@ -52,6 +52,10 @@ check('soignant signe pour lui', await as('soin', `update public.session_attende
 check('soignant ne signe pas pour un autre', await as('soin2', `update public.session_attendees set status='present' where staff_id='11111111-1111-1111-1111-111111111111'`), 'ok(0)');
 check('feuille clôturée verrouillée', await as('admin', `update public.sessions set closed_at=now() where id='99999999-9999-9999-9999-999999999999'`), 'ok');
 check('modif après clôture refusée', await as('admin', `update public.session_attendees set status='absent'`), 'REFUSÉ');
+check('feuille clôturée non supprimable', await as('admin', `delete from public.sessions where id='99999999-9999-9999-9999-999999999999'`), 'REFUSÉ');
+check('animation crée une séance', await as('admin', `insert into public.sessions (kind,title,day,start_min,end_min) values ('activite','Loto',private.paris_today(),600,660) returning id is not null as ok`), '"ok":true');
+check('soignant ne crée pas de séance', await as('soin', `insert into public.sessions (kind,title,day,start_min,end_min) values ('reunion','x',private.paris_today(),600,660)`), 'REFUSÉ');
+check('séance ouverte supprimable', await as('admin', `delete from public.sessions where title='Loto' returning title`), '"title":"Loto"');
 check('pointage : chacun le sien', await as('soin', `insert into public.time_clock (staff_id) values ('11111111-1111-1111-1111-111111111111')`), 'ok(1)');
 check('pointage pour autrui refusé', await as('soin', `insert into public.time_clock (staff_id) values ('22222222-2222-2222-2222-222222222222')`), 'REFUSÉ');
 check('soignant saisit un frais', await as('soin', `insert into public.expenses (category, subcategory, amount_cents) values ('pet','Achat',1500)`), 'ok(1)');

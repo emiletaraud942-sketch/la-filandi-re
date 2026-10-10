@@ -287,53 +287,79 @@ export async function loadResidents(): Promise<ResidentsData> {
   }
 }
 
-export type Attendee = { id: string; n: string; sub: string; at: string | null }
-export type SessionSheet = { id: string; type: 'form' | 'reun' | 'act'; n: string; when: string; place: string; lead: string; closed: boolean; who: Attendee[] }
+export type Attendee = { id: string; n: string; sub: string; at: string | null; st: 'present' | 'absent' | 'excused' | null; mine: boolean }
+export type SessionSheet = { id: string; type: 'form' | 'reun' | 'act'; n: string; when: string; place: string; lead: string; closed: boolean; closedAt: string | null; who: Attendee[] }
+export type People = { staff: { id: string; name: string; job: string }[]; residents: { id: string; name: string; room: string; floor: number }[] }
+export type SessionsData = { sessions: SessionSheet[]; now: string; day: string; today: string; canManage: boolean; people: People | null }
 
 const KIND: Record<string, SessionSheet['type']> = { formation: 'form', reunion: 'reun', activite: 'act' }
 const clock = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+const hhmm = (iso: string) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' })
 
-/** Feuilles d'émargement du jour : formations, réunions et activités des résidents. */
-export async function loadSessions(): Promise<{ sessions: SessionSheet[]; now: string }> {
+/** Feuilles d'émargement d'un jour (aujourd'hui par défaut) : formations, réunions et activités des résidents. */
+export async function loadSessions(day?: string): Promise<SessionsData> {
   if (DEMO) {
     const staff = staffAll()
     const pick = (roles: string[], n: number, skip = 0) =>
       staff.filter((p) => roles.includes(p.role)).slice(skip, skip + n).map((p, i) => ({ id: `${p.name}-${i}`, n: p.name, sub: ROLE_LBL[p.role] ?? p.role }))
     const withSigned = (l: { id: string; n: string; sub: string }[], k: number): Attendee[] =>
-      l.map((p, i) => ({ ...p, at: i < k ? clock(9 * 60 + 52 + i * 2) : null }))
+      l.map((p, i) => ({ ...p, at: i < k ? clock(9 * 60 + 52 + i * 2) : null, st: i < k ? 'present' : null, mine: i === 0 }))
     const residents = floorData(2).rooms.filter((r) => r.state === 'occ').slice(0, 12).map((r) => ({ id: 'r' + r.no, n: r.who as string, sub: `Chambre ${r.no}` }))
+    const today = parisToday()
     return {
-      now: clock(NOW),
+      now: clock(NOW), day: today, today, canManage: true,
+      people: {
+        staff: staff.map((p) => ({ id: p.name, name: p.name, job: p.role })),
+        residents: FLOORS.flatMap((f) => floorData(f.id).rooms.filter((r) => r.state !== 'free').map((r) => ({ id: 'r' + r.no, name: r.who as string, room: r.no, floor: f.id }))),
+      },
       sessions: [
-        { id: 'f1', type: 'form', n: 'Gestes et postures', when: 'mer. 14 octobre · 10:00–12:00', place: 'Salle de formation', lead: 'Intervenant extérieur', closed: false, who: withSigned(pick(['AS', 'AES', 'ASHQ'], 8, 2), 5) },
-        { id: 'r1', type: 'reun', n: 'Réunion d’équipe', when: 'mer. 14 octobre · 14:00–14:45', place: 'Salle de réunion', lead: 'Cadre de santé', closed: false, who: withSigned(pick(['IDE', 'AS', 'AES'], 9, 0), 0) },
-        { id: 'a1', type: 'act', n: 'Loto', when: 'mer. 14 octobre · 10:30–11:30', place: 'Salon d’animation', lead: 'Animation', closed: false, who: withSigned(residents, 0) },
+        { id: 'f1', type: 'form', n: 'Gestes et postures', when: 'mer. 14 octobre · 10:00–12:00', place: 'Salle de formation', lead: 'Intervenant extérieur', closed: false, closedAt: null, who: withSigned(pick(['AS', 'AES', 'ASHQ'], 8, 2), 5) },
+        { id: 'r1', type: 'reun', n: 'Réunion d’équipe', when: 'mer. 14 octobre · 14:00–14:45', place: 'Salle de réunion', lead: 'Cadre de santé', closed: false, closedAt: null, who: withSigned(pick(['IDE', 'AS', 'AES'], 9, 0), 0) },
+        { id: 'a1', type: 'act', n: 'Loto', when: 'mer. 14 octobre · 10:30–11:30', place: 'Salon d’animation', lead: 'Animation', closed: false, closedAt: null, who: withSigned(residents, 0) },
       ],
     }
   }
   const sb = await createClient()
   const today = parisToday()
-  const { data: sess, error } = await sb.from('sessions').select('id, kind, title, day, start_min, end_min, place, lead, closed_at').eq('day', today).order('start_min')
+  const d = day ?? today
+  const role = await loadMyRole()
+  const canManage = !!role && ['admin', 'direction', 'cadre', 'animation'].includes(role)
+  const { data: auth } = await sb.auth.getUser()
+  const { data: me } = auth.user ? await sb.from('staff').select('id').eq('profile_id', auth.user.id).maybeSingle() : { data: null }
+  const { data: sess, error } = await sb.from('sessions').select('id, kind, title, day, start_min, end_min, place, lead, closed_at').eq('day', d).order('start_min')
   fail('séances', error)
   const ids = (sess ?? []).map((s) => s.id)
   const { data: att, error: e2 } = ids.length
-    ? await sb.from('session_attendees').select('id, session_id, status, signed_at, staff:staff_id(display_name, job_code), resident:resident_id(display_name, room:room_id(number))').in('session_id', ids)
+    ? await sb.from('session_attendees').select('id, session_id, staff_id, status, signed_at, staff:staff_id(display_name, job_code), resident:resident_id(display_name, room:room_id(number))').in('session_id', ids)
     : { data: [], error: null }
   fail('présences', e2)
-  const date = new Date(today + 'T12:00:00Z').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' })
-  const time = (iso: string) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' })
+  let people: People | null = null
+  if (canManage) {
+    const [st, re] = await Promise.all([
+      sb.from('staff').select('id, display_name, job_code').eq('active', true).order('display_name'),
+      sb.from('rooms_overview').select('resident_id, resident_name, number, floor_id').not('resident_id', 'is', null).order('number'),
+    ])
+    fail('personnel', st.error); fail('résidents', re.error)
+    people = {
+      staff: (st.data ?? []).map((x) => ({ id: x.id, name: x.display_name, job: x.job_code })),
+      residents: (re.data ?? []).map((x) => ({ id: x.resident_id as string, name: x.resident_name ?? '—', room: x.number ?? '', floor: x.floor_id ?? 0 })),
+    }
+  }
+  const date = new Date(d + 'T12:00:00Z').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' })
   return {
+    day: d, today, canManage, people,
     now: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }),
     sessions: (sess ?? []).map((s) => ({
       id: s.id, type: KIND[s.kind] ?? 'reun', n: s.title, when: `${date} · ${clock(s.start_min)}–${clock(s.end_min)}`,
-      place: s.place ?? '', lead: s.lead ?? '', closed: !!s.closed_at,
+      place: s.place ?? '', lead: s.lead ?? '', closed: !!s.closed_at, closedAt: s.closed_at ? hhmm(s.closed_at) : null,
       who: (att ?? []).filter((a) => a.session_id === s.id).map((a): Attendee => {
         const st = a.staff as { display_name: string; job_code: string } | null
         const re = a.resident as { display_name: string; room: { number: string } | null } | null
         return {
           id: a.id, n: st?.display_name ?? re?.display_name ?? '—',
           sub: st ? (ROLE_LBL[st.job_code] ?? st.job_code) : `Chambre ${re?.room?.number ?? '?'}`,
-          at: a.status === 'present' && a.signed_at ? time(a.signed_at) : null,
+          at: a.status === 'present' && a.signed_at ? hhmm(a.signed_at) : null,
+          st: a.status, mine: !!me && a.staff_id === me.id,
         }
       }),
     })),
