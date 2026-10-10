@@ -58,5 +58,13 @@ check('soignant saisit un frais', await as('soin', `insert into public.expenses 
 check('soignant ne lit pas les frais', await as('soin', 'select count(*)::int c from public.expenses'), '"c":0');
 check('admin lit les frais', await as('admin', 'select count(*)::int c from public.expenses'), '"c":1');
 check('journal d\'audit alimenté', await as('admin', `select count(*)::int c from public.audit_log where table_name in ('tasks','visit_requests','expenses')`), (g) => !g.includes('"c":0'));
+await db.exec(`insert into public.residents (room_id, display_name) select id, 'Mme T. T.' from public.rooms where number in ('301','302','303')`);
+check('démo : soignant refusé', await as('soin', `select public.demo_seed_today()`), 'REFUSÉ');
+await db.exec(`delete from public.tasks`);
+check('démo : admin crée des tâches pour aujourd’hui', await as('admin', `select (public.demo_seed_today() ->> 'taches')::int as n`), (g) => !g.includes('"n":0') && g.includes('"n":'));
+check('démo : relance sans doublon de tâches', await as('admin', `select (public.demo_seed_today() ->> 'taches')::int as n`), '"n":0');
+await db.exec(`delete from public.tasks`);
+check('démo : le propriétaire de la base peut la lancer (éditeur SQL)', (await db.query(`select (public.demo_seed_today() ->> 'taches')::int as n`)).rows.map((r) => JSON.stringify(r)).join(''), (g) => !g.includes('"n":0'));
+check('démo : les événements couvrent 7 jours', await as('admin', `select count(distinct day)::int as n from public.resident_events`), '"n":7');
 console.log(fails ? `${fails} ÉCHEC(S)` : 'TOUT PASSE');
 process.exit(fails ? 1 : 0);

@@ -20,6 +20,8 @@ Plan des chambres, tâches, espace soignant, équipes, résidents, visites, stoc
 
 État du branchement sur Supabase (hors `DEMO_MODE`) : **branchées** — plan des chambres, tâches (changement d'avancement), espace soignant (validation), équipes, résidents, stock (commande), véhicules (réservation), émargement (signature et clôture), frais invisibles (saisie, réservé aux responsables). **À faire** — réservation de visite : le formulaire public des familles passe par une route serveur avec clé de service et un fournisseur d'e-mails ; en attendant, la page reste en données fictives.
 
+**Tâches du jour de la démo, en une commande** (éditeur SQL de Supabase, ou compte admin) : `select public.demo_seed_today();` — recrée plannings, tâches et journées des résidents pour la date du jour, sans doublon si on la relance. À retirer avant l'usage réel : `drop function public.demo_seed_today();`.
+
 Les données de démonstration se chargent avec `supabase/seed.sql` (et se retirent avec `supabase/unseed.sql`) ; sans cela, les pages affichent des états vides.
 
 ## Base de données (Supabase uniquement)
