@@ -61,6 +61,10 @@ check('pointage pour autrui refusé', await as('soin', `insert into public.time_
 check('soignant saisit un frais', await as('soin', `insert into public.expenses (category, subcategory, amount_cents) values ('pet','Achat',1500)`), 'ok(1)');
 check('soignant ne lit pas les frais', await as('soin', 'select count(*)::int c from public.expenses'), '"c":0');
 check('admin lit les frais', await as('admin', 'select count(*)::int c from public.expenses'), '"c":1');
+check('admin fixe un repère (upsert)', await as('admin', `insert into public.expense_targets (category, month, target_cents) values ('pet', date_trunc('month', now())::date, 5000) on conflict (category, month) do update set target_cents = excluded.target_cents returning target_cents`), '"target_cents":5000');
+check('soignant ne fixe pas de repère', await as('soin', `insert into public.expense_targets (category, month, target_cents) values ('tps', date_trunc('month', now())::date, 1)`), 'REFUSÉ');
+check('soignant ne supprime pas un frais', await as('soin', `delete from public.expenses`), 'ok(0)');
+check('admin corrige un frais', await as('admin', `update public.expenses set amount_cents=2000 returning amount_cents`), '"amount_cents":2000');
 check('journal d\'audit alimenté', await as('admin', `select count(*)::int c from public.audit_log where table_name in ('tasks','visit_requests','expenses')`), (g) => !g.includes('"c":0'));
 await db.exec(`insert into public.residents (room_id, display_name) select id, 'Mme T. T.' from public.rooms where number in ('301','302','303')`);
 check('démo : soignant refusé', await as('soin', `select public.demo_seed_today()`), 'REFUSÉ');

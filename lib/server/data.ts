@@ -201,36 +201,52 @@ export async function loadVehicles(): Promise<VehiclesData> {
   }
 }
 
-/** Dépenses du mois en cours et repères mensuels. Réservé aux responsables : renvoie null pour les autres. */
-export async function loadExpenses() {
+export type ExpensesData = {
+  entries: Entry[]; rate: number; targets: Record<Cat, number> | null
+  period: { label: string; day: number; days: number }
+  month: string; months: { value: string; label: string }[]
+}
+
+const monthLabel = (ym: string) => new Date(ym + '-15T12:00:00Z').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+const lastMonths = (today: string, n = 6) => Array.from({ length: n }, (_, i) => {
+  const d = new Date(Date.UTC(Number(today.slice(0, 4)), Number(today.slice(5, 7)) - 1 - i, 15))
+  const value = d.toISOString().slice(0, 7)
+  return { value, label: monthLabel(value) }
+})
+
+/** Dépenses d'un mois (le mois en cours par défaut) et repères mensuels. Réservé aux responsables : renvoie null pour les autres. */
+export async function loadExpenses(month?: string): Promise<ExpensesData | null> {
+  const today = parisToday()
+  const months = lastMonths(today)
+  const ym = month && months.some((m) => m.value === month) ? month : today.slice(0, 7)
+  const current = ym === today.slice(0, 7)
+  const date = new Date(ym + '-15T12:00:00Z')
+  const days = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate()
+  const period = { label: date.toLocaleDateString('fr-FR', { month: 'long', timeZone: 'UTC' }), day: current ? Number(today.slice(8)) : days, days }
   if (DEMO) {
-    const period = { label: 'octobre', day: 14, days: 31 }
     const entries = demoEntries()
     const tot = (c: Cat) => entries.filter((e) => e.cat === c).reduce((a, e) => a + e.eur, 0)
     const k = { pet: 1.05, tps: 0.78, cout: 0.88 }
     const targets = Object.fromEntries((['pet', 'tps', 'cout'] as Cat[]).map((c) => [c, Math.round(((tot(c) / period.day) * period.days * k[c]) / 10) * 10])) as Record<Cat, number>
-    return { entries, rate: RATE, targets, period }
+    return { entries, rate: RATE, targets, period: { ...period, day: Math.min(period.day, 14) }, month: ym, months }
   }
   const sb = await createClient()
   const { data: auth } = await sb.auth.getUser()
   if (!auth.user) return null
   const { data: me } = await sb.from('profiles').select('role').eq('id', auth.user.id).maybeSingle()
   if (!me || !['admin', 'direction', 'cadre'].includes(me.role)) return null
-  const today = parisToday()
-  const monthStart = today.slice(0, 8) + '01'
+  const monthStart = ym + '-01', monthEnd = `${ym}-${String(days).padStart(2, '0')}`
   const [rows, targets] = await Promise.all([
-    sb.from('expenses').select('id, day, category, subcategory, floor_id, amount_cents, hours').gte('day', monthStart).lte('day', today),
+    sb.from('expenses').select('id, day, category, subcategory, floor_id, amount_cents, hours').gte('day', monthStart).lte('day', monthEnd).order('day').order('id'),
     sb.from('expense_targets').select('category, target_cents').eq('month', monthStart),
   ])
   fail('frais', rows.error); fail('repères', targets.error)
-  const date = new Date(today + 'T12:00:00Z')
-  const days = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate()
   const t = Object.fromEntries((targets.data ?? []).map((x) => [x.category, x.target_cents / 100]))
   return {
     entries: (rows.data ?? []).map((e): Entry => ({ id: e.id, d: Number(e.day.slice(8)), cat: e.category, sub: e.subcategory, f: e.floor_id ?? 4, eur: e.amount_cents / 100, hrs: Number(e.hours) })),
     rate: RATE,
     targets: targets.data?.length ? ({ pet: 0, tps: 0, cout: 0, ...t } as Record<Cat, number>) : null,
-    period: { label: date.toLocaleDateString('fr-FR', { month: 'long', timeZone: 'UTC' }), day: date.getUTCDate(), days },
+    period, month: ym, months,
   }
 }
 
