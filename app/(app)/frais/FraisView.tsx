@@ -1,9 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState, useTransition } from 'react'
+import type { Cat, Entry } from '@/lib/demo/expenses'
+import { addExpense } from './actions'
 
-export type Cat = 'pet' | 'tps' | 'cout'
-export type Entry = { id: string; d: number; cat: Cat; sub: string; f: number; eur: number; hrs: number }
 const CK: Cat[] = ['pet', 'tps', 'cout']
 const CATS: Record<Cat, { n: string; s: string }> = {
   pet: { n: 'Petites dépenses non suivies', s: 'Petites dépenses' },
@@ -11,10 +11,14 @@ const CATS: Record<Cat, { n: string; s: string }> = {
   cout: { n: 'Coûts d’usage cachés', s: 'Coûts cachés' },
 }
 const CC: Record<Cat, string> = { pet: 'c1', tps: 'c2', cout: 'c3' }
-const DAYS_IN = 31, TODAY_D = 14
 const fmt = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €'
 
-export function FraisView({ entries, subs, rate }: { entries: Entry[]; subs: Record<Cat, readonly string[]>; rate: number }) {
+export type Period = { label: string; day: number; days: number }
+
+export function FraisView({ entries, subs, rate, targets, period }: { entries: Entry[]; subs: Record<Cat, readonly string[]>; rate: number; targets: Record<Cat, number> | null; period: Period }) {
+  const TODAY_D = period.day, DAYS_IN = period.days
+  const [error, setError] = useState<string | null>(null)
+  const [, start] = useTransition()
   const [list, setList] = useState(entries)
   const [cat, setCat] = useState<Cat>('cout')
   const [sub, setSub] = useState(0)
@@ -23,12 +27,7 @@ export function FraisView({ entries, subs, rate }: { entries: Entry[]; subs: Rec
 
   const tot = (f: (e: Entry) => boolean = () => true) => list.filter(f).reduce((a, e) => a + e.eur, 0)
   const proj = (v: number) => (v / TODAY_D) * DAYS_IN
-  // Repères mensuels d'exemple, calés sur le jeu initial. En production : réglés par la direction.
-  const base = useMemo(() => {
-    const t = (c: Cat) => entries.filter((e) => e.cat === c).reduce((a, e) => a + e.eur, 0)
-    const k = { pet: 1.05, tps: 0.78, cout: 0.88 }
-    return Object.fromEntries(CK.map((c) => [c, Math.round((((t(c) / TODAY_D) * DAYS_IN) * k[c]) / 10) * 10])) as Record<Cat, number>
-  }, [entries])
+  const base = targets
 
   const total = tot()
   const bySub: Record<string, number> = {}
@@ -40,7 +39,7 @@ export function FraisView({ entries, subs, rate }: { entries: Entry[]; subs: Rec
     <div>
       <div className="top10">
         <div className="tot10">
-          <span>Frais invisibles · octobre, du 1er au {TODAY_D}</span>
+          <span>Frais invisibles · {period.label}, du 1er au {TODAY_D}</span>
           <b className="disp">{fmt(total)}</b>
           <small>Projection fin de mois : <b>{fmt(proj(total))}</b></small>
         </div>
@@ -48,14 +47,14 @@ export function FraisView({ entries, subs, rate }: { entries: Entry[]; subs: Rec
 
       <div className="g10">
         {CK.map((k) => {
-          const t = tot((e) => e.cat === k), p = proj(t), b = base[k], over = p > b * 1.1
+          const t = tot((e) => e.cat === k), p = proj(t), b = base?.[k] ?? 0, over = b > 0 && p > b * 1.1
           return (
             <article key={k} className={`sc ${CC[k]}`}>
               <h3>{CATS[k].n}</h3>
-              <p className="vv"><b className="disp">{fmt(t)}</b><span>{Math.round((t / total) * 100)} % du total</span></p>
-              <div className="bar"><i style={{ width: `${Math.min(100, (p / (b * 1.4)) * 100)}%` }} /><u style={{ left: `${(1 / 1.4) * 100}%` }} title="Repère mensuel" /></div>
-              <p className="sm">Projection {fmt(p)} · repère {fmt(b)}</p>
-              <span className={`pill st-${over ? 'late' : 'ok'}`}><i className="dot" />{over ? 'Au-dessus du repère' : 'Dans le repère'}</span>
+              <p className="vv"><b className="disp">{fmt(t)}</b><span>{total ? Math.round((t / total) * 100) : 0} % du total</span></p>
+              {b > 0 ? <div className="bar"><i style={{ width: `${Math.min(100, (p / (b * 1.4)) * 100)}%` }} /><u style={{ left: `${(1 / 1.4) * 100}%` }} title="Repère mensuel" /></div> : null}
+              <p className="sm">Projection {fmt(p)}{b > 0 ? ` · repère ${fmt(b)}` : ' · aucun repère mensuel fixé'}</p>
+              {b > 0 && <span className={`pill st-${over ? 'late' : 'ok'}`}><i className="dot" />{over ? 'Au-dessus du repère' : 'Dans le repère'}</span>}
             </article>
           )
         })}
@@ -69,7 +68,7 @@ export function FraisView({ entries, subs, rate }: { entries: Entry[]; subs: Rec
             return (
               <div key={key} className={`rk ${CC[k as Cat]}`}>
                 <span className="rk-n">{s}</span>
-                <div className="rk-b"><i style={{ width: `${(v / top[0][1]) * 100}%` }} /></div>
+                <div className="rk-b"><i style={{ width: `${(v / (top[0]?.[1] || 1)) * 100}%` }} /></div>
                 <b>{fmt(v)}</b>
               </div>
             )
@@ -99,9 +98,18 @@ export function FraisView({ entries, subs, rate }: { entries: Entry[]; subs: Rec
         ) : (
           <div className="pre">{[5, 10, 20, 50, 100].map((v) => <button key={v} className="chip" aria-pressed={amt === v} onClick={() => setAmt(v)}>{v} €</button>)}</div>
         )}
+        {error && <p role="alert" className="err">{error}</p>}
         <button
           className="btn add-btn"
-          onClick={() => setList((l) => [...l, { id: 'n' + l.length, d: TODAY_D, cat, sub: subs[cat][sub], f: 4, eur: cat === 'tps' ? hrs * rate : amt, hrs: cat === 'tps' ? hrs : 0 }])}
+          onClick={() => {
+            const e: Entry = { id: 'n' + list.length, d: TODAY_D, cat, sub: subs[cat][sub], f: 4, eur: cat === 'tps' ? hrs * rate : amt, hrs: cat === 'tps' ? hrs : 0 }
+            setError(null)
+            setList((l) => [...l, e])
+            start(async () => {
+              const res = await addExpense(e.cat, e.sub, e.eur, e.hrs)
+              if (!res.ok) { setList((l) => l.filter((x) => x.id !== e.id)); setError(res.error) }
+            })
+          }}
         >Ajouter · {fmt(cat === 'tps' ? hrs * rate : amt)}</button>
       </section>
     </div>

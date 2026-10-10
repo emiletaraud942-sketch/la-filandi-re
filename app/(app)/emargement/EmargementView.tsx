@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { closeSession, signAttendance } from './actions'
 
-type Sess = { id: string; type: 'form' | 'reun' | 'act'; n: string; when: string; place: string; lead: string; who: { n: string; sub: string }[]; signed: number }
-const clock = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+type Sess = { id: string; type: 'form' | 'reun' | 'act'; n: string; when: string; place: string; lead: string; closed: boolean; who: { id: string; n: string; sub: string; at: string | null }[] }
 const TYPE = { form: 'Formation', reun: 'Réunion', act: 'Activité résidents' }
 
 function Scribble({ name }: { name: string }) {
@@ -16,18 +16,21 @@ function Scribble({ name }: { name: string }) {
 
 export function EmargementView({ sessions, now }: { sessions: Sess[]; now: string }) {
   const [id, setId] = useState(sessions[0].id)
-  // signatures : nom -> heure. Les premières signatures de la démo sont préremplies.
+  // signatures : identifiant de la ligne -> heure.
   const [sig, setSig] = useState<Record<string, Record<string, string>>>(() =>
-    Object.fromEntries(sessions.map((s) => [s.id, Object.fromEntries(s.who.slice(0, s.signed).map((p, i) => [p.n, clock(9 * 60 + 52 + i * 2)]))])))
-  const [closed, setClosed] = useState<Record<string, boolean>>({})
+    Object.fromEntries(sessions.map((x) => [x.id, Object.fromEntries(x.who.filter((p) => p.at).map((p) => [p.id, p.at as string]))])))
+  const [closed, setClosed] = useState<Record<string, boolean>>(() => Object.fromEntries(sessions.map((x) => [x.id, x.closed])))
+  const [error, setError] = useState<string | null>(null)
+  const [, start] = useTransition()
   const s = sessions.find((x) => x.id === id) ?? sessions[0]
   const sg = sig[s.id], isClosed = closed[s.id]
-  const n = s.who.filter((p) => sg[p.n]).length
+  const n = s.who.filter((p) => sg[p.id]).length
   return (
     <div>
       <div className="chips" role="group" aria-label="Séance">
         {sessions.map((x) => <button key={x.id} className="chip" aria-pressed={id === x.id} onClick={() => setId(x.id)}>{TYPE[x.type]} · {x.n}</button>)}
       </div>
+      {error && <p role="alert" className="err">{error}</p>}
       <div className="feuille">
         <div className="fh">
           <span className="k5">Feuille d’émargement · {TYPE[s.type]}</span>
@@ -42,9 +45,16 @@ export function EmargementView({ sessions, now }: { sessions: Sess[]; now: strin
                 <td className="no">{i + 1}</td>
                 <td><b>{p.n}</b><small>{p.sub}</small></td>
                 <td className="sgc">
-                  {sg[p.n] ? <><Scribble name={p.n} /><time>{sg[p.n]}</time></>
+                  {sg[p.id] ? <><Scribble name={p.n} /><time>{sg[p.id]}</time></>
                     : isClosed ? <span className="abs">Absent</span>
-                    : <button className="btn" onClick={() => setSig((m) => ({ ...m, [s.id]: { ...m[s.id], [p.n]: now } }))}>{s.type === 'act' ? 'Émarger' : 'Signer'}</button>}
+                    : <button className="btn" onClick={() => {
+                        setError(null)
+                        setSig((m) => ({ ...m, [s.id]: { ...m[s.id], [p.id]: now } }))
+                        start(async () => {
+                          const res = await signAttendance(p.id)
+                          if (!res.ok) { setSig((m) => { const c = { ...m[s.id] }; delete c[p.id]; return { ...m, [s.id]: c } }); setError(res.error) }
+                        })
+                      }}>{s.type === 'act' ? 'Émarger' : 'Signer'}</button>}
                 </td>
               </tr>
             ))}
@@ -52,7 +62,14 @@ export function EmargementView({ sessions, now }: { sessions: Sess[]; now: strin
         </table>
         <div className="ff">
           <span><b>{n}</b> sur {s.who.length} {s.type === 'act' ? 'présents' : 'signatures'}</span>
-          {isClosed ? <span className="ord">✓ Feuille clôturée à {now}</span> : <button className="btn" onClick={() => setClosed((c) => ({ ...c, [s.id]: true }))}>Clôturer la feuille</button>}
+          {isClosed ? <span className="ord">✓ Feuille clôturée à {now}</span> : <button className="btn" onClick={() => {
+            setError(null)
+            setClosed((c) => ({ ...c, [s.id]: true }))
+            start(async () => {
+              const res = await closeSession(s.id)
+              if (!res.ok) { setClosed((c) => ({ ...c, [s.id]: false })); setError(res.error) }
+            })
+          }}>Clôturer la feuille</button>}
         </div>
       </div>
     </div>

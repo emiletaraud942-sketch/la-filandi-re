@@ -11,12 +11,14 @@ const DAYS_L = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'di
 const KIND: Record<DayEvent['k'], string> = { meal: 'Repas', ani: 'Animation', vis: 'Visite', coif: 'Coiffeuse', out: 'Sortie' }
 
 export function ResidentsView({ floors, today }: { floors: FloorDays[]; today: number }) {
-  const firstOcc = (f: number) => (floors[f].rooms.find((r) => r.state === 'occ') ?? floors[f].rooms[0]).no
+  const floorOf = (id: number) => floors.find((x) => x.floor.id === id) ?? floors[0]
+  const firstOcc = (id: number) => (floorOf(id).rooms.find((r) => r.state === 'occ') ?? floorOf(id).rooms[0])?.no ?? ''
   const [f, setF] = useState(2)
   const [no, setNo] = useState(firstOcc(2))
   const [d, setD] = useState(today)
-  const rooms = floors[f].rooms
+  const rooms = floorOf(f).rooms
   const room = rooms.find((r) => r.no === no) ?? rooms[0]
+  if (!room) return <p className="muted">Aucune chambre sur cet étage.</p>
   const ev = room.days[d]
   const c = (k: DayEvent['k']) => ev.filter((e) => e.k === k).length
 
@@ -56,7 +58,7 @@ export function ResidentsView({ floors, today }: { floors: FloorDays[]; today: n
           <span className="big disp">{room.no}</span>
           <div>
             <h2 className="disp">{room.who ?? 'Chambre libre'}</h2>
-            <p className="muted">{floors[room.floor].floor.name}{floors[room.floor].floor.note ? ` · ${floors[room.floor].floor.note}` : ''}</p>
+            <p className="muted">{floorOf(room.floor).floor.name}{floorOf(room.floor).floor.note ? ` · ${floorOf(room.floor).floor.note}` : ''}</p>
           </div>
         </header>
         {room.state !== 'free' && <p className="sum5">{c('meal')} repas · {c('ani')} animation{c('ani') > 1 ? 's' : ''} · {c('vis')} visite{c('vis') > 1 ? 's' : ''}</p>}
