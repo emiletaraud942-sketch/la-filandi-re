@@ -84,13 +84,17 @@ export function floorData(f: number) {
       })
     }
     tasks.sort((a, b) => a.start - b.start)
-    let dot: Dot = 'none'
-    if (tasks.some((t) => t.st === 'late')) dot = 'late'
-    else if (tasks.some((t) => t.st === 'wip')) dot = 'wip'
-    else if (tasks.some((t) => t.st === 'done')) dot = 'ok'
+    const dot = dotOf(tasks)
     rooms.push({ no, n, floor: f, side: n <= 16 ? 'N' : 'S', state, who, tasks, dot })
   }
   return (_fc[f] = { floor: FLOORS[f], rooms })
+}
+// Pastille d'une chambre : rouge (retard) > orange (en cours) > vert (à jour) > gris.
+export function dotOf(tasks: { st: TaskStatus }[]): Dot {
+  if (tasks.some((t) => t.st === 'late')) return 'late'
+  if (tasks.some((t) => t.st === 'wip')) return 'wip'
+  if (tasks.some((t) => t.st === 'done')) return 'ok'
+  return 'none'
 }
 export function counts(d: { rooms: Room[] }) {
   const c = { ok: 0, wip: 0, late: 0, none: 0, free: 0, occ: 0 }

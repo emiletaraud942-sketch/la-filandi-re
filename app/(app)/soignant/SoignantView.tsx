@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { NOW, hm, type Task } from '@/lib/data'
+import { setTaskStatus } from '../taches/actions'
 
 type MyTask = Task & { id: string; who: string | null }
 const SHIFT: [number, number] = [6 * 60 + 45, 14 * 60 + 15]
@@ -13,8 +14,19 @@ export function SoignantView({ me, tasks }: { me: { name: string; first: string;
   const done = mine.filter((t) => t.st === 'done')
   const open = mine.filter((t) => t.st !== 'done')
   const pct = mine.length ? Math.round((done.length / mine.length) * 100) : 0
-  const toggle = (id: string) =>
-    setAll((l) => l.map((t) => (t.id !== id ? t : { ...t, st: t.st === 'done' ? (t.end <= NOW ? 'late' : 'todo') : 'done' })))
+  const [error, setError] = useState<string | null>(null)
+  const toggle = (id: string) => {
+    const t = all.find((x) => x.id === id)
+    if (!t) return
+    const before = t.st
+    const st = before === 'done' ? (t.end <= NOW ? 'late' : 'todo') : 'done'
+    const apply = (v: Task['st']) => setAll((l) => l.map((x) => (x.id !== id ? x : { ...x, st: v })))
+    setError(null)
+    apply(st)
+    setTaskStatus(id, st === 'done' ? 'done' : 'todo').then((res) => {
+      if (!res.ok) { apply(before); setError(res.error) }
+    })
+  }
 
   const card = (t: MyTask) => (
     <div key={t.id} className={`t3a st-${t.st}`}>
@@ -40,6 +52,7 @@ export function SoignantView({ me, tasks }: { me: { name: string; first: string;
           <div className="p3-prog"><i style={{ width: `${pct}%` }} /></div>
         </div>
       </div>
+      {error && <p role="alert" className="err">{error}</p>}
       <h3 className="p3-h disp">À faire</h3>
       {open.length ? open.map(card) : <p className="muted">Tout est fait, bravo.</p>}
       <h3 className="p3-h disp">Déjà faites</h3>

@@ -61,8 +61,9 @@ function Corridor({ title, rooms, sel, onSel }: { title: string; rooms: Room[]; 
 
 export function PlanView({ floors }: { floors: FloorData[] }) {
   const [f, setF] = useState(2)
-  const [sel, setSel] = useState<string | null>(() => floors[2].rooms.find((r) => r.dot === 'late')?.no ?? null)
-  const d = floors[f]
+  const [sel, setSel] = useState<string | null>(() => floors.find((x) => x.floor.id === 2)?.rooms.find((r) => r.dot === 'late')?.no ?? null)
+  const d = floors.find((x) => x.floor.id === f) ?? floors[0]
+  if (!d) return <p className="muted">Aucun étage n’est encore configuré.</p>
   const c = counts(d)
   const room = d.rooms.find((r) => r.no === sel)
   return (

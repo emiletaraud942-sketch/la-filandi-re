@@ -1,34 +1,51 @@
 'use client'
 
-import { useState } from 'react'
-import { FloorChips } from '@/components/FloorChips'
+import { useState, useTransition } from 'react'
 import { ROLE_LBL, ST_TASK, hm, type Room, type Task, type TaskStatus } from '@/lib/data'
+import { setTaskStatus } from './actions'
 
+type FloorRooms = { id: number; short: string; rooms: Room[] }
 const NEXT: Record<TaskStatus, TaskStatus> = { todo: 'wip', wip: 'done', done: 'todo', late: 'done' }
 const FILT: [string, string][] = [['all', 'Tout'], ['late', 'En retard'], ['wip', 'En cours'], ['todo', 'À venir'], ['done', 'Fait']]
 const ORDER: Record<TaskStatus, number> = { late: 3, wip: 2, todo: 1, done: 0 }
 
-export function TachesView({ floors }: { floors: Room[][] }) {
+export function TachesView({ floors }: { floors: FloorRooms[] }) {
   const [data, setData] = useState(floors)
-  const [f, setF] = useState(2)
+  const [f, setF] = useState(floors.find((x) => x.id === 2)?.id ?? floors[0]?.id ?? 0)
   const [status, setStatus] = useState('all')
+  const [error, setError] = useState<string | null>(null)
+  const [, start] = useTransition()
 
   const keep = (t: Task) => status === 'all' || t.st === status
-  const cycle = (room: string, k: string) =>
-    setData((d) => d.map((rooms, i) => i !== f ? rooms : rooms.map((r) => r.no !== room ? r : { ...r, tasks: r.tasks.map((t) => t.k === k ? { ...t, st: NEXT[t.st] } : t) })))
+  const patch = (room: string, k: string, st: TaskStatus) =>
+    setData((d) => d.map((fl) => fl.id !== f ? fl : { ...fl, rooms: fl.rooms.map((r) => r.no !== room ? r : { ...r, tasks: r.tasks.map((t) => t.k === k ? { ...t, st } : t) }) }))
 
-  const list = data[f].filter((r) => r.tasks.some(keep))
+  const cycle = (room: string, t: Task) => {
+    const next = NEXT[t.st]
+    setError(null)
+    patch(room, t.k, next)
+    start(async () => {
+      const res = await setTaskStatus(t.k, next === 'late' ? 'todo' : next)
+      if (!res.ok) { patch(room, t.k, t.st); setError(res.error) }
+    })
+  }
+
+  const cur = data.find((x) => x.id === f)
+  const list = (cur?.rooms ?? []).filter((r) => r.tasks.some(keep))
   const n = list.reduce((a, r) => a + r.tasks.filter(keep).length, 0)
 
   return (
     <div>
       <div className="p2-bar">
-        <FloorChips value={f} onChange={setF} />
+        <div className="chips" role="group" aria-label="Étage">
+          {data.map((x) => <button key={x.id} className="chip" aria-pressed={f === x.id} onClick={() => setF(x.id)}>{x.short}</button>)}
+        </div>
         <div className="chips" role="group" aria-label="Statut">
           {FILT.map(([k, l]) => <button key={k} className="chip" aria-pressed={status === k} onClick={() => setStatus(k)}>{l}</button>)}
         </div>
       </div>
       <div className="p2-sub"><span className="p2-count">{n} tâches dans {list.length} chambres · touchez un statut pour le faire avancer</span></div>
+      {error && <p role="alert" className="err">{error}</p>}
       {list.length ? (
         <div className="p2-grid">
           {list.map((r) => {
@@ -41,8 +58,8 @@ export function TachesView({ floors }: { floors: Room[][] }) {
                 {shown.map((t) => (
                   <div key={t.k} className="p2-t">
                     <time>{hm(t.start)}</time><span>{t.label}</span>
-                    <button className={`pill act st-${t.st}`} onClick={() => cycle(r.no, t.k)} aria-label="Changer le statut"><i className="dot" />{ST_TASK[t.st]}</button>
-                    <small>{t.by} · {ROLE_LBL[t.role]} · {hm(t.start)}–{hm(t.end)}</small>
+                    <button className={`pill act st-${t.st}`} onClick={() => cycle(r.no, t)} aria-label="Changer le statut"><i className="dot" />{ST_TASK[t.st]}</button>
+                    <small>{t.by}{ROLE_LBL[t.role] ? ` · ${ROLE_LBL[t.role]}` : ''} · {hm(t.start)}–{hm(t.end)}</small>
                   </div>
                 ))}
                 {more > 0 && <p className="p2-more">+ {more} autre{more > 1 ? 's' : ''} tâche{more > 1 ? 's' : ''} plus tard</p>}

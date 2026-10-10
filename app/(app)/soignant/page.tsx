@@ -1,17 +1,16 @@
 import './page.css'
 import { PageHead } from '@/components/PageHead'
-import { floorData } from '@/lib/data'
+import { loadMyDay } from '@/lib/server/data'
 import { SoignantView } from './SoignantView'
 
-// Démo : la soignante connectée est « Camille R. », 2e étage. En production : profil + étage de l'utilisateur.
-const ME = { name: 'Camille R.', first: 'Camille', floor: 2 }
-
-export default function SoignantPage() {
-  const tasks = floorData(ME.floor).rooms.flatMap((r) => r.tasks.map((t) => ({ ...t, id: r.no + t.k, who: r.who })))
+export default async function SoignantPage() {
+  const me = await loadMyDay()
   return (
     <div className="pg-3">
       <PageHead eyebrow="Espace soignant" title="Mon planning" />
-      <SoignantView me={ME} tasks={tasks.filter((t) => t.by === ME.name)} />
+      {me ? <SoignantView me={me} tasks={me.tasks} /> : (
+        <p className="muted">Votre compte n’est pas encore lié à un membre du personnel. Demandez à la direction de faire le lien.</p>
+      )}
     </div>
   )
 }
