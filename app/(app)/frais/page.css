@@ -1,8 +1,6 @@
 .pg-10 {
   &{--c1:#d08a3c;--c2:#5d6a9a;--c3:#6f8f74}
   .c1{--cc:var(--c1)}.c2{--cc:var(--c2)}.c3{--cc:var(--c3)}
-  .k5{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:0 0 8px;display:block}
-  .sq{display:inline-block;width:11px;height:11px;border-radius:3px;background:var(--cc);margin-right:7px}
   .top10{margin-bottom:14px}
   .tot10{display:inline-block;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 20px;box-shadow:var(--shadow)}
   .tot10>span{display:block;font-size:12.5px;color:var(--ink2);letter-spacing:.03em}
@@ -12,8 +10,6 @@
   .bar{position:relative;height:10px;border-radius:99px;background:color-mix(in srgb,var(--line) 85%,transparent)}
   .bar i{position:absolute;left:0;top:0;height:100%;border-radius:99px;background:var(--cc)}
   .bar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);text-decoration:none}
-  .mini{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
-  .mini b{white-space:nowrap}
   /* A */
   .g10{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
   .sc{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--cc);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
@@ -34,28 +30,7 @@
   .eq p{margin:0 0 8px}
   .eq p b{font-size:28px}
   /* B */
-  .b10{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:14px;align-items:start}
-  @media (max-width:900px){.b10{grid-template-columns:1fr}}
-  .hmt{border-collapse:separate;border-spacing:3px;width:100%;min-width:500px}
-  .hmt th{color:var(--ink2);font:600 12px var(--font-display);letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:4px 6px}
-  .hmt tbody th{font-size:15px;color:var(--ink);width:74px}
-  .hmt td{color:var(--ink);padding:12px 8px;border-radius:var(--r);text-align:right;font-size:14px}
-  .hm{background:color-mix(in srgb,var(--accent) calc(var(--p) * .5),var(--surface));cursor:pointer}
-  .hm.sel{outline:2px solid var(--ink);outline-offset:1px}
-  .hm b{color:var(--ink)}
-  .tt{background:var(--surface);border:1px solid var(--line)}
-  .ft th,.ft td{border-top:2px solid var(--ink3)}
-  .stk{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
-  .st10{display:grid;grid-template-columns:62px 1fr;gap:8px;align-items:center;margin-top:8px;font-size:13px}
-  .sb{display:flex;height:16px;border-radius:3px;overflow:hidden}
-  .sb i{display:block;background:var(--cc)}
-  .det10{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
-  .det10 h3{margin:0 0 8px;font-size:17px}
   /* C */
-  .c10{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
-  @media (max-width:860px){.c10{grid-template-columns:1fr}}
-  .qe,.al{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
-  .stp-l{margin:12px 0 8px;font-size:13.5px;font-weight:700;color:var(--ink)}
   .cbs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .cb{height:56px;border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:var(--r);font:700 14.5px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.03em;cursor:pointer;padding:0 4px}
   .cb[aria-pressed=true]{background:var(--cc);border-color:var(--cc);color:#13110a}
@@ -65,11 +40,6 @@
   .stp b{font-size:32px}
   .stp small{font-size:14px;color:var(--ink2);font-family:var(--font-body);text-transform:none}
   .pm{width:60px;height:60px;border-radius:var(--r);border:1px solid var(--line);background:var(--accent-soft);color:var(--ink);font:700 30px var(--font-display);cursor:pointer}
-  .big{width:100%;height:58px;margin-top:16px;border:0;border-radius:var(--r);background:var(--accent);color:var(--on-accent);font:700 21px var(--font-display);text-transform:uppercase;letter-spacing:.05em;cursor:pointer}
-  .alc{display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--late) 12%,var(--bg));border:1px solid color-mix(in srgb,var(--late) 45%,transparent);border-radius:var(--r);padding:9px 12px;margin-bottom:6px}
-  .alc .dot{margin-top:5px}
-  .alc b{display:block;font-size:13.5px}
-  .alc span{font-size:12.5px;color:var(--ink2)}
   .add10{margin-top:12px}
   .add10 h3{margin:0 0 10px;font-size:17px;font-weight:600}
   .add-btn{margin-top:14px}

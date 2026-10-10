@@ -31,6 +31,10 @@ Les migrations sont dans `supabase/migrations/` et s'appliquent dans l'ordre. `s
 
 Rôles applicatifs : `admin`, `direction`, `cadre`, `soignant`, `animation`, `accueil`, `technique`. Un nouveau compte est créé en `soignant` ; seul un `admin` change les rôles.
 
+## Tests
+
+`npm run test:db` rejoue toutes les migrations sur Postgres local (PGlite) et vérifie les droits par rôle. `npm run typecheck` et `npm run build` complètent la vérification ; le tout tourne sur GitHub à chaque envoi (`.github/workflows/ci.yml`).
+
 ## Phases
 
 0. Cadrage · **1. Fondations (en cours)** · 2. Plan et tâches · 3. Équipes et résidents · 4. Logistique · 5. Pilotage · 6. Pilote terrain
