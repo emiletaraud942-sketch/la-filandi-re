@@ -11,7 +11,7 @@ for (const f of fs.readdirSync(dir).filter((x) => !x.endsWith('_cron.sql')).sort
 await db.exec(`grant select, insert, update, delete on all tables in schema public to authenticated; grant select on all tables in schema public to anon;`);
 const U = { admin: '00000000-0000-0000-0000-00000000000a', soin: '00000000-0000-0000-0000-00000000000b', soin2: '00000000-0000-0000-0000-00000000000c', acc: '00000000-0000-0000-0000-00000000000d', tech: '00000000-0000-0000-0000-00000000000e' };
 for (const [k, id] of Object.entries(U)) await db.exec(`insert into auth.users (id,email) values ('${id}','${k}@x.fr')`);
-await db.exec(`update public.profiles set role='admin' where id='${U.admin}'; update public.profiles set role='accueil' where id='${U.acc}'; update public.profiles set role='technique' where id='${U.tech}';`);
+await db.exec(`update public.profiles set active=true; update public.profiles set role='admin' where id='${U.admin}'; update public.profiles set role='accueil' where id='${U.acc}'; update public.profiles set role='technique' where id='${U.tech}';`);
 await db.exec(`insert into public.staff (id, display_name, job_code, profile_id) values ('11111111-1111-1111-1111-111111111111','Soignante A','AS','${U.soin}'),('22222222-2222-2222-2222-222222222222','Soignante B','AS','${U.soin2}')`);
 await db.exec(`insert into public.tasks (id, room_id, label, day, start_min, end_min, assigned_to) select '33333333-3333-3333-3333-333333333333', id, 'Plateau', private.paris_today(), 0, 1, '11111111-1111-1111-1111-111111111111' from public.rooms where number='201';
 insert into public.tasks (id, room_id, label, day, start_min, end_min, assigned_to) select '44444444-4444-4444-4444-444444444444', id, 'Plateau B', private.paris_today(), 0, 1439, '22222222-2222-2222-2222-222222222222' from public.rooms where number='202';
@@ -65,6 +65,10 @@ check('admin fixe un repère (upsert)', await as('admin', `insert into public.ex
 check('soignant ne fixe pas de repère', await as('soin', `insert into public.expense_targets (category, month, target_cents) values ('tps', date_trunc('month', now())::date, 1)`), 'REFUSÉ');
 check('soignant ne supprime pas un frais', await as('soin', `delete from public.expenses`), 'ok(0)');
 check('admin corrige un frais', await as('admin', `update public.expenses set amount_cents=2000 returning amount_cents`), '"amount_cents":2000');
+await db.exec(`insert into auth.users (id,email) values ('00000000-0000-0000-0000-0000000000ff','nouveau@x.fr')`);
+check('nouveau compte inactif', await as('admin', `select active from public.profiles where id='00000000-0000-0000-0000-0000000000ff'`), '"active":false');
+check('admin active un compte et fixe son rôle', await as('admin', `update public.profiles set active=true, role='cadre' where id='00000000-0000-0000-0000-0000000000ff' returning role`), '"role":"cadre"');
+check('soignant ne change pas de rôle', await as('soin', `update public.profiles set role='admin' where id='${U.soin}'`), 'ok(0)');
 check('journal d\'audit alimenté', await as('admin', `select count(*)::int c from public.audit_log where table_name in ('tasks','visit_requests','expenses')`), (g) => !g.includes('"c":0'));
 await db.exec(`insert into public.residents (room_id, display_name) select id, 'Mme T. T.' from public.rooms where number in ('301','302','303')`);
 check('démo : soignant refusé', await as('soin', `select public.demo_seed_today()`), 'REFUSÉ');

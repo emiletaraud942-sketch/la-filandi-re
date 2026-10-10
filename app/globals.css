@@ -65,3 +65,4 @@ a { color: inherit }
 .busy { opacity: .6; pointer-events: none }
 .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px }
 @keyframes spin { to { transform: rotate(360deg) } }
+.who a.me { color: inherit; text-decoration: underline; text-underline-offset: 3px }

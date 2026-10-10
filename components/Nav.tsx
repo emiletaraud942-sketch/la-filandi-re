@@ -16,11 +16,11 @@ export const PAGES = [
   { href: '/frais', label: 'Frais invisibles' },
 ]
 
-export function Nav() {
+export function Nav({ admin = false }: { admin?: boolean }) {
   const path = usePathname()
   return (
     <nav className="nav" aria-label="Sections">
-      {PAGES.map((p) => (
+      {(admin ? [...PAGES, { href: '/utilisateurs', label: 'Utilisateurs' }] : PAGES).map((p) => (
         <Link key={p.href} href={p.href} aria-current={path === p.href ? 'page' : undefined}>{p.label}</Link>
       ))}
     </nav>

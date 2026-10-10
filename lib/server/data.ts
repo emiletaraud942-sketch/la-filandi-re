@@ -460,3 +460,56 @@ export async function loadPublicSlots(): Promise<Slot[]> {
   fail('créneaux', error)
   return (data ?? []).map((a) => ({ id: a.slot_id, iso: a.day, start: a.start_min, capacity: 12, remaining: a.remaining }))
 }
+
+export const ROLE_NAMES: Record<string, string> = {
+  admin: 'Administrateur', direction: 'Direction', cadre: 'Cadre de santé', soignant: 'Soignant',
+  animation: 'Animation', accueil: 'Accueil', technique: 'Services techniques',
+}
+
+export type Me = { name: string; role: string; email: string; staff: string | null; active: boolean }
+
+/** Profil de la personne connectée. */
+export async function loadMe(): Promise<Me | null> {
+  if (DEMO) return { name: 'Compte de démonstration', role: 'admin', email: 'demo@exemple.fr', staff: null, active: true }
+  const sb = await createClient()
+  const { data: auth } = await sb.auth.getUser()
+  if (!auth.user) return null
+  const [{ data: p }, { data: s }] = await Promise.all([
+    sb.from('profiles').select('full_name, role, active').eq('id', auth.user.id).maybeSingle(),
+    sb.from('staff').select('display_name').eq('profile_id', auth.user.id).maybeSingle(),
+  ])
+  return { name: p?.full_name ?? auth.user.email ?? '', role: p?.role ?? 'soignant', email: auth.user.email ?? '', staff: s?.display_name ?? null, active: p?.active ?? false }
+}
+
+export type UserRow = { id: string; name: string; role: string; active: boolean; staffId: string | null; staffName: string | null; me: boolean }
+export type UsersData = { users: UserRow[]; freeStaff: { id: string; name: string; job: string }[] }
+
+/** Comptes et fiches du personnel. Réservé à l'administrateur : renvoie null pour les autres. */
+export async function loadUsers(): Promise<UsersData | null> {
+  if (DEMO) {
+    return {
+      users: [
+        { id: 'u1', name: 'Compte de démonstration', role: 'admin', active: true, staffId: null, staffName: null, me: true },
+        { id: 'u2', name: 'Camille E.', role: 'soignant', active: true, staffId: 's1', staffName: 'Camille E.', me: false },
+        { id: 'u3', name: 'accueil', role: 'accueil', active: false, staffId: null, staffName: null, me: false },
+      ],
+      freeStaff: [{ id: 's9', name: 'Inès G.', job: 'IDE' }],
+    }
+  }
+  const sb = await createClient()
+  const { data: auth } = await sb.auth.getUser()
+  if (!auth.user || (await loadMyRole()) !== 'admin') return null
+  const [profiles, staff] = await Promise.all([
+    sb.from('profiles').select('id, full_name, role, active, created_at').order('created_at'),
+    sb.from('staff').select('id, display_name, job_code, profile_id').eq('active', true).order('display_name'),
+  ])
+  fail('comptes', profiles.error); fail('personnel', staff.error)
+  const byProfile = new Map((staff.data ?? []).filter((s) => s.profile_id).map((s) => [s.profile_id as string, s]))
+  return {
+    users: (profiles.data ?? []).map((p): UserRow => ({
+      id: p.id, name: p.full_name, role: p.role, active: p.active,
+      staffId: byProfile.get(p.id)?.id ?? null, staffName: byProfile.get(p.id)?.display_name ?? null, me: p.id === auth.user!.id,
+    })),
+    freeStaff: (staff.data ?? []).filter((s) => !s.profile_id).map((s) => ({ id: s.id, name: s.display_name, job: s.job_code })),
+  }
+}
