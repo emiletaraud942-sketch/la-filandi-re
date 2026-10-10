@@ -78,25 +78,29 @@ create table public.audit_log (
 create index audit_log_at_idx on public.audit_log (at desc);
 
 -- ───────────────────────── Fonctions ─────────────────────────
-create function public.current_app_role()
+-- Les aides aux politiques RLS vivent dans le schéma « private » : il n'est pas exposé par l'API REST.
+create schema if not exists private;
+grant usage on schema private to authenticated;
+
+create function private.current_app_role()
 returns public.app_role
 language sql stable security definer set search_path = ''
 as $$
   select p.role from public.profiles p where p.id = auth.uid() and p.active
 $$;
 
-create function public.is_manager()
+create function private.is_manager()
 returns boolean
 language sql stable security definer set search_path = ''
 as $$
-  select coalesce((select public.current_app_role()) in ('admin', 'direction', 'cadre'), false)
+  select coalesce((select private.current_app_role()) in ('admin', 'direction', 'cadre'), false)
 $$;
 
-create function public.is_admin()
+create function private.is_admin()
 returns boolean
 language sql stable security definer set search_path = ''
 as $$
-  select coalesce((select public.current_app_role()) = 'admin', false)
+  select coalesce((select private.current_app_role()) = 'admin', false)
 $$;
 
 create function public.audit_row()
@@ -134,12 +138,12 @@ $$;
 -- Ces fonctions ne sont appelées que par des déclencheurs ou par les politiques RLS.
 revoke execute on function public.audit_row() from public, anon, authenticated;
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
-revoke execute on function public.current_app_role() from public, anon;
-revoke execute on function public.is_manager() from public, anon;
-revoke execute on function public.is_admin() from public, anon;
-grant execute on function public.current_app_role() to authenticated;
-grant execute on function public.is_manager() to authenticated;
-grant execute on function public.is_admin() to authenticated;
+revoke execute on function private.current_app_role() from public, anon;
+revoke execute on function private.is_manager() from public, anon;
+revoke execute on function private.is_admin() from public, anon;
+grant execute on function private.current_app_role() to authenticated;
+grant execute on function private.is_manager() to authenticated;
+grant execute on function private.is_admin() to authenticated;
 
 create trigger on_auth_user_created
   after insert on auth.users
@@ -172,25 +176,25 @@ create policy staff_read on public.staff for select to authenticated using (true
 
 -- Écriture : admin, direction et cadre.
 create policy floors_write on public.floors for all to authenticated
-  using ((select public.is_manager())) with check ((select public.is_manager()));
+  using ((select private.is_manager())) with check ((select private.is_manager()));
 create policy job_roles_write on public.job_roles for all to authenticated
-  using ((select public.is_manager())) with check ((select public.is_manager()));
+  using ((select private.is_manager())) with check ((select private.is_manager()));
 create policy rooms_write on public.rooms for all to authenticated
-  using ((select public.is_manager())) with check ((select public.is_manager()));
+  using ((select private.is_manager())) with check ((select private.is_manager()));
 create policy residents_write on public.residents for all to authenticated
-  using ((select public.is_manager())) with check ((select public.is_manager()));
+  using ((select private.is_manager())) with check ((select private.is_manager()));
 create policy staff_write on public.staff for all to authenticated
-  using ((select public.is_manager())) with check ((select public.is_manager()));
+  using ((select private.is_manager())) with check ((select private.is_manager()));
 
 -- Profils : chacun voit le sien, les responsables voient tout, seul l'admin modifie (pas d'auto-promotion).
 create policy profiles_read on public.profiles for select to authenticated
-  using (id = (select auth.uid()) or (select public.is_manager()));
+  using (id = (select auth.uid()) or (select private.is_manager()));
 create policy profiles_update on public.profiles for update to authenticated
-  using ((select public.is_admin())) with check ((select public.is_admin()));
+  using ((select private.is_admin())) with check ((select private.is_admin()));
 
 -- Journal : lecture admin et direction uniquement. Les écritures passent par le déclencheur.
 create policy audit_read on public.audit_log for select to authenticated
-  using ((select public.current_app_role()) in ('admin', 'direction'));
+  using ((select private.current_app_role()) in ('admin', 'direction'));
 
 -- ───────────────────────── Vue : occupation des chambres ─────────────────────────
 create view public.rooms_overview with (security_invoker = true) as
@@ -221,5 +225,4 @@ insert into public.rooms (floor_id, number, wing)
 select f, lpad((f * 100 + n)::text, 3, '0'), case when n <= 16 then 'N' else 'S' end
 from generate_series(0, 3) f, generate_series(1, 31) n;
 
--- Les insertions de référence ci-dessus ne doivent pas encombrer le journal.
-truncate public.audit_log restart identity;
+-- Remarque : les 124 insertions de chambres ci-dessus laissent 124 lignes « INSERT rooms » dans audit_log.
