@@ -1,0 +1,28 @@
+.pg-1 {
+  .p1-sum{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .p1-floor{margin:0 0 14px;color:var(--ink2)}
+  .p1-floor b{font-size:21px;color:var(--ink);margin-right:4px;font-weight:600}
+  .p1-h{font-size:16px;margin:18px 0 10px;font-weight:600}
+  .p1-hint{margin:0 0 12px}
+  .p1-detail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:6px;box-shadow:var(--shadow)}
+  .p1-detail header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .p1-detail h3{margin:0;font-size:21px;font-weight:600}
+  .p1-detail p{margin:4px 0 8px}
+  .p1-tasks{list-style:none;margin:0;padding:0}
+  .p1-tasks li{display:grid;grid-template-columns:48px 1fr auto auto;gap:4px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .p1-tasks time{font-variant-numeric:tabular-nums;color:var(--ink2)}
+  .p1-tasks em{font-style:normal;color:var(--ink2);font-size:12.5px}
+  @media(max-width:560px){.p1-tasks li{grid-template-columns:44px 1fr auto}.p1-tasks em{display:none}}
+  /* A : cartes par couloir */
+  .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+  .rc{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:3px;color:var(--ink);box-shadow:var(--shadow)}
+  .rc.free{background:transparent;border-style:dashed;box-shadow:none;color:var(--ink2)}
+  .rc.sel{outline:2px solid var(--accent);outline-offset:1px}
+  .rc-top{display:flex;justify-content:space-between;align-items:center}
+  .rc-no{font-size:24px;font-weight:600;line-height:1.1}
+  .rc .dot{width:12px;height:12px;box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
+  .rc-who{font-weight:600;font-size:14px}
+  .rc-st{font-size:12.5px;color:var(--ink2)}
+  /* B : plan SVG */
+  /* C : tuiles pleines */
+}
