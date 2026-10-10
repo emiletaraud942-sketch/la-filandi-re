@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useToast } from '@/components/Toast'
 import type { Art } from '@/lib/demo/stock'
 import { loadMovements, moveStock, orderItem, saveItem, setStockQty, type ItemInput, type Movement } from './actions'
@@ -23,6 +23,7 @@ export function StockView({ items, locations }: { items: Art[]; locations: Recor
   const router = useRouter()
   const toast = useToast()
   const [arts, setArts] = useState(items)
+  useEffect(() => setArts(items), [items])
   const [cat, setCat] = useState('all')
   const [edit, setEdit] = useState<ItemInput | null>(null)
   const [hist, setHist] = useState<{ id: string; rows: Movement[] } | null>(null)

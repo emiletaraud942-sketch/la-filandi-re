@@ -14,4 +14,14 @@
   /* B : frise horaire */
   /* C : matrice */
   .p2-more{margin:0;padding:7px 0 8px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3)}
+  .adm2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .new2{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 12px}
+  .new2 label{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+  .new2 label.w{grid-column:span 2}
+  .new2 input,.new2 select,.ctl2 select{display:block;width:100%;margin-top:5px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:500 14px var(--font-body);text-transform:none;letter-spacing:0}
+  .act2{grid-column:1/-1;display:flex;gap:8px}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .ctl2{grid-column:1/-1;display:flex;gap:8px;align-items:center;margin-top:4px}
+  .ctl2 select{margin:0;padding:6px 8px;font-size:13px}
+  .x2{border:0;background:transparent;color:var(--late);font:700 12.5px var(--font-body);cursor:pointer;white-space:nowrap}
 }

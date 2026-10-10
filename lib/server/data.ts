@@ -5,7 +5,7 @@ import { LOCATIONS, STOCK, type Art } from '@/lib/demo/stock'
 import { RATE, SUBS, demoEntries, type Cat, type Entry } from '@/lib/demo/expenses'
 import { BOOKINGS, TODAY_IDX, VEHICLES, WEEK, type Booking, type Vehicle, type WeekDay } from '@/lib/demo/vehicles'
 import {
-  FLOORS, NOW, ROLES, ROLE_LBL, dotOf, floorData, residentDay, staffAll,
+  CAT, FLOORS, NOW, ROLES, ROLE_LBL, dotOf, floorData, residentDay, staffAll,
   type DayEvent, type Floor, type Room, type Staff, type Task, type TaskStatus,
 } from '@/lib/data'
 
@@ -13,7 +13,7 @@ export type FloorRooms = { floor: Floor; rooms: Room[] }
 export type MyTask = Task & { id: string; who: string | null }
 export type MyDay = { name: string; first: string; floor: number; tasks: MyTask[] } | null
 
-const parisToday = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })
+export const parisToday = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })
 const fail = (what: string, error: { message: string } | null) => {
   if (error) throw new Error(`${what} : ${error.message}`)
 }
@@ -39,7 +39,7 @@ export async function loadFloors(): Promise<FloorRooms[]> {
     const list = byRoom.get(t.room_id) ?? []
     list.push({
       k: t.id, label: t.label ?? '', role: who?.job_code ?? '', start: t.start_min ?? 0, end: t.end_min ?? 0,
-      st: (t.effective_status ?? 'todo') as TaskStatus, by: who?.display_name ?? 'Non attribuée', room: '',
+      st: (t.effective_status ?? 'todo') as TaskStatus, by: who?.display_name ?? 'Non attribuée', room: '', byId: t.assigned_to ?? undefined,
     })
     byRoom.set(t.room_id, list)
   }
@@ -91,20 +91,52 @@ export async function loadMyDay(): Promise<MyDay> {
   }
 }
 
-/** Personnel du jour : poste (code), équipe (matin, soir, nuit, repos…) et étage. */
-export async function loadStaff(): Promise<Staff[]> {
-  if (DEMO) return staffAll()
+/** Rôle de la personne connectée (admin en démo). */
+export async function loadMyRole(): Promise<string | null> {
+  if (DEMO) return 'admin'
   const sb = await createClient()
-  const [staff, shifts] = await Promise.all([
+  const { data: auth } = await sb.auth.getUser()
+  if (!auth.user) return null
+  const { data } = await sb.from('profiles').select('role').eq('id', auth.user.id).maybeSingle()
+  return data?.role ?? null
+}
+
+/** Personnel d'un jour : poste (code), équipe (matin, soir, nuit, repos…), étage et heure de pointage. */
+export async function loadStaff(day?: string): Promise<Staff[]> {
+  if (DEMO) return staffAll().map((p) => ({ ...p, id: p.name, clock: p.shift === 'm' ? '06:' + String(40 + (p.name.length % 8)).padStart(2, '0') : null }))
+  const sb = await createClient()
+  const d = day ?? parisToday()
+  const [staff, shifts, clock] = await Promise.all([
     sb.from('staff').select('id, display_name, job_code, floor_id').eq('active', true).order('display_name'),
-    sb.from('shifts').select('staff_id, kind, pause_start_min').eq('day', parisToday()),
+    sb.from('shifts').select('staff_id, kind, pause_start_min').eq('day', d),
+    sb.from('time_clock').select('staff_id, in_at').eq('day', d).order('in_at'),
   ])
-  fail('personnel', staff.error); fail('plannings', shifts.error)
+  fail('personnel', staff.error); fail('plannings', shifts.error); fail('pointages', clock.error)
   const today = new Map((shifts.data ?? []).map((s) => [s.staff_id, s]))
+  const first = new Map<string, string>()
+  for (const c of clock.data ?? []) if (!first.has(c.staff_id)) first.set(c.staff_id, c.in_at)
+  const time = (iso: string) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' })
   return (staff.data ?? []).map((s): Staff => ({
-    name: s.display_name, role: s.job_code, shift: today.get(s.id)?.kind ?? 'off',
+    id: s.id, name: s.display_name, role: s.job_code, shift: today.get(s.id)?.kind ?? 'off',
     floor: s.floor_id ?? 0, pause: today.get(s.id)?.pause_start_min ?? 10 * 60 + 30,
+    clock: first.has(s.id) ? time(first.get(s.id) as string) : null,
   }))
+}
+
+export type MyClock = { open: boolean; since: string | null; known: boolean }
+
+/** État du pointage de la personne connectée aujourd'hui. */
+export async function loadMyClock(): Promise<MyClock> {
+  if (DEMO) return { open: true, since: '06:42', known: true }
+  const sb = await createClient()
+  const { data: auth } = await sb.auth.getUser()
+  if (!auth.user) return { open: false, since: null, known: false }
+  const { data: me } = await sb.from('staff').select('id').eq('profile_id', auth.user.id).maybeSingle()
+  if (!me) return { open: false, since: null, known: false }
+  const { data } = await sb.from('time_clock').select('in_at, out_at').eq('staff_id', me.id).eq('day', parisToday()).order('in_at', { ascending: false }).limit(1)
+  const last = data?.[0]
+  const time = (iso: string) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' })
+  return { open: !!last && !last.out_at, since: last ? time(last.in_at) : null, known: true }
 }
 
 /** Postes et effectifs minimum souhaités. */
@@ -295,5 +327,39 @@ export async function loadSessions(): Promise<{ sessions: SessionSheet[]; now: s
         }
       }),
     })),
+  }
+}
+
+export type TaskAdmin = {
+  staff: { id: string; name: string; job: string }[]
+  types: { code: string; label: string; start: number; duration: number }[]
+  rooms: { id: string; no: string; floor: number }[]
+}
+
+/** Listes nécessaires pour créer et réattribuer des tâches. Renvoie null si la personne n'est pas responsable. */
+export async function loadTaskAdmin(): Promise<TaskAdmin | null> {
+  if (DEMO) {
+    const staff = staffAll()
+    return {
+      staff: staff.map((p) => ({ id: p.name, name: p.name, job: p.role })),
+      types: CAT.map((c) => ({ code: c.k, label: c.label, start: c.start, duration: c.dur })),
+      rooms: FLOORS.flatMap((f) => floorData(f.id).rooms.map((r) => ({ id: r.no, no: r.no, floor: f.id }))),
+    }
+  }
+  const sb = await createClient()
+  const { data: auth } = await sb.auth.getUser()
+  if (!auth.user) return null
+  const { data: me } = await sb.from('profiles').select('role').eq('id', auth.user.id).maybeSingle()
+  if (!me || !['admin', 'direction', 'cadre'].includes(me.role)) return null
+  const [staff, types, rooms] = await Promise.all([
+    sb.from('staff').select('id, display_name, job_code').eq('active', true).order('display_name'),
+    sb.from('task_types').select('code, label, default_start_min, duration_min').order('label'),
+    sb.from('rooms').select('id, number, floor_id').order('number'),
+  ])
+  fail('personnel', staff.error); fail('types de tâches', types.error); fail('chambres', rooms.error)
+  return {
+    staff: (staff.data ?? []).map((s) => ({ id: s.id, name: s.display_name, job: s.job_code })),
+    types: (types.data ?? []).map((t) => ({ code: t.code, label: t.label, start: t.default_start_min, duration: t.duration_min })),
+    rooms: (rooms.data ?? []).map((r) => ({ id: r.id, no: r.number, floor: r.floor_id })),
   }
 }

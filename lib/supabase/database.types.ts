@@ -633,23 +633,29 @@ export type Database = {
       }
       task_types: {
         Row: {
+          auto: boolean
           code: string
           default_start_min: number
           duration_min: number
+          every_days: number
           job_code: string | null
           label: string
         }
         Insert: {
+          auto?: boolean
           code: string
           default_start_min: number
           duration_min: number
+          every_days?: number
           job_code?: string | null
           label: string
         }
         Update: {
+          auto?: boolean
           code?: string
           default_start_min?: number
           duration_min?: number
+          every_days?: number
           job_code?: string | null
           label?: string
         }
@@ -1170,7 +1176,8 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      demo_seed_today: { Args: never; Returns: Json }
+      generate_daily_tasks: { Args: { p_day?: string }; Returns: number }
     }
     Enums: {
       app_role:

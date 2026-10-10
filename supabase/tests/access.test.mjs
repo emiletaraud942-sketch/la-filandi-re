@@ -7,7 +7,7 @@ await db.exec(`create role anon; create role authenticated; create schema auth;
 create table auth.users (id uuid primary key default gen_random_uuid(), email text, raw_user_meta_data jsonb);
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true),'')::uuid $$;
 grant usage on schema public, auth to anon, authenticated;`);
-for (const f of fs.readdirSync(dir).sort()) { try { await db.exec(fs.readFileSync(dir + f, 'utf8')); console.log('OK ', f); } catch (e) { console.log('ERR', f, e.message); process.exit(1); } }
+for (const f of fs.readdirSync(dir).filter((x) => !x.endsWith('_cron.sql')).sort()) { try { await db.exec(fs.readFileSync(dir + f, 'utf8')); console.log('OK ', f); } catch (e) { console.log('ERR', f, e.message); process.exit(1); } }
 await db.exec(`grant select, insert, update, delete on all tables in schema public to authenticated; grant select on all tables in schema public to anon;`);
 const U = { admin: '00000000-0000-0000-0000-00000000000a', soin: '00000000-0000-0000-0000-00000000000b', soin2: '00000000-0000-0000-0000-00000000000c', acc: '00000000-0000-0000-0000-00000000000d', tech: '00000000-0000-0000-0000-00000000000e' };
 for (const [k, id] of Object.entries(U)) await db.exec(`insert into auth.users (id,email) values ('${id}','${k}@x.fr')`);
@@ -66,5 +66,13 @@ check('démo : relance sans doublon de tâches', await as('admin', `select (publ
 await db.exec(`delete from public.tasks`);
 check('démo : le propriétaire de la base peut la lancer (éditeur SQL)', (await db.query(`select (public.demo_seed_today() ->> 'taches')::int as n`)).rows.map((r) => JSON.stringify(r)).join(''), (g) => !g.includes('"n":0'));
 check('démo : les événements couvrent 7 jours', await as('admin', `select count(distinct day)::int as n from public.resident_events`), '"n":7');
+await db.exec(`delete from public.tasks`);
+check('tâches auto : soignant refusé', await as('soin', `select public.generate_daily_tasks()`), 'REFUSÉ');
+const gen = await as('admin', `select public.generate_daily_tasks() as n`);
+check('tâches auto : un responsable les génère', gen, (g) => !g.includes('"n":0'));
+check('tâches auto : relance sans doublon', await as('admin', `select public.generate_daily_tasks() as n`), '"n":0');
+check('tâches auto : repas pour chaque résident présent', await as('admin', `select count(*)::int n from public.tasks where type_code = 'dej'`), (g) => g.includes('"n":3'));
+check('tâches auto : attribuées au personnel AS', await as('admin', `select count(*)::int n from public.tasks t join public.staff s on s.id = t.assigned_to where t.type_code = 'dej' and s.job_code = 'AS'`), (g) => g.includes('"n":3'));
+check('tâches auto : jour futur possible', await as('admin', `select public.generate_daily_tasks(private.paris_today() + 1) as n`), (g) => !g.includes('"n":0'));
 console.log(fails ? `${fails} ÉCHEC(S)` : 'TOUT PASSE');
 process.exit(fails ? 1 : 0);

@@ -1,10 +1,10 @@
 // Jeu de données fictif (résidents et soignants pseudonymisés). À remplacer par Supabase.
 export type Dot = 'ok' | 'wip' | 'late' | 'none'
 export type TaskStatus = 'done' | 'wip' | 'todo' | 'late'
-export type Task = { k: string; label: string; role: string; start: number; end: number; st: TaskStatus; by: string; room: string }
+export type Task = { k: string; label: string; role: string; start: number; end: number; st: TaskStatus; by: string; room: string; byId?: string }
 export type Room = { no: string; n: number; floor: number; side: 'N' | 'S'; state: 'free' | 'out' | 'occ'; who: string | null; tasks: Task[]; dot: Dot }
 export type Floor = { id: number; name: string; short: string; note?: string }
-export type Staff = { name: string; role: string; shift: 'm' | 's' | 'n' | 'off' | 'leave' | 'abs'; floor: number; pause: number }
+export type Staff = { name: string; role: string; shift: 'm' | 's' | 'n' | 'off' | 'leave' | 'abs'; floor: number; pause: number; id?: string; clock?: string | null }
 export type DayEvent = { t: number; label: string; place: string; k: 'meal' | 'ani' | 'vis' | 'coif' | 'out' }
 
 export function rng(seed: number) {
@@ -39,7 +39,7 @@ export const POOL: Record<string, string[]> = {
   ACC: ['Sophie G.'],
 }
 export const ROLE_LBL: Record<string, string> = { AS: 'Aide-soignant', ASHQ: 'Agent de service', AES: 'AES / AMP', TECH: 'Technique', ACC: 'Accueil', IDE: 'Infirmier', ANI: 'Animation' }
-const CAT = [
+export const CAT = [
   { k: 'pdj', label: 'Petit-déjeuner', role: 'AS', start: 7 * 60 + 30, dur: 40 },
   { k: 'lit', label: 'Réfection du lit', role: 'AS', start: 9 * 60, dur: 15 },
   { k: 'men', label: 'Ménage de la chambre', role: 'ASHQ', start: 9 * 60 + 30, dur: 30 },
