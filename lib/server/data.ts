@@ -3,7 +3,7 @@ import { DEMO } from '@/lib/mode'
 import { createClient } from '@/lib/supabase/server'
 import { LOCATIONS, STOCK, type Art } from '@/lib/demo/stock'
 import { RATE, SUBS, demoEntries, type Cat, type Entry } from '@/lib/demo/expenses'
-import { BOOKINGS, TODAY_IDX, VEHICLES, WEEK, type Booking, type Vehicle, type WeekDay } from '@/lib/demo/vehicles'
+import { BOOKINGS, LOGS, TODAY_IDX, VEHICLES, WEEK, type Booking, type Log, type Vehicle, type WeekDay } from '@/lib/demo/vehicles'
 import {
   CAT, FLOORS, NOW, ROLES, ROLE_LBL, dotOf, floorData, residentDay, staffAll,
   type DayEvent, type Floor, type Room, type Staff, type Task, type TaskStatus,
@@ -168,9 +168,11 @@ export async function loadStock(): Promise<{ items: Art[]; locations: Record<str
 
 const MONTH = (d: string | null) => (d ? new Date(d + 'T12:00:00Z').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' }) : 'à renseigner')
 
-/** Véhicules, réservations de la semaine en cours et nom de la personne connectée. */
-export async function loadVehicles(): Promise<{ vehicles: Vehicle[]; bookings: Booking[]; week: WeekDay[]; today: number; me: string }> {
-  if (DEMO) return { vehicles: VEHICLES, bookings: BOOKINGS, week: WEEK, today: TODAY_IDX, me: 'Camille R.' }
+export type VehiclesData = { vehicles: Vehicle[]; bookings: Booking[]; logs: Log[]; week: WeekDay[]; today: number; me: string; canManage: boolean }
+
+/** Véhicules, réservations de la semaine en cours, carnet de bord et nom de la personne connectée. */
+export async function loadVehicles(): Promise<VehiclesData> {
+  if (DEMO) return { vehicles: VEHICLES, bookings: BOOKINGS, logs: LOGS, week: WEEK, today: TODAY_IDX, me: 'Camille R.', canManage: true }
   const sb = await createClient()
   const now = new Date(parisToday() + 'T12:00:00Z')
   const dow = (now.getUTCDay() + 6) % 7
@@ -178,23 +180,25 @@ export async function loadVehicles(): Promise<{ vehicles: Vehicle[]; bookings: B
     const d = new Date(now.getTime() + (i - dow) * 86400000)
     return { n: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'][i], d: d.getUTCDate(), iso: d.toISOString().slice(0, 10) }
   })
-  const [veh, bk, staff, auth] = await Promise.all([
+  const [veh, bk, logs, staff, auth, role] = await Promise.all([
     sb.from('vehicles').select('id, name, model, plate, odometer, next_service_km, ct_due, insurance_due, in_garage').order('name'),
-    sb.from('vehicle_bookings').select('id, vehicle_id, day, period, motif, driver_id').gte('day', week[0].iso).lte('day', week[6].iso),
+    sb.from('vehicle_bookings').select('id, vehicle_id, day, period, motif, driver_id, created_by').gte('day', week[0].iso).lte('day', week[6].iso),
+    sb.from('vehicle_logs').select('id, vehicle_id, day, kind, label, km, amount_cents, driver_id').order('day', { ascending: false }).order('id').limit(60),
     sb.from('staff').select('id, display_name'),
     sb.auth.getUser(),
+    loadMyRole(),
   ])
-  fail('véhicules', veh.error); fail('réservations', bk.error); fail('personnel', staff.error)
+  fail('véhicules', veh.error); fail('réservations', bk.error); fail('carnet', logs.error); fail('personnel', staff.error)
   const names = new Map((staff.data ?? []).map((s) => [s.id, s.display_name]))
-  const me = auth.data.user ? (await sb.from('staff').select('display_name').eq('profile_id', auth.data.user.id).maybeSingle()).data?.display_name : null
+  const uid = auth.data.user?.id
+  const me = uid ? (await sb.from('staff').select('display_name').eq('profile_id', uid).maybeSingle()).data?.display_name : null
   return {
-    vehicles: (veh.data ?? []).map((v) => ({ id: v.id, n: v.name, model: v.model, plate: v.plate, km: v.odometer, svc: v.next_service_km, ct: MONTH(v.ct_due), ass: MONTH(v.insurance_due), garage: v.in_garage })),
-    bookings: (bk.data ?? []).map((b) => ({ id: b.id, v: b.vehicle_id, d: week.findIndex((w) => w.iso === b.day), p: b.period, motif: b.motif, who: (b.driver_id && names.get(b.driver_id)) || '—' })),
-    week, today: dow, me: me ?? 'Moi',
+    vehicles: (veh.data ?? []).map((v) => ({ id: v.id, n: v.name, model: v.model, plate: v.plate, km: v.odometer, svc: v.next_service_km, ct: MONTH(v.ct_due), ass: MONTH(v.insurance_due), garage: v.in_garage, ctIso: v.ct_due ?? '', assIso: v.insurance_due ?? '' })),
+    bookings: (bk.data ?? []).map((b) => ({ id: b.id, v: b.vehicle_id, d: week.findIndex((w) => w.iso === b.day), p: b.period, motif: b.motif, who: (b.driver_id && names.get(b.driver_id)) || '—', mine: b.created_by === uid })),
+    logs: (logs.data ?? []).map((l) => ({ id: l.id, v: l.vehicle_id, day: l.day, kind: l.kind as 'trip' | 'fuel' | 'maint', label: l.label, km: l.km, eur: l.amount_cents / 100, who: (l.driver_id && names.get(l.driver_id)) || '—' })),
+    week, today: dow, me: me ?? 'Moi', canManage: !!role && ['admin', 'direction', 'cadre', 'technique'].includes(role),
   }
 }
-
-export { SUBS }
 
 /** Dépenses du mois en cours et repères mensuels. Réservé aux responsables : renvoie null pour les autres. */
 export async function loadExpenses() {
@@ -229,17 +233,19 @@ export async function loadExpenses() {
   }
 }
 
-export type ResidentRoom = { no: string; floor: number; who: string | null; state: 'free' | 'out' | 'occ'; days: DayEvent[][] }
+export type ResidentRoom = { no: string; floor: number; who: string | null; state: 'free' | 'out' | 'occ'; days: DayEvent[][]; roomId?: string; residentId?: string | null }
 
 /** Emploi du temps des résidents sur la semaine en cours, par étage et par chambre. */
-export async function loadResidents(): Promise<{ floors: { floor: Floor; rooms: ResidentRoom[] }[]; today: number }> {
+export type ResidentsData = { floors: { floor: Floor; rooms: ResidentRoom[] }[]; today: number; week: string[]; canEvents: boolean; canResidents: boolean }
+
+export async function loadResidents(): Promise<ResidentsData> {
   if (DEMO) {
     return {
-      today: 2,
+      today: 2, week: Array.from({ length: 7 }, (_, i) => `2026-10-${12 + i}`), canEvents: true, canResidents: true,
       floors: FLOORS.map((f) => ({
         floor: f,
         rooms: floorData(f.id).rooms.map((r) => ({
-          no: r.no, floor: r.floor, who: r.who, state: r.state,
+          no: r.no, floor: r.floor, who: r.who, state: r.state, roomId: r.no, residentId: r.state === 'free' ? null : 'res' + r.no,
           days: Array.from({ length: 7 }, (_, d) => (r.state === 'free' ? [] : residentDay(r, d))),
         })),
       })),
@@ -251,8 +257,8 @@ export async function loadResidents(): Promise<{ floors: { floor: Floor; rooms: 
   const iso = (i: number) => new Date(now.getTime() + (i - dow) * 86400000).toISOString().slice(0, 10)
   const [floors, rooms, events] = await Promise.all([
     sb.from('floors').select('id, name, short, note').order('id'),
-    sb.from('rooms_overview').select('number, floor_id, resident_id, resident_name, state').order('number'),
-    sb.from('resident_events').select('resident_id, day, start_min, label, place, kind').gte('day', iso(0)).lte('day', iso(6)).order('start_min'),
+    sb.from('rooms_overview').select('id, number, floor_id, resident_id, resident_name, state').order('number'),
+    sb.from('resident_events').select('id, resident_id, day, start_min, label, place, kind').gte('day', iso(0)).lte('day', iso(6)).order('start_min'),
   ])
   fail('étages', floors.error); fail('chambres', rooms.error); fail('événements', events.error)
   const days = Array.from({ length: 7 }, (_, i) => iso(i))
@@ -261,15 +267,18 @@ export async function loadResidents(): Promise<{ floors: { floor: Floor; rooms: 
     const di = days.indexOf(e.day)
     if (di < 0) continue
     const grid = byRes.get(e.resident_id) ?? Array.from({ length: 7 }, () => [] as DayEvent[])
-    grid[di].push({ t: e.start_min, label: e.label, place: e.place ?? '', k: e.kind })
+    grid[di].push({ t: e.start_min, label: e.label, place: e.place ?? '', k: e.kind, id: e.id })
     byRes.set(e.resident_id, grid)
   }
+  const role = await loadMyRole()
   return {
-    today: dow,
+    today: dow, week: days,
+    canEvents: !!role && ['admin', 'direction', 'cadre', 'animation'].includes(role),
+    canResidents: !!role && ['admin', 'direction', 'cadre'].includes(role),
     floors: (floors.data ?? []).map((f) => ({
       floor: { id: f.id, name: f.name, short: f.short, note: f.note ?? undefined },
       rooms: (rooms.data ?? []).filter((r) => r.floor_id === f.id).map((r): ResidentRoom => ({
-        no: r.number ?? '', floor: f.id, who: r.resident_name,
+        no: r.number ?? '', floor: f.id, who: r.resident_name, roomId: r.id ?? undefined, residentId: r.resident_id,
         state: r.state === 'free' ? 'free' : r.state === 'away' ? 'out' : 'occ',
         days: (r.resident_id && byRes.get(r.resident_id)) || Array.from({ length: 7 }, () => []),
       })),
@@ -363,3 +372,4 @@ export async function loadTaskAdmin(): Promise<TaskAdmin | null> {
     rooms: (rooms.data ?? []).map((r) => ({ id: r.id, no: r.number, floor: r.floor_id })),
   }
 }
+export { SUBS }

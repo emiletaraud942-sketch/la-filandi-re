@@ -24,4 +24,24 @@
   .rf{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   /* B */
   /* C */
+  .row8{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .two8{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-top:0}
+  .two8 .rf,.rf+.rf{margin-top:16px}
+  .edit8{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 12px;margin-bottom:12px}
+  .edit8 h3{grid-column:1/-1;margin:0;font-size:19px}
+  .edit8 .row8{grid-column:1/-1}
+  .edit8 label{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+  .edit8 input,.note8{display:block;width:100%;margin-top:5px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:500 15px var(--font-body);text-transform:none;letter-spacing:0}
+  .stp8{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+  .stp8 button{width:56px;height:56px;border-radius:var(--r);border:1px solid var(--line);background:var(--accent-soft);color:var(--ink);font:700 28px var(--font-display);cursor:pointer}
+  .stp8 b{font-size:32px}
+  .lg8,.bk8{list-style:none;margin:12px 0 0;padding:0}
+  .lg8 li{display:grid;grid-template-columns:62px 12px 1fr auto;gap:8px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+  .lg8 time{color:var(--ink2)}
+  .tg{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--m1)}
+  .tg.fuel{background:var(--m2)}.tg.maint{background:var(--late)}
+  .bk8 li{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .bk8 li span{color:var(--ink2);flex:1;min-width:200px}
+  .x8{border:0;background:transparent;color:var(--late);font:700 12.5px var(--font-body);cursor:pointer}
 }

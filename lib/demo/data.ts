@@ -5,7 +5,7 @@ export type Task = { k: string; label: string; role: string; start: number; end:
 export type Room = { no: string; n: number; floor: number; side: 'N' | 'S'; state: 'free' | 'out' | 'occ'; who: string | null; tasks: Task[]; dot: Dot }
 export type Floor = { id: number; name: string; short: string; note?: string }
 export type Staff = { name: string; role: string; shift: 'm' | 's' | 'n' | 'off' | 'leave' | 'abs'; floor: number; pause: number; id?: string; clock?: string | null }
-export type DayEvent = { t: number; label: string; place: string; k: 'meal' | 'ani' | 'vis' | 'coif' | 'out' }
+export type DayEvent = { t: number; label: string; place: string; k: 'meal' | 'ani' | 'vis' | 'coif' | 'out'; id?: string }
 
 export function rng(seed: number) {
   let a = seed >>> 0
