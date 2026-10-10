@@ -66,3 +66,11 @@ a { color: inherit }
 .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px }
 @keyframes spin { to { transform: rotate(360deg) } }
 .who a.me { color: inherit; text-decoration: underline; text-underline-offset: 3px }
+
+/* Chargement */
+.skel { display: grid; gap: 14px }
+.sk { background: linear-gradient(90deg, var(--line), color-mix(in srgb, var(--line) 40%, var(--surface)), var(--line)); background-size: 200% 100%; animation: sk 1.4s ease-in-out infinite; border-radius: var(--r); min-height: 120px }
+.sk-t { height: 34px; min-height: 0; width: 260px; max-width: 70% }
+.sk-p { height: 16px; min-height: 0; width: 420px; max-width: 90% }
+.sk-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
+@keyframes sk { to { background-position: -200% 0 } }

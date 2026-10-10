@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AutoRefresh } from '@/components/AutoRefresh'
 import { Nav } from '@/components/Nav'
 import { ToastProvider } from '@/components/Toast'
 import { DEMO } from '@/lib/mode'
@@ -35,6 +36,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
       </div>
       <ToastProvider>
+        {!DEMO && !inactive && <AutoRefresh />}
         <main className="page">
           {inactive ? (
             <div className="card" style={{ marginTop: '6vh' }}>

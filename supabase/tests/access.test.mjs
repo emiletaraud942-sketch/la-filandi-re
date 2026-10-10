@@ -7,7 +7,7 @@ await db.exec(`create role anon; create role authenticated; create schema auth;
 create table auth.users (id uuid primary key default gen_random_uuid(), email text, raw_user_meta_data jsonb);
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true),'')::uuid $$;
 grant usage on schema public, auth to anon, authenticated;`);
-for (const f of fs.readdirSync(dir).filter((x) => !x.endsWith('_cron.sql')).sort()) { try { await db.exec(fs.readFileSync(dir + f, 'utf8')); console.log('OK ', f); } catch (e) { console.log('ERR', f, e.message); process.exit(1); } }
+for (const f of fs.readdirSync(dir).filter((x) => !x.endsWith('_cron.sql') && !x.endsWith('_realtime.sql')).sort()) { try { await db.exec(fs.readFileSync(dir + f, 'utf8')); console.log('OK ', f); } catch (e) { console.log('ERR', f, e.message); process.exit(1); } }
 await db.exec(`grant select, insert, update, delete on all tables in schema public to authenticated; grant select on all tables in schema public to anon;`);
 const U = { admin: '00000000-0000-0000-0000-00000000000a', soin: '00000000-0000-0000-0000-00000000000b', soin2: '00000000-0000-0000-0000-00000000000c', acc: '00000000-0000-0000-0000-00000000000d', tech: '00000000-0000-0000-0000-00000000000e' };
 for (const [k, id] of Object.entries(U)) await db.exec(`insert into auth.users (id,email) values ('${id}','${k}@x.fr')`);
